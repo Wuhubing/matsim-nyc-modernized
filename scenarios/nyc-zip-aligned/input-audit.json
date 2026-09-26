@@ -1,0 +1,27 @@
+{
+  "separated-network.xml": {
+    "archive_sha256": "fe3a5c66daf29b994faae4ff8630e841042f23c164ac9bfb7a0a6c2c70c0b42c",
+    "workspace_sha256": "fe3a5c66daf29b994faae4ff8630e841042f23c164ac9bfb7a0a6c2c70c0b42c",
+    "identical": true
+  },
+  "separated-schedule.xml": {
+    "archive_sha256": "2f827bff3530b2c2b411f53a3b7d88449c64fe0428da02c7cd87dc2098d25b3d",
+    "workspace_sha256": "2f827bff3530b2c2b411f53a3b7d88449c64fe0428da02c7cd87dc2098d25b3d",
+    "identical": true
+  },
+  "separated-vehicle.xml": {
+    "archive_sha256": "47424ce02b195f20a78574978ac05787f7aa615998a6b2f71fedf241c881425c",
+    "workspace_sha256": "47424ce02b195f20a78574978ac05787f7aa615998a6b2f71fedf241c881425c",
+    "identical": true
+  },
+  "vehicle_type.xml": {
+    "archive_sha256": "5be397c3a3f378acdba47055ebe11810fda1c6fe130a91ad347e7671042500ab",
+    "workspace_sha256": "5be397c3a3f378acdba47055ebe11810fda1c6fe130a91ad347e7671042500ab",
+    "identical": true
+  },
+  "count.xml": {
+    "archive_sha256": "7fb8bf0841106490be26855ea04f2cd881822fc9df57c3419dd9c6c452d21e46",
+    "workspace_sha256": "7fb8bf0841106490be26855ea04f2cd881822fc9df57c3419dd9c6c452d21e46",
+    "identical": true
+  }
+}

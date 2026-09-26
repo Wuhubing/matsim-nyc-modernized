@@ -1,0 +1,711 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE config SYSTEM "http://www.matsim.org/files/dtd/config_v2.dtd">
+<config>
+  <module name="counts">
+    <param name="analyzedModes" value="car,FHV,taxi" />
+    <param name="averageCountsOverIterations" value="1" />
+    <param name="countsScaleFactor" value="25" />
+    <param name="distanceFilter" value="null" />
+    <param name="distanceFilterCenterNode" value="null" />
+    <param name="filterModes" value="false" />
+    <param name="inputCRS" value="null" />
+    <param name="inputCountsFile" value="../nyc/count.xml.gz" />
+    <param name="outputformat" value="txt" />
+    <param name="writeCountsInterval" value="1" />
+  </module>
+  <module name="global">
+    <param name="randomSeed" value="4711" />
+    <param name="coordinateSystem" value="EPSG:3628" />
+    <param name="numberOfThreads" value="16" />
+  </module>
+  <module name="network">
+    <param name="inputNetworkFile" value="../nyc/separated-network.xml.gz" />
+  </module>
+  <module name="plans">
+    <param name="inputPlansFile" value="../nyc/population-v6.xml.gz" />
+  </module>
+  <module name="controler">
+    <param name="outputDirectory" value="outputs/nyc-zip-aligned/schema1" />
+    <param name="firstIteration" value="0" />
+    <param name="lastIteration" value="0" />
+    <param name="eventsFileFormat" value="xml" />
+    <param name="mobsim" value="qsim" />
+    <param name="runId" value="BUILT" />
+    <param name="overwriteFiles" value="failIfDirectoryExists" />
+    <param name="writePlansInterval" value="1" />
+    <param name="writeEventsInterval" value="1" />
+  </module>
+  <module name="transit">
+    <param name="transitScheduleFile" value="../nyc/separated-schedule.xml.gz" />
+    <param name="vehiclesFile" value="../nyc/separated-vehicle.xml.gz" />
+    <param name="transitModes" value="pt" />
+    <param name="useTransit" value="true" />
+  </module>
+  <module name="qsim">
+    <param name="vehiclesSource" value="modeVehicleTypesFromVehiclesData" />
+    <param name="linkDynamics" value="PassingQ" />
+    <param name="startTime" value="00:00:00" />
+    <param name="endTime" value="30:00:00" />
+    <param name="flowCapacityFactor" value="0.15" />
+    <param name="storageCapacityFactor" value="0.30" />
+    <param name="numberOfThreads" value="16" />
+    <param name="mainMode" value="car,FHV,taxi" />
+  </module>
+  <module name="planscalcroute">
+    <param name="networkModes" value="car,FHV,taxi" />
+    <parameterset type="teleportedModeParameters">
+      <param name="beelineDistanceFactor" value="4.2" />
+      <param name="mode" value="cb" />
+      <param name="teleportedModeFreespeedFactor" value="null" />
+      <param name="teleportedModeSpeed" value="13.66666666666667" />
+    </parameterset>
+    <parameterset type="teleportedModeParameters">
+      <param name="beelineDistanceFactor" value="1.4" />
+      <param name="mode" value="walk" />
+      <param name="teleportedModeFreespeedFactor" value="null" />
+      <param name="teleportedModeSpeed" value="2.7333333333333333" />
+    </parameterset>
+    <parameterset type="teleportedModeParameters">
+      <param name="beelineDistanceFactor" value="4.2" />
+      <param name="mode" value="bike" />
+      <param name="teleportedModeFreespeedFactor" value="null" />
+      <param name="teleportedModeSpeed" value="13.66666666666667" />
+    </parameterset>
+    <parameterset type="teleportedModeParameters">
+      <param name="beelineDistanceFactor" value="2.8" />
+      <param name="mode" value="ride" />
+      <param name="teleportedModeFreespeedFactor" value="null" />
+      <param name="teleportedModeSpeed" value="13.66666666666667" />
+    </parameterset>
+  </module>
+  <module name="vehicles">
+    <param name="vehiclesFile" value="../nyc/vehicle_type.xml.gz" />
+  </module>
+  <module name="strategy">
+    <param name="maxAgentPlanMemorySize" value="5" />
+    <param name="fractionOfIterationsToDisableInnovation" value="0.8" />
+    <parameterset type="strategysettings">
+      <param name="strategyName" value="SelectExpBeta" />
+      <param name="subpopulation" value="man" />
+      <param name="weight" value="0.7" />
+    </parameterset>
+    <parameterset type="strategysettings">
+      <param name="strategyName" value="TimeAllocationMutator" />
+      <param name="subpopulation" value="man" />
+      <param name="weight" value="0.1" />
+    </parameterset>
+    <parameterset type="strategysettings">
+      <param name="strategyName" value="ReRoute" />
+      <param name="subpopulation" value="man" />
+      <param name="weight" value="0.1" />
+    </parameterset>
+    <parameterset type="strategysettings">
+      <param name="strategyName" value="SubtourModeChoice" />
+      <param name="subpopulation" value="man" />
+      <param name="weight" value="0.1" />
+    </parameterset>
+    <parameterset type="strategysettings">
+      <param name="strategyName" value="SelectExpBeta" />
+      <param name="subpopulation" value="nonman" />
+      <param name="weight" value="0.7" />
+    </parameterset>
+    <parameterset type="strategysettings">
+      <param name="strategyName" value="TimeAllocationMutator" />
+      <param name="subpopulation" value="nonman" />
+      <param name="weight" value="0.1" />
+    </parameterset>
+    <parameterset type="strategysettings">
+      <param name="strategyName" value="ReRoute" />
+      <param name="subpopulation" value="nonman" />
+      <param name="weight" value="0.1" />
+    </parameterset>
+    <parameterset type="strategysettings">
+      <param name="strategyName" value="SubtourModeChoice" />
+      <param name="subpopulation" value="nonman" />
+      <param name="weight" value="0.1" />
+    </parameterset>
+    <parameterset type="strategysettings">
+      <param name="strategyName" value="SelectExpBeta" />
+      <param name="subpopulation" value="outside" />
+      <param name="weight" value="1.0" />
+    </parameterset>
+  </module>
+  <module name="subtourModeChoice">
+    <param name="modes" value="pt,car,FHV,taxi,walk,cb,bike,ride" />
+  </module>
+  <module name="travelTimeCalculator">
+    <param name="analyzedModes" value="pt,car,FHV,taxi,walk,cb,bike,ride" />
+    <param name="separateModes" value="true" />
+  </module>
+  <module name="TimeAllocationMutator">
+    <param name="mutationAffectsDuration" value="true" />
+    <param name="mutationRange" value="1800.0" />
+  </module>
+  <module name="planCalcScore">
+    <param name="writeExperiencedPlans" value="true" />
+    <parameterset type="scoringParameters">
+      <param name="subpopulation" value="nonman" />
+      <param name="earlyDeparture" value="-1.07137783" />
+      <param name="lateArrival" value="-4.186614906" />
+      <param name="marginalUtilityOfMoney" value="0.0543894" />
+      <param name="performing" value="1.74717" />
+      <param name="utilityOfLineSwitch" value="0.0" />
+      <param name="waiting" value="-0.0" />
+      <param name="waitingPt" value="-1.3278" />
+      <parameterset type="activityParams">
+        <param name="activityType" value="Home" />
+        <param name="typicalDuration" value="08:00:00" />
+      </parameterset>
+      <parameterset type="activityParams">
+        <param name="activityType" value="Work" />
+        <param name="typicalDuration" value="08:00:00" />
+        <param name="openingTime" value="07:00:00" />
+        <param name="latestStartTime" value="11:00:00" />
+        <param name="closingTime" value="20:00:00" />
+      </parameterset>
+      <parameterset type="activityParams">
+        <param name="activityType" value="School" />
+        <param name="typicalDuration" value="08:00:00" />
+        <param name="openingTime" value="07:00:00" />
+        <param name="latestStartTime" value="11:00:00" />
+        <param name="closingTime" value="20:00:00" />
+      </parameterset>
+      <parameterset type="activityParams">
+        <param name="activityType" value="Secondary" />
+        <param name="typicalDuration" value="01:00:00" />
+        <param name="openingTime" value="07:00:00" />
+        <param name="latestStartTime" value="11:00:00" />
+        <param name="closingTime" value="20:00:00" />
+      </parameterset>
+      <parameterset type="activityParams">
+        <param name="activityType" value="University" />
+        <param name="typicalDuration" value="01:00:00" />
+        <param name="openingTime" value="07:00:00" />
+        <param name="latestStartTime" value="11:00:00" />
+        <param name="closingTime" value="20:00:00" />
+      </parameterset>
+      <parameterset type="activityParams">
+        <param name="activityType" value="pt interaction" />
+        <param name="closingTime" value="undefined" />
+        <param name="earliestEndTime" value="undefined" />
+        <param name="latestStartTime" value="undefined" />
+        <param name="minimalDuration" value="undefined" />
+        <param name="openingTime" value="undefined" />
+        <param name="priority" value="1.0" />
+        <param name="scoringThisActivityAtAll" value="false" />
+        <param name="typicalDuration" value="undefined" />
+        <param name="typicalDurationScoreComputation" value="relative" />
+      </parameterset>
+      <parameterset type="modeParams">
+        <param name="constant" value="-0.051911253" />
+        <param name="marginalUtilityOfDistance_util_m" value="0.0" />
+        <param name="marginalUtilityOfTraveling_util_hr" value="0" />
+        <param name="mode" value="car" />
+        <param name="monetaryDistanceRate" value="-0.0005" />
+      </parameterset>
+      <parameterset type="modeParams">
+        <param name="constant" value="-1.80663" />
+        <param name="marginalUtilityOfDistance_util_m" value="0.0" />
+        <param name="marginalUtilityOfTraveling_util_hr" value="0" />
+        <param name="mode" value="taxi" />
+        <param name="monetaryDistanceRate" value="-0.0016" />
+      </parameterset>
+      <parameterset type="modeParams">
+        <param name="constant" value="0.907972" />
+        <param name="marginalUtilityOfDistance_util_m" value="0.0" />
+        <param name="marginalUtilityOfTraveling_util_hr" value="0" />
+        <param name="mode" value="pt" />
+        <param name="monetaryDistanceRate" value="0.0" />
+      </parameterset>
+      <parameterset type="modeParams">
+        <param name="constant" value="3.49153" />
+        <param name="marginalUtilityOfDistance_util_m" value="0.0" />
+        <param name="marginalUtilityOfTraveling_util_hr" value="-5.04971" />
+        <param name="mode" value="walk" />
+        <param name="monetaryDistanceRate" value="0.0" />
+      </parameterset>
+      <parameterset type="modeParams">
+        <param name="constant" value="-1.3512" />
+        <param name="marginalUtilityOfDistance_util_m" value="0.0" />
+        <param name="marginalUtilityOfTraveling_util_hr" value="-5.635" />
+        <param name="mode" value="bike" />
+        <param name="monetaryDistanceRate" value="0.0" />
+      </parameterset>
+      <parameterset type="modeParams">
+        <param name="constant" value="0" />
+        <param name="marginalUtilityOfDistance_util_m" value="0.0" />
+        <param name="marginalUtilityOfTraveling_util_hr" value="0" />
+        <param name="mode" value="ride" />
+        <param name="monetaryDistanceRate" value="-0.001" />
+      </parameterset>
+      <parameterset type="modeParams">
+        <param name="constant" value="-2.038671888" />
+        <param name="marginalUtilityOfDistance_util_m" value="0.0" />
+        <param name="marginalUtilityOfTraveling_util_hr" value="-5.635" />
+        <param name="mode" value="cb" />
+        <param name="monetaryDistanceRate" value="0.0" />
+      </parameterset>
+      <parameterset type="modeParams">
+        <param name="constant" value="-3.380229276" />
+        <param name="marginalUtilityOfDistance_util_m" value="0.0" />
+        <param name="marginalUtilityOfTraveling_util_hr" value="0" />
+        <param name="mode" value="FHV" />
+        <param name="monetaryDistanceRate" value="-0.001" />
+      </parameterset>
+      <parameterset type="modeParams">
+        <param name="constant" value="0.0" />
+        <param name="dailyMonetaryConstant" value="0.0" />
+        <param name="dailyUtilityConstant" value="0.0" />
+        <param name="marginalUtilityOfDistance_util_m" value="0.0" />
+        <param name="marginalUtilityOfTraveling_util_hr" value="-1.70959" />
+        <param name="mode" value="access_walk" />
+        <param name="monetaryDistanceRate" value="0.0" />
+      </parameterset>
+      <parameterset type="modeParams">
+        <param name="constant" value="0.0" />
+        <param name="dailyMonetaryConstant" value="0.0" />
+        <param name="dailyUtilityConstant" value="0.0" />
+        <param name="marginalUtilityOfDistance_util_m" value="0.0" />
+        <param name="marginalUtilityOfTraveling_util_hr" value="-1.67102" />
+        <param name="mode" value="egress_walk" />
+        <param name="monetaryDistanceRate" value="0.0" />
+      </parameterset>
+      <parameterset type="modeParams">
+        <param name="constant" value="0.0" />
+        <param name="dailyMonetaryConstant" value="0.0" />
+        <param name="dailyUtilityConstant" value="0.0" />
+        <param name="marginalUtilityOfDistance_util_m" value="0.0" />
+        <param name="marginalUtilityOfTraveling_util_hr" value="-1.60768" />
+        <param name="mode" value="transit_walk" />
+        <param name="monetaryDistanceRate" value="0.0" />
+      </parameterset>
+    </parameterset>
+    <parameterset type="scoringParameters">
+      <param name="earlyDeparture" value="-1.07137783" />
+      <param name="lateArrival" value="-4.186614906" />
+      <param name="marginalUtilityOfMoney" value="0.062227" />
+      <param name="performing" value="1.74717" />
+      <param name="subpopulation" value="man" />
+      <param name="utilityOfLineSwitch" value="0.0" />
+      <param name="waiting" value="-0.0" />
+      <param name="waitingPt" value="-1.3278" />
+      <parameterset type="activityParams">
+        <param name="activityType" value="Home" />
+        <param name="typicalDuration" value="08:00:00" />
+      </parameterset>
+      <parameterset type="activityParams">
+        <param name="activityType" value="Work" />
+        <param name="typicalDuration" value="08:00:00" />
+        <param name="openingTime" value="07:00:00" />
+        <param name="latestStartTime" value="11:00:00" />
+        <param name="closingTime" value="20:00:00" />
+      </parameterset>
+      <parameterset type="activityParams">
+        <param name="activityType" value="School" />
+        <param name="typicalDuration" value="08:00:00" />
+        <param name="openingTime" value="07:00:00" />
+        <param name="latestStartTime" value="11:00:00" />
+        <param name="closingTime" value="20:00:00" />
+      </parameterset>
+      <parameterset type="activityParams">
+        <param name="activityType" value="Secondary" />
+        <param name="typicalDuration" value="01:00:00" />
+        <param name="openingTime" value="07:00:00" />
+        <param name="latestStartTime" value="11:00:00" />
+        <param name="closingTime" value="20:00:00" />
+      </parameterset>
+      <parameterset type="activityParams">
+        <param name="activityType" value="University" />
+        <param name="typicalDuration" value="01:00:00" />
+        <param name="openingTime" value="07:00:00" />
+        <param name="latestStartTime" value="11:00:00" />
+        <param name="closingTime" value="20:00:00" />
+      </parameterset>
+      <parameterset type="activityParams">
+        <param name="activityType" value="pt interaction" />
+        <param name="closingTime" value="undefined" />
+        <param name="earliestEndTime" value="undefined" />
+        <param name="latestStartTime" value="undefined" />
+        <param name="minimalDuration" value="undefined" />
+        <param name="openingTime" value="undefined" />
+        <param name="priority" value="1.0" />
+        <param name="scoringThisActivityAtAll" value="false" />
+        <param name="typicalDuration" value="undefined" />
+        <param name="typicalDurationScoreComputation" value="relative" />
+      </parameterset>
+      <parameterset type="modeParams">
+        <param name="constant" value="-0.06412" />
+        <param name="marginalUtilityOfDistance_util_m" value="0.0" />
+        <param name="marginalUtilityOfTraveling_util_hr" value="0" />
+        <param name="mode" value="car" />
+        <param name="monetaryDistanceRate" value="-0.0005" />
+      </parameterset>
+      <parameterset type="modeParams">
+        <param name="constant" value="1.06440" />
+        <param name="marginalUtilityOfDistance_util_m" value="0.0" />
+        <param name="marginalUtilityOfTraveling_util_hr" value="0" />
+        <param name="mode" value="taxi" />
+        <param name="monetaryDistanceRate" value="-0.0016" />
+      </parameterset>
+      <parameterset type="modeParams">
+        <param name="constant" value="3.12598" />
+        <param name="marginalUtilityOfDistance_util_m" value="0.0" />
+        <param name="marginalUtilityOfTraveling_util_hr" value="0" />
+        <param name="mode" value="pt" />
+        <param name="monetaryDistanceRate" value="0.0" />
+      </parameterset>
+      <parameterset type="modeParams">
+        <param name="constant" value="5.72732" />
+        <param name="marginalUtilityOfDistance_util_m" value="0.0" />
+        <param name="marginalUtilityOfTraveling_util_hr" value="-3.94494" />
+        <param name="mode" value="walk" />
+        <param name="monetaryDistanceRate" value="0.0" />
+      </parameterset>
+      <parameterset type="modeParams">
+        <param name="constant" value="0.43720" />
+        <param name="marginalUtilityOfDistance_util_m" value="0.0" />
+        <param name="marginalUtilityOfTraveling_util_hr" value="-2.54574" />
+        <param name="mode" value="bike" />
+        <param name="monetaryDistanceRate" value="0.0" />
+      </parameterset>
+      <parameterset type="modeParams">
+        <param name="constant" value="0" />
+        <param name="marginalUtilityOfDistance_util_m" value="0.0" />
+        <param name="marginalUtilityOfTraveling_util_hr" value="0" />
+        <param name="mode" value="ride" />
+        <param name="monetaryDistanceRate" value="-0.001" />
+      </parameterset>
+      <parameterset type="modeParams">
+        <param name="constant" value="-0.36880" />
+        <param name="marginalUtilityOfDistance_util_m" value="0.0" />
+        <param name="marginalUtilityOfTraveling_util_hr" value="-2.54574" />
+        <param name="mode" value="cb" />
+        <param name="monetaryDistanceRate" value="0.0" />
+      </parameterset>
+      <parameterset type="modeParams">
+        <param name="constant" value="0.79096" />
+        <param name="marginalUtilityOfDistance_util_m" value="0.0" />
+        <param name="marginalUtilityOfTraveling_util_hr" value="0" />
+        <param name="mode" value="FHV" />
+        <param name="monetaryDistanceRate" value="-0.001" />
+      </parameterset>
+      <parameterset type="modeParams">
+        <param name="constant" value="0.0" />
+        <param name="dailyMonetaryConstant" value="0.0" />
+        <param name="dailyUtilityConstant" value="0.0" />
+        <param name="marginalUtilityOfDistance_util_m" value="0.0" />
+        <param name="marginalUtilityOfTraveling_util_hr" value="-0.95761" />
+        <param name="mode" value="access_walk" />
+        <param name="monetaryDistanceRate" value="0.0" />
+      </parameterset>
+      <parameterset type="modeParams">
+        <param name="constant" value="0.0" />
+        <param name="dailyMonetaryConstant" value="0.0" />
+        <param name="dailyUtilityConstant" value="0.0" />
+        <param name="marginalUtilityOfDistance_util_m" value="0.0" />
+        <param name="marginalUtilityOfTraveling_util_hr" value="-0.86112" />
+        <param name="mode" value="egress_walk" />
+        <param name="monetaryDistanceRate" value="0.0" />
+      </parameterset>
+      <parameterset type="modeParams">
+        <param name="constant" value="0.0" />
+        <param name="dailyMonetaryConstant" value="0.0" />
+        <param name="dailyUtilityConstant" value="0.0" />
+        <param name="marginalUtilityOfDistance_util_m" value="0.0" />
+        <param name="marginalUtilityOfTraveling_util_hr" value="-1.45993" />
+        <param name="mode" value="transit_walk" />
+        <param name="monetaryDistanceRate" value="0.0" />
+      </parameterset>
+    </parameterset>
+    <parameterset type="scoringParameters">
+      <param name="earlyDeparture" value="-1.07137783" />
+      <param name="lateArrival" value="-4.186614906" />
+      <param name="marginalUtilityOfMoney" value="0.062227" />
+      <param name="performing" value="1.74717" />
+      <param name="subpopulation" value="default" />
+      <param name="utilityOfLineSwitch" value="0.0" />
+      <param name="waiting" value="-0.0" />
+      <param name="waitingPt" value="-1.3278" />
+      <parameterset type="activityParams">
+        <param name="activityType" value="Home" />
+        <param name="typicalDuration" value="08:00:00" />
+      </parameterset>
+      <parameterset type="activityParams">
+        <param name="activityType" value="Work" />
+        <param name="typicalDuration" value="08:00:00" />
+        <param name="openingTime" value="07:00:00" />
+        <param name="latestStartTime" value="11:00:00" />
+        <param name="closingTime" value="20:00:00" />
+      </parameterset>
+      <parameterset type="activityParams">
+        <param name="activityType" value="School" />
+        <param name="typicalDuration" value="08:00:00" />
+        <param name="openingTime" value="07:00:00" />
+        <param name="latestStartTime" value="11:00:00" />
+        <param name="closingTime" value="20:00:00" />
+      </parameterset>
+      <parameterset type="activityParams">
+        <param name="activityType" value="Secondary" />
+        <param name="typicalDuration" value="01:00:00" />
+        <param name="openingTime" value="07:00:00" />
+        <param name="latestStartTime" value="11:00:00" />
+        <param name="closingTime" value="20:00:00" />
+      </parameterset>
+      <parameterset type="activityParams">
+        <param name="activityType" value="University" />
+        <param name="typicalDuration" value="01:00:00" />
+        <param name="openingTime" value="07:00:00" />
+        <param name="latestStartTime" value="11:00:00" />
+        <param name="closingTime" value="20:00:00" />
+      </parameterset>
+      <parameterset type="activityParams">
+        <param name="activityType" value="pt interaction" />
+        <param name="closingTime" value="undefined" />
+        <param name="earliestEndTime" value="undefined" />
+        <param name="latestStartTime" value="undefined" />
+        <param name="minimalDuration" value="undefined" />
+        <param name="openingTime" value="undefined" />
+        <param name="priority" value="1.0" />
+        <param name="scoringThisActivityAtAll" value="false" />
+        <param name="typicalDuration" value="undefined" />
+        <param name="typicalDurationScoreComputation" value="relative" />
+      </parameterset>
+      <parameterset type="modeParams">
+        <param name="constant" value="-0.06412" />
+        <param name="marginalUtilityOfDistance_util_m" value="0.0" />
+        <param name="marginalUtilityOfTraveling_util_hr" value="0" />
+        <param name="mode" value="car" />
+        <param name="monetaryDistanceRate" value="-0.0005" />
+      </parameterset>
+      <parameterset type="modeParams">
+        <param name="constant" value="1.06440" />
+        <param name="marginalUtilityOfDistance_util_m" value="0.0" />
+        <param name="marginalUtilityOfTraveling_util_hr" value="0" />
+        <param name="mode" value="taxi" />
+        <param name="monetaryDistanceRate" value="-0.0016" />
+      </parameterset>
+      <parameterset type="modeParams">
+        <param name="constant" value="3.12598" />
+        <param name="marginalUtilityOfDistance_util_m" value="0.0" />
+        <param name="marginalUtilityOfTraveling_util_hr" value="0" />
+        <param name="mode" value="pt" />
+        <param name="monetaryDistanceRate" value="0.0" />
+      </parameterset>
+      <parameterset type="modeParams">
+        <param name="constant" value="5.72732" />
+        <param name="marginalUtilityOfDistance_util_m" value="0.0" />
+        <param name="marginalUtilityOfTraveling_util_hr" value="-3.94494" />
+        <param name="mode" value="walk" />
+        <param name="monetaryDistanceRate" value="0.0" />
+      </parameterset>
+      <parameterset type="modeParams">
+        <param name="constant" value="0.43720" />
+        <param name="marginalUtilityOfDistance_util_m" value="0.0" />
+        <param name="marginalUtilityOfTraveling_util_hr" value="-2.54574" />
+        <param name="mode" value="bike" />
+        <param name="monetaryDistanceRate" value="0.0" />
+      </parameterset>
+      <parameterset type="modeParams">
+        <param name="constant" value="0" />
+        <param name="marginalUtilityOfDistance_util_m" value="0.0" />
+        <param name="marginalUtilityOfTraveling_util_hr" value="0" />
+        <param name="mode" value="ride" />
+        <param name="monetaryDistanceRate" value="-0.001" />
+      </parameterset>
+      <parameterset type="modeParams">
+        <param name="constant" value="-0.36880" />
+        <param name="marginalUtilityOfDistance_util_m" value="0.0" />
+        <param name="marginalUtilityOfTraveling_util_hr" value="-2.54574" />
+        <param name="mode" value="cb" />
+        <param name="monetaryDistanceRate" value="0.0" />
+      </parameterset>
+      <parameterset type="modeParams">
+        <param name="constant" value="0.79096" />
+        <param name="marginalUtilityOfDistance_util_m" value="0.0" />
+        <param name="marginalUtilityOfTraveling_util_hr" value="0" />
+        <param name="mode" value="FHV" />
+        <param name="monetaryDistanceRate" value="-0.001" />
+      </parameterset>
+      <parameterset type="modeParams">
+        <param name="constant" value="0.0" />
+        <param name="dailyMonetaryConstant" value="0.0" />
+        <param name="dailyUtilityConstant" value="0.0" />
+        <param name="marginalUtilityOfDistance_util_m" value="0.0" />
+        <param name="marginalUtilityOfTraveling_util_hr" value="-0.95761" />
+        <param name="mode" value="access_walk" />
+        <param name="monetaryDistanceRate" value="0.0" />
+      </parameterset>
+      <parameterset type="modeParams">
+        <param name="constant" value="0.0" />
+        <param name="dailyMonetaryConstant" value="0.0" />
+        <param name="dailyUtilityConstant" value="0.0" />
+        <param name="marginalUtilityOfDistance_util_m" value="0.0" />
+        <param name="marginalUtilityOfTraveling_util_hr" value="-0.86112" />
+        <param name="mode" value="egress_walk" />
+        <param name="monetaryDistanceRate" value="0.0" />
+      </parameterset>
+      <parameterset type="modeParams">
+        <param name="constant" value="0.0" />
+        <param name="dailyMonetaryConstant" value="0.0" />
+        <param name="dailyUtilityConstant" value="0.0" />
+        <param name="marginalUtilityOfDistance_util_m" value="0.0" />
+        <param name="marginalUtilityOfTraveling_util_hr" value="-1.45993" />
+        <param name="mode" value="transit_walk" />
+        <param name="monetaryDistanceRate" value="0.0" />
+      </parameterset>
+    </parameterset>
+    <parameterset type="scoringParameters">
+      <param name="earlyDeparture" value="-1.07137783" />
+      <param name="lateArrival" value="-4.186614906" />
+      <param name="marginalUtilityOfMoney" value="0.062227" />
+      <param name="performing" value="1.74717" />
+      <param name="subpopulation" value="outside" />
+      <param name="utilityOfLineSwitch" value="0.0" />
+      <param name="waiting" value="-0.0" />
+      <param name="waitingPt" value="-1.3278" />
+      <parameterset type="activityParams">
+        <param name="activityType" value="Home" />
+        <param name="typicalDuration" value="08:00:00" />
+      </parameterset>
+      <parameterset type="activityParams">
+        <param name="activityType" value="Work" />
+        <param name="typicalDuration" value="08:00:00" />
+        <param name="openingTime" value="07:00:00" />
+        <param name="latestStartTime" value="11:00:00" />
+        <param name="closingTime" value="20:00:00" />
+      </parameterset>
+      <parameterset type="activityParams">
+        <param name="activityType" value="School" />
+        <param name="typicalDuration" value="08:00:00" />
+        <param name="openingTime" value="07:00:00" />
+        <param name="latestStartTime" value="11:00:00" />
+        <param name="closingTime" value="20:00:00" />
+      </parameterset>
+      <parameterset type="activityParams">
+        <param name="activityType" value="Secondary" />
+        <param name="typicalDuration" value="01:00:00" />
+        <param name="openingTime" value="07:00:00" />
+        <param name="latestStartTime" value="11:00:00" />
+        <param name="closingTime" value="20:00:00" />
+      </parameterset>
+      <parameterset type="activityParams">
+        <param name="activityType" value="University" />
+        <param name="typicalDuration" value="01:00:00" />
+        <param name="openingTime" value="07:00:00" />
+        <param name="latestStartTime" value="11:00:00" />
+        <param name="closingTime" value="20:00:00" />
+      </parameterset>
+      <parameterset type="activityParams">
+        <param name="activityType" value="pt interaction" />
+        <param name="closingTime" value="undefined" />
+        <param name="earliestEndTime" value="undefined" />
+        <param name="latestStartTime" value="undefined" />
+        <param name="minimalDuration" value="undefined" />
+        <param name="openingTime" value="undefined" />
+        <param name="priority" value="1.0" />
+        <param name="scoringThisActivityAtAll" value="false" />
+        <param name="typicalDuration" value="undefined" />
+        <param name="typicalDurationScoreComputation" value="relative" />
+      </parameterset>
+      <parameterset type="modeParams">
+        <param name="constant" value="-0.06412" />
+        <param name="marginalUtilityOfDistance_util_m" value="0.0" />
+        <param name="marginalUtilityOfTraveling_util_hr" value="0" />
+        <param name="mode" value="car" />
+        <param name="monetaryDistanceRate" value="-0.0005" />
+      </parameterset>
+      <parameterset type="modeParams">
+        <param name="constant" value="1.06440" />
+        <param name="marginalUtilityOfDistance_util_m" value="0.0" />
+        <param name="marginalUtilityOfTraveling_util_hr" value="0" />
+        <param name="mode" value="taxi" />
+        <param name="monetaryDistanceRate" value="-0.0016" />
+      </parameterset>
+      <parameterset type="modeParams">
+        <param name="constant" value="3.12598" />
+        <param name="marginalUtilityOfDistance_util_m" value="0.0" />
+        <param name="marginalUtilityOfTraveling_util_hr" value="0" />
+        <param name="mode" value="pt" />
+        <param name="monetaryDistanceRate" value="0.0" />
+      </parameterset>
+      <parameterset type="modeParams">
+        <param name="constant" value="5.72732" />
+        <param name="marginalUtilityOfDistance_util_m" value="0.0" />
+        <param name="marginalUtilityOfTraveling_util_hr" value="-3.94494" />
+        <param name="mode" value="walk" />
+        <param name="monetaryDistanceRate" value="0.0" />
+      </parameterset>
+      <parameterset type="modeParams">
+        <param name="constant" value="0.43720" />
+        <param name="marginalUtilityOfDistance_util_m" value="0.0" />
+        <param name="marginalUtilityOfTraveling_util_hr" value="-2.54574" />
+        <param name="mode" value="bike" />
+        <param name="monetaryDistanceRate" value="0.0" />
+      </parameterset>
+      <parameterset type="modeParams">
+        <param name="constant" value="0" />
+        <param name="marginalUtilityOfDistance_util_m" value="0.0" />
+        <param name="marginalUtilityOfTraveling_util_hr" value="0" />
+        <param name="mode" value="ride" />
+        <param name="monetaryDistanceRate" value="-0.001" />
+      </parameterset>
+      <parameterset type="modeParams">
+        <param name="constant" value="0.36880" />
+        <param name="marginalUtilityOfDistance_util_m" value="0.0" />
+        <param name="marginalUtilityOfTraveling_util_hr" value="-2.54574" />
+        <param name="mode" value="cb" />
+        <param name="monetaryDistanceRate" value="0.0" />
+      </parameterset>
+      <parameterset type="modeParams">
+        <param name="constant" value="0.79096" />
+        <param name="marginalUtilityOfDistance_util_m" value="0.0" />
+        <param name="marginalUtilityOfTraveling_util_hr" value="0" />
+        <param name="mode" value="FHV" />
+        <param name="monetaryDistanceRate" value="-0.001" />
+      </parameterset>
+      <parameterset type="modeParams">
+        <param name="constant" value="0.0" />
+        <param name="dailyMonetaryConstant" value="0.0" />
+        <param name="dailyUtilityConstant" value="0.0" />
+        <param name="marginalUtilityOfDistance_util_m" value="0.0" />
+        <param name="marginalUtilityOfTraveling_util_hr" value="-0.95761" />
+        <param name="mode" value="access_walk" />
+        <param name="monetaryDistanceRate" value="0.0" />
+      </parameterset>
+      <parameterset type="modeParams">
+        <param name="constant" value="0.0" />
+        <param name="dailyMonetaryConstant" value="0.0" />
+        <param name="dailyUtilityConstant" value="0.0" />
+        <param name="marginalUtilityOfDistance_util_m" value="0.0" />
+        <param name="marginalUtilityOfTraveling_util_hr" value="-0.86112" />
+        <param name="mode" value="egress_walk" />
+        <param name="monetaryDistanceRate" value="0.0" />
+      </parameterset>
+      <parameterset type="modeParams">
+        <param name="constant" value="0.0" />
+        <param name="dailyMonetaryConstant" value="0.0" />
+        <param name="dailyUtilityConstant" value="0.0" />
+        <param name="marginalUtilityOfDistance_util_m" value="0.0" />
+        <param name="marginalUtilityOfTraveling_util_hr" value="-1.45993" />
+        <param name="mode" value="transit_walk" />
+        <param name="monetaryDistanceRate" value="0.0" />
+      </parameterset>
+    </parameterset>
+  </module>
+  <module name="transitRouter">
+    <param name="additionalTransferTime" value="0.0" />
+    <param name="directWalkFactor" value="5.0" />
+    <param name="extensionRadius" value="200.0" />
+    <param name="maxBeelineWalkConnectionDistance" value="300.0" />
+    <param name="searchRadius" value="4000.0" />
+  </module>
+  <module name="nycModel">
+    <param name="restoredCosts" value="true" />
+    <param name="publishedNetwork" value="false" />
+    <param name="zipAligned" value="true" />
+    <param name="archiveCapacityFactors" value="capacity-factors.csv" />
+  </module>
+  <module name="roadpricing">
+    <param name="tollLinksFile" value="../nyc-schema1/schema1-tolls.xml" />
+  </module>
+</config>

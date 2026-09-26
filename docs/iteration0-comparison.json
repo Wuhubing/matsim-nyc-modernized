@@ -1,0 +1,29 @@
+{
+  "iteration": 0,
+  "metrics": {
+    "baseline": {
+      "entries": 19845,
+      "minutes": 77.62586673149657,
+      "revenue": 0.0,
+      "stuck": 61148,
+      "car_share": 25.472989702733802,
+      "completed_car_legs": 294103
+    },
+    "schema1": {
+      "entries": 18773,
+      "minutes": 77.55899088351255,
+      "revenue": 345920.76,
+      "stuck": 61156,
+      "car_share": 25.472989702733802,
+      "completed_car_legs": 294046
+    },
+    "actual2025": {
+      "entries": 15358,
+      "minutes": 76.5828924817282,
+      "revenue": 106493.75,
+      "stuck": 61186,
+      "car_share": 25.472989702733802,
+      "completed_car_legs": 293485
+    }
+  }
+}

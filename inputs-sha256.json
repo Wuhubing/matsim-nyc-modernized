@@ -1,0 +1,8 @@
+{
+  "scenarios/nyc/count.xml.gz": "7ee13c85322030f4f5ac2391f72ed1cc004bb01b1d11abb3aad93c81d75ca789",
+  "scenarios/nyc/population-v6.xml.gz": "ab78fff4e3fde799462a40da76da92e2b335129ba0d7f7bbb79603cfba24097e",
+  "scenarios/nyc/separated-network.xml.gz": "07fc709407eb52815fd41c50bb3e8f4d79e0e068a1621a12adf515ad98f03581",
+  "scenarios/nyc/separated-schedule.xml.gz": "b451a7a3948d412a254d8d405d4af39e82c7ec3ae64e53abc801a9399c9ab0f4",
+  "scenarios/nyc/separated-vehicle.xml.gz": "ab77380dd1178629508ec5b3d5defcc4c19a4c86fc276d65b456ae8a73a30fc8",
+  "scenarios/nyc/vehicle_type.xml.gz": "98b4809fb4119787275665de7dac561696b9bfece5cc0dd7a3d3650ecc67e8c8"
+}

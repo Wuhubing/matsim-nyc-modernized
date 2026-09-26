@@ -1,0 +1,11 @@
+target/
+outputs/
+.tools/
+.venv/
+__pycache__/
+*.log
+*.err
+.env
+.env.*
+.DS_Store
+scenarios/nyc-zip-aligned/capacity-factors.csv
