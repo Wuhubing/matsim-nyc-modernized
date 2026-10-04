@@ -97,6 +97,16 @@ public final class RunNyc {
         }
         String fixedPlanGuard = System.getProperty("nyc.fixedPlanGuard");
         if (fixedPlanGuard != null) controler.addControlerListener(new FixedPlanGuard(scenario, fixedPlanGuard));
+        if (Boolean.getBoolean("nyc.onlineMetrics")) {
+            if (nyc.getPricing2025Links() == null) throw new IllegalArgumentException("nyc.onlineMetrics needs pricing2025Links");
+            IterationMetrics metrics = new IterationMetrics(scenario, nyc.getPricing2025Links(), config.controller().getOutputDirectory());
+            controler.addOverridingModule(new AbstractModule() {
+                @Override public void install() {
+                    addEventHandlerBinding().toInstance(metrics);
+                    addControllerListenerBinding().toInstance(metrics);
+                }
+            });
+        }
         controler.run();
     }
 }
