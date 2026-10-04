@@ -66,3 +66,75 @@ The chart is from three completed September 26, 2026 exploratory runs. It is ret
 ## Attribution
 
 Based on [C2SMART Center, Code for MATSim-NYC project (2022), DOI 10.5281/zenodo.7430184](https://doi.org/10.5281/zenodo.7430184) and [the MATSim-NYC paper](https://arxiv.org/abs/2008.04762). Preserve upstream attribution and the supplied [GPL-3.0 license](LICENSE). Source data and boundary provenance are described separately in [PROVENANCE.md](PROVENANCE.md).
+
+## Baseline diagnostics (full population, old fixed-entry capacities)
+
+For the local side-by-side checkout with `../C2SMART-Year3-Project`, the diagnostic
+runner extracts the **active** `ExpressFactor` and `ArterialFactor` arrays from
+`RunTimeDependentNetworkExample.java`. These are old fixed-entry parameters, not
+verified final calibration results. The old repository is read-only.
+
+Place the local toolchain
+paths in `.tools/environment.json` (`java_home`, `maven`), then use `--build-only`. The executor checks
+`.tools/build-status.json` and `.tools/verify-status.json` for `exit_code: 0` and
+copies their logs. The current task's verified installations and build evidence
+are retained there. Use the virtual environment containing `zstandard`:
+
+```sh
+.venv/bin/python scripts/run_baseline_diagnostic.py --build-only
+.venv/bin/python scripts/test_baseline_diagnostic.py
+.venv/bin/python scripts/run_baseline_diagnostic.py --prepare-only
+.venv/bin/python scripts/run_baseline_diagnostic.py --run-dir outputs/baseline-diagnostic-TIMESTAMP
+.venv/bin/python scripts/run_baseline_diagnostic.py --analyze-only --run-dir outputs/baseline-diagnostic-TIMESTAMP
+```
+
+Preparation prints the exact run directory. Execution runs **only baseline**:
+first iteration 0, then an independent run of iterations 0–4. Both retain the
+full 389,301-person input, seed 4711, 16 threads, original behavioral settings and
+capacity scaling. Input hashes are cached against file metadata. Each output
+attempt is new and cannot overwrite another. Scripts and a runnable JAR are
+snapshotted alongside commands, input identifiers and effective MATSim configs.
+
+All simulation attempts share one persisted **eight-hour budget**. A directory
+lock prevents concurrent executors. A failed or uncleanly interrupted attempt
+requires inspection before resuming, and the existing budget must not be reset.
+The budget includes process startup, shutdown and retries; preparation, building
+and offline analysis are timed separately. The initial Java heap limit is 16 GiB;
+one 24 GiB retry is allowed only for a clear heap OOM without resource pressure.
+Heap size is not total process memory. RSS sampling runs every ten seconds;
+macOS memory pressure, swap and disk checks run every minute. The executor stops
+on less than 30 GiB free disk, critical memory pressure lasting 60 seconds, swap
+growth over 2 GiB within five minutes, or budget exhaustion.
+
+The short run retains innovation fraction 0.8 and therefore is **not the prefix
+of a 0–100 run**. Actual strategy evidence, logs, resource samples and metrics
+are saved per attempt. Stopwatch operations include callbacks and potentially
+I/O; missing measurements remain blank. Offline historical-charge checks inspect
+`personScore` events separately from added congestion-charge `personMoney`
+events. Negative utility changes are not fiscal revenue or dollar welfare.
+Successful diagnostics do not establish convergence, old-engine equivalence,
+or real-world predictive validity.
+
+## Fixed-plan bus capacity diagnostic
+
+`scripts/run_bus_capacity_diagnostic.py` prepares two independent baseline iteration-0
+runs using the selected plans serialized before iteration 4 of the recorded baseline
+campaign. It preserves all 389,301 persons, disables replanning, and changes only bus
+seats and standing capacity by a factor of two. Shared transit vehicles/types, if any,
+are normalized in both arms before treatment is applied. The opt-in
+`nyc.fixedPlanGuard` rejects initialization changes before traffic execution.
+
+Use the project JDK 25 and Maven to build, then:
+
+```sh
+.venv/bin/python scripts/run_bus_capacity_diagnostic.py --prepare-only
+.venv/bin/python scripts/run_bus_capacity_diagnostic.py --run-dir outputs/bus-capacity-diagnostic-TIMESTAMP
+.venv/bin/python scripts/run_bus_capacity_diagnostic.py --run-dir outputs/bus-capacity-diagnostic-TIMESTAMP --analyze-only
+.venv/bin/python scripts/test_bus_capacity_diagnostic.py
+```
+
+The two arms and retries share a persistent two-hour simulation budget. Analysis
+includes censored waiting, re-identifies the control's full-vehicle cohort, and
+separates target-leg completion from reaching the final scheduled activity.
+`comparison.csv` uses treatment minus control. These are mechanism diagnostics,
+not population-expanded forecasts, welfare estimates, or calibrated capacity targets.

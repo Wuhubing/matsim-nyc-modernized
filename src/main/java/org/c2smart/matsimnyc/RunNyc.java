@@ -95,6 +95,8 @@ public final class RunNyc {
                 }
             });
         }
+        String fixedPlanGuard = System.getProperty("nyc.fixedPlanGuard");
+        if (fixedPlanGuard != null) controler.addControlerListener(new FixedPlanGuard(scenario, fixedPlanGuard));
         controler.run();
     }
 }
