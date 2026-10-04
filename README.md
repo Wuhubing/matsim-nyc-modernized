@@ -2,6 +2,49 @@
 
 A Java 25 / MATSim 2026.0 modernization of C2SMART's released NYC model, with a baseline, reconstructed Schema 1 cordon, and a modeled launch-2025 congestion-pricing policy. This is an independent research workspace, not an official MTA model or a validated forecast of 2025 outcomes.
 
+## 本 fork 的二次开发：仿真加速（分支 `perf/simulation-redundancy`）
+
+本 fork 基于 [harrrisw/matsim-nyc-modernized](https://github.com/harrrisw/matsim-nyc-modernized) 做二次开发。
+目标是在**结果严格不变**的前提下缩短多轮 MATSim 仿真的耗时，并把仿真过程中的冗余整理成可以度量的研究问题。
+
+### 优化内容与效果
+
+测试条件：2025 收费情景，全人口 389,301，种子 4711，16 线程，12 轮，单次配对。
+
+| | 原版 | 本 fork | 变化 |
+|---|---:|---:|---:|
+| 12 轮总耗时 | 2,139.9 s | 1,574.0 s | **−26.4%** |
+| 交通仿真（mobsim）合计 | 1,611 s | 1,063 s | **−34%** |
+| 输出体积 | 15.1 GB | 2.9 GB | −81% |
+| 逐轮指标差异 | — | **0 项** | 计数和美分精确相等，其余 rtol 1e-9 |
+
+1. **在线指标替代逐轮事件写出（E1，带来几乎全部收益）。**
+   原版每轮把约 8,000 万条事件写成约 1.1 GB 的 XML，只为在离线阶段从中统计指标。写出发生在单一事件线程上，会拖慢交通仿真。
+   新增 `IterationMetrics`（`-Dnyc.onlineMetrics=true`），在仿真过程中直接计算同一组指标：收费区进入、car leg 时长、候车与未上车、收费收入、未完成出行等。
+   每轮写出 `iteration-metrics-N.json`，并配合 `controller.writeEventsInterval=0` 使用。
+2. **收费与历史成本查表（E2）。**
+   `Pricing2025` 和 `LegacyCosts` 原来在路由和事件处理中，每次调用都要把 link ID 转成字符串再查集合；现在改为按 `Id.index()` 预先算好的标志数组查表。
+   结果逐位一致，但耗时变化在噪声范围内（短跑 −2.9%）。
+3. **仿真冗余度量（研究部分）。** 逐轮比较 12 轮的事件，发现：
+   - 只有 9–13% 的人被原样重放；
+   - 约 40% 的人方式和路线不变，出行时间变化不超过 1 分钟；
+   - 换计划的人里，回到自己以前试过的计划的比例从第 8 轮的 59% 升到关闭创新后的约 99%；
+   - 交通状态的变化是全局性的，不是局部的。
+   这说明剩余的耗时来自交通交互本身，需要用近似或学习方法处理。
+
+### 如何验证结果不变
+
+- `scripts/VerifyPricingReplay.java`：把一整轮真实事件重放给新代码，569,387 条收费事件按顺序完全一致；路由收费在 1.1 亿个 link × 时间单元上逐位一致。
+- `scripts/ReplayIterationMetrics.java`：在线指标与离线扫描事件文件的结果完全相同。
+- `experiments/performance/redundancy_campaign.py`：在独立账本上跑配对计时，并比较 12 轮逐轮指标。
+- `experiments/redundancy/`：冗余度量脚本与中文方法说明（`README.md`）。
+
+### 注意
+
+- 开启 E1 后默认不写任何事件文件。依赖事件的工具（如 `scripts/compare.py`）需要时，可设 `writeEventsInterval` 等于最后一轮的轮号，这样只写第 0 轮和最后一轮。
+- 以上为单一情景、单一种子的结果。只证明已观测指标一致，不涉及事件顺序、个体轨迹、收敛性或现实效度。
+- 上游的署名与 GPL-3.0 许可证保持不变。
+
 ## Included
 
 - Java source, Maven build, and synthetic regression checks.
