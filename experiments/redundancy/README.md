@@ -62,13 +62,30 @@ MATSim 每轮都会把全部人口完整重跑一遍交通仿真。上一轮已�
 .venv/bin/python experiments/redundancy/revisits.py OUT
 ```
 
-## 同分支的工程项（结果严格一致，均已离线验证，尚未进行计时运行）
+## 同分支的工程项：已计时验证
 
-- **E2 收费查表**：`Pricing2025` 和 `LegacyCosts` 改为按 `Id.index()` 查表。验证 `scripts/VerifyPricingReplay.java`：
-  路由收费网格（11,262 万个 link × 时间单元）逐位一致；把第 11 轮真实事件重放给新处理器，生成的 569,387 条收费/历史费用事件按顺序完全一致。
-  另外，整份事件读入加上两个处理器只用了 81 秒，说明收费处理器不太可能是事件线程的瓶颈。
-- **E1 在线指标**：`IterationMetrics`（`-Dnyc.onlineMetrics=true`）在仿真中计算 `event_metrics.py` 的全部指标，每轮写 `iteration-metrics-N.json`。
-  用第 11 轮真实事件离线重放（`scripts/ReplayIterationMetrics.java`），12 项指标与离线扫描完全相同。
-  这使得不必每轮写出完整事件文件，可以把 `writeEventsInterval` 调大。
-- 下一步：在新的独立仿真账本上，跑一次带 JFR 等待剖析的 0–2 轮运行，量化 QSim 等待事件线程的时间；
-  然后对 baseline、E1、E2 和 E1+E2 做短跑筛选，最后做 12 轮配对验证。
+campaign `outputs/performance-20261004-171012-redundancy`（独立账本，用了 6,124 / 14,400 秒；报告见其中的 `report_zh.md`）。
+
+- **E1＋E2，12 轮配对：总耗时 2,139.9 → 1,574.0 秒（−26.4%），mobsim 1,611 → 1,063 秒（−34%），输出 15.1 → 2.9 GB。**
+  12 轮的逐轮指标差异为 0 项：计数和美分精确相等，其他数值满足 rtol 1e-9。
+- 收益几乎全部来自 **E1**：在线计算指标，不再每轮写出事件 XML。
+  E2（收费查表）在全规模上逐位一致，但耗时变化在噪声范围内（短跑 −2.9%）。
+- JFR：事件线程的执行采样中，XML 写出占 37–39%；分发、评分和旅行时间统计各占 14–21%；自定义收费处理器只占 3–4%。
+- 这对应上文的 R4（每轮固定开销）。消除它之后，每轮 mobsim 仍有 74–108 秒，而且随轮次增长。
+  剩下的部分主要来自 R1–R3（交互仿真本身），需要用近似或学习方法处理，不能再指望结果严格一致的工程手段。
+- 单一情景、种子、单次配对。E1 默认不写任何事件文件；需要事件时，可设 `writeEventsInterval=lastIteration`。
+
+复现：
+
+```sh
+.venv/bin/python experiments/performance/redundancy_campaign.py prepare --baseline-jar PRE_E2_JAR --limit-seconds 14400
+.venv/bin/python experiments/performance/redundancy_campaign.py run --run-dir outputs/performance-TIMESTAMP-redundancy
+.venv/bin/python experiments/performance/critical_path.py outputs/performance-TIMESTAMP-redundancy/short-profile JDK/bin/jfr
+```
+
+离线等价性检查（不需要仿真）：
+
+```sh
+java -cp target/matsim-nyc-modernized-1.0.0.jar:target/regression-classes org.c2smart.matsimnyc.VerifyPricingReplay CONFIG EVENTS
+java -cp target/matsim-nyc-modernized-1.0.0.jar:target/regression-classes org.c2smart.matsimnyc.ReplayIterationMetrics CONFIG EVENTS ITERATION OUTDIR
+```
