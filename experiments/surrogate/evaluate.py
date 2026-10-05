@@ -92,7 +92,7 @@ def l3(policy, spread, scale1):
 def main():
     values, spread = seed_spread()
     result = {'seed_values': {str(k): v for k, v in values.items()}, 'seed_spread': spread}
-    psim = [OUT/'surrogate-psim-20261005-f']   # clean batch; batch c only contributes the qsim-ref equality check
+    psim = [OUT/'surrogate-psim-20261005-f', OUT/'surrogate-psim-20261005-g']   # batch c only contributes the qsim-ref equality check
     ref_run = OUT/'surrogate-psim-20261005-c/qsim-ref'
     if (ref_run/'simulation/iteration-metrics-11.json').exists():
         result['qsim_ref_identical_to_full_candidate'] = identical_metrics(ref_run, SEEDS[4711])

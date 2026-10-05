@@ -52,7 +52,32 @@ a frozen-time replay cannot represent, not from how link times are aggregated.
 
 ### L2: PSim hybrids, end to end (seed 4711, 12 iterations, final iteration is QSim)
 
-Filled in from `evaluation.json` once batch `surrogate-psim-20261005-f` completes.
+Gate check: with PSim installed but every iteration QSim (`qsim-ref`), all 12 iterations' online metrics are
+identical to the plain run.
+
+Final-iteration indicators, relative to the all-QSim run with the same seed (QSim seed SD is tiny, e.g.
+car share 0.0002, so every arm is far outside seed noise; |z| reported as max over nine indicators):
+
+| Arm | QSim its | Score | PT share | Not boarded | Waiting | Unfinished | Car entries | Revenue | max\|z\| |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| psim3-mean (contrib-like) | 5 | −26.9% | +2.3% | +10.5% | +8.7% | +8.1% | −3.7% | −5.2% | 90 |
+| psim6-mean | 3 | −74.1% | +4.7% | +30.6% | +23.7% | +23.1% | −5.2% | −7.6% | 185 |
+| drift-mean (θ = 0.5) | 5 | −29.9% | +2.0% | +11.8% | +9.4% | +9.0% | −2.0% | −2.5% | 77 |
+| psim3-learned (road correction) | 5 | −26.1% | +2.4% | +10.3% | +8.6% | +7.9% | −2.8% | −4.8% | 94 |
+| **psim3-pt (observed transit times)** | 5 | **−20.3%** | **+0.8%** | **+7.3%** | +5.9% | +5.7% | −2.1% | −3.3% | **34** |
+
+Diagnosis: the bias grows with the number of PSim iterations and always points the same way — more transit,
+more people not boarded, lower executed score. Experienced transit legs in QSim take **1.6–2.8× their routed
+time** (peak hours 2.3–2.8×) because capacity is tight, so a replay that uses routed transit times makes transit
+look far better than it is. Correcting road times does not help; scaling transit times by the last QSim's
+experienced/routed ratio per departure hour removes about two thirds of the transit-share bias. The remainder
+(denied boarding as a discrete capacity event; hour-level rather than line/stop-level ratios) is still open.
+
+Cost: wall times drifted by up to ~25% over the session because of other load on the machine (an all-QSim
+reference took 1,574 s at one time and 1,955 s later), so speedups are computed within each run from its own
+QSim and PSim iteration durations: a PSim iteration costs 0.28–0.35 of a QSim iteration (replanning/routing
+dominates), giving **1.6× (QSim every 3rd iteration) to 2.2× (every 6th)** over the iterations, startup excluded.
+This matches the Amdahl bound above: PSim alone cannot approach 20–30×.
 
 ### L3: policy response (congestion-charge scale)
 
