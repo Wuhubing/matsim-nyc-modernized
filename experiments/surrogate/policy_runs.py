@@ -36,9 +36,9 @@ def wait_for(after):
     if not after:
         return
     after = Path(after)
-    while json.loads((after/'manifest.json').read_text()).get('status') in ('prepared', 'screening', 'running', 'full_validation') \
-            or json.loads((after/'budget.json').read_text())['active'] or not (after/'executor.out').exists() \
-            or 'exit' not in (after/'executor.out').read_text():
+    # The earlier runner appends 'exit N' when it stops (success or failure); its ledger must show no active run.
+    while not (after/'executor.out').exists() or 'exit' not in (after/'executor.out').read_text() \
+            or json.loads((after/'budget.json').read_text())['active']:
         time.sleep(30)
 
 

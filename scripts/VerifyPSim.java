@@ -44,8 +44,9 @@ public final class VerifyPSim {
   sw.notifyBeforeMobsim(new BeforeMobsimEvent(null,1,false));
   if(sw.toSimulate.size()!=1||sw.toSimulate.getFirst()!=newPlan)throw new AssertionError("only the changed plan is simulated");
   // Replay all three plans directly to check event semantics.
-  sw.toSimulate.clear();sw.toSimulate.addAll(List.of(a.getSelectedPlan(),b.getSelectedPlan()));
+  sw.toSimulate.clear();sw.toSimulate.addAll(List.of(b.getSelectedPlan(),a.getSelectedPlan()));
   var mean=replay(s,sw,null);
+  for(int k=1;k<mean.size();k++)if(mean.get(k).getTime()<mean.get(k-1).getTime())throw new AssertionError("events not chronological at "+k);
   // a: depart 3600, l1 (20 s), end link l2 (20 s, mean variant) -> arrival 3640; walk 300 s after work end 7200.
   if(time(mean,PersonDepartureEvent.class,0)!=3600||time(mean,LinkEnterEvent.class,0)!=3600||time(mean,LinkLeaveEvent.class,1)!=3620
      ||time(mean,PersonArrivalEvent.class,0)!=3640||time(mean,PersonArrivalEvent.class,1)!=7500)throw new AssertionError("mean timing "+mean);
@@ -54,6 +55,18 @@ public final class VerifyPSim {
   var stuck=mean.stream().filter(e->e instanceof PersonStuckEvent).map(e->(PersonStuckEvent)e).toList();
   if(stuck.size()!=1||!stuck.getFirst().getPersonId().toString().equals("b")||!"taxi".equals(stuck.getFirst().getLegMode())||stuck.getFirst().getTime()!=108000)
    throw new AssertionError("taxi leg past end time must be stuck with its mode: "+stuck);
+  // Production events manager with a handler that emits events while handling (like LegacyCosts): must stay chronological.
+  {
+   var pc=ConfigUtils.createConfig();pc.eventsManager().setNumberOfThreads(1);pc.eventsManager().setSynchronizeOnSimSteps(true);
+   var par=EventsUtils.createEventsManager(pc);var seen=new ArrayList<Event>();
+   if(!par.getClass().getSimpleName().equals("SimStepParallelEventsManagerImpl"))throw new AssertionError("expected production manager, got "+par.getClass());
+   par.addHandler(new BasicEventHandler(){public void handleEvent(Event e){
+    seen.add(e);if(e instanceof PersonArrivalEvent arr)par.processEvent(new PersonScoreEvent(arr.getTime(),arr.getPersonId(),-1,"derived"));}});
+   new NycPSim.PSim(s,par,sw,(link,time,p,v)->20.4,null).run();
+   if(seen.stream().noneMatch(e->e instanceof PersonScoreEvent))throw new AssertionError("derived events missing");
+   for(int k=1;k<seen.size();k++)if(seen.get(k).getTime()<seen.get(k-1).getTime())throw new AssertionError("parallel manager order at "+k);
+   if(seen.stream().anyMatch(e->e.getTime()!=Math.floor(e.getTime())))throw new AssertionError("PSim times must be whole seconds");
+  }
   // Geometric variant: no observations -> calculator fallback per link, free flow (10 s) on the end link.
   var geo=replay(s,sw,new NycPSim.RobustTimes());
   if(time(geo,PersonArrivalEvent.class,0)!=3630)throw new AssertionError("end link free flow "+time(geo,PersonArrivalEvent.class,0));
@@ -75,7 +88,7 @@ public final class VerifyPSim {
   }
   if(!seq.equals(List.of(false,false,true,false)))throw new AssertionError("drift schedule "+seq);
   Files.walk(dir).sorted(Comparator.reverseOrder()).forEach(p->p.toFile().delete());
-  System.out.println("PASS: PSim evaluates only changed plans, drift refresh, restores kept scores, network-mode vehicles/events/times, end-link rule, stuck legs");
+  System.out.println("PASS: PSim evaluates only changed plans, drift refresh, chronological emission (incl. handler-derived events on the parallel manager), restores kept scores, network-mode vehicles/events/times, end-link rule, stuck legs");
  }
  static Person person(Scenario s,String id,double end,String mode,List<Id<Link>> ids){
   var f=s.getPopulation().getFactory();var p=f.createPerson(Id.createPersonId(id));var plan=f.createPlan();

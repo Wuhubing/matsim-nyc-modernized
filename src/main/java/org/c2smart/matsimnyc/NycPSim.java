@@ -68,6 +68,7 @@ public final class NycPSim {
         Switch sw = new Switch(scenario, cycle, config.controller().getFirstIteration(), config.controller().getLastIteration(),
                 Path.of(config.controller().getOutputDirectory()));
         sw.drift = drift;
+        sw.observedPt = "observed".equals(System.getProperty("nyc.psim.pt", "routed"));
         // Same construction as TravelTimeCalculatorModule.SingleModeTravelTimeCalculatorProvider (one per routed
         // network mode), but registered behind a gate instead of directly with the events manager.
         var tt = config.travelTimeCalculator();
@@ -85,7 +86,7 @@ public final class NycPSim {
             @Override public void install() {
                 calculators.forEach((mode, c) -> bind(TravelTimeCalculator.class).annotatedWith(Names.named(mode)).toInstance(c));
                 addEventHandlerBinding().toInstance(gate);
-                addControllerListenerBinding().toInstance(sw);
+                addControllerListenerBinding().toInstance(sw);   // Guice injects members of toInstance bindings
                 bind(Switch.class).toInstance(sw);
                 bind(Gate.class).toInstance(gate);
                 bind(QSimProvider.class);
@@ -100,6 +101,10 @@ public final class NycPSim {
         private final int cycle, first, last;
         /** drift:THETA refresh rule: run QSim once the changed-plan shares of PSim iterations since the last QSim sum to THETA. */
         double drift = Double.NaN; double accumulated;
+        /** nyc.psim.pt=observed: scale routed transit leg times by the experienced/routed ratio of the latest QSim
+         *  iteration per departure hour (captures crowding, waiting and re-boarding that routed times ignore). */
+        boolean observedPt; double[] ptRatio;
+        @Inject(optional = true) org.matsim.core.scoring.ExperiencedPlansService experienced;
         private final Path log;
         private boolean qsim = true;
         private Map<Id<Person>, Plan> before = Map.of();
@@ -111,6 +116,30 @@ public final class NycPSim {
             this.scenario = scenario; this.cycle = cycle; this.first = first; this.last = last; this.log = outputDirectory.resolve("psim-log.csv");
         }
         boolean isQSim() { return qsim; }
+        double[] ptRatios() {
+            double[] actual = new double[31], routed = new double[31]; int[] n = new int[31];
+            var exp = experienced.getExperiencedPlans();
+            for (Person p : scenario.getPopulation().getPersons().values()) {
+                Plan x = exp.get(p.getId()); if (x == null) continue;
+                var planned = TripStructureUtils.getLegs(p.getSelectedPlan()); var done = TripStructureUtils.getLegs(x);
+                if (planned.size() != done.size()) continue;
+                for (int k = 0; k < planned.size(); k++) {
+                    Leg a = planned.get(k), b = done.get(k);
+                    if (!"pt".equals(a.getMode()) || !"pt".equals(b.getMode()) || b.getDepartureTime().isUndefined() || b.getTravelTime().isUndefined()) continue;
+                    double r = a.getRoute() != null && a.getRoute().getTravelTime().isDefined() ? a.getRoute().getTravelTime().seconds() : a.getTravelTime().orElse(0);
+                    if (r <= 0) continue;
+                    int h = (int) Math.min(30, b.getDepartureTime().seconds() / 3600);
+                    actual[h] += b.getTravelTime().seconds(); routed[h] += r; n[h]++;
+                }
+            }
+            double all = Arrays.stream(actual).sum() / Math.max(1e-9, Arrays.stream(routed).sum());
+            double[] ratio = new double[31];
+            for (int h = 0; h < 31; h++) ratio[h] = Math.max(.5, Math.min(5, n[h] >= 50 ? actual[h] / routed[h] : all));
+            try {
+                Files.writeString(log.resolveSibling("psim-pt-ratio.csv"), Arrays.toString(ratio) + "\n", StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+            } catch (IOException x) { throw new UncheckedIOException(x); }
+            return ratio;
+        }
         @Override public void notifyIterationStarts(IterationStartsEvent e) {
             int i = e.getIteration();
             qsim = i == first || i == last || (Double.isNaN(drift) ? (i - first) % cycle == 0 : accumulated >= drift);
@@ -129,6 +158,7 @@ public final class NycPSim {
             accumulated += toSimulate.size() / (double) scenario.getPopulation().getPersons().size();
         }
         @Override public void notifyIterationEnds(IterationEndsEvent e) {
+            if (qsim && observedPt && experienced != null) ptRatio = ptRatios();
             for (var entry : keptScores.entrySet())
                 scenario.getPopulation().getPersons().get(entry.getKey()).getSelectedPlan().setScore(entry.getValue());
             try {
@@ -203,9 +233,20 @@ public final class NycPSim {
         }
         @Override public void run() {
             long start = System.currentTimeMillis();
-            List<List<Event>> perPlan = sw.toSimulate.parallelStream().map(this::replay).toList();
+            // The default events manager requires chronological order across all agents (as QSim produces);
+            // a stable sort by time keeps each person's own event order for equal timestamps.
+            List<Event> all = new ArrayList<>();
+            for (List<Event> list : sw.toSimulate.parallelStream().map(this::replay).toList()) all.addAll(list);
+            all.sort(Comparator.comparingDouble(Event::getTime));
+            // Emulate QSim's time steps: handlers (e.g. LegacyCosts, Pricing2025) emit events at the current time while
+            // processing, so each second must be fully processed before later events are queued.
             events.initProcessing();
-            for (List<Event> list : perPlan) for (Event e : list) events.processEvent(e);
+            double step = Double.NaN;
+            for (Event e : all) {
+                if (e.getTime() != step) { if (!Double.isNaN(step)) events.afterSimStep(step); step = e.getTime(); }
+                events.processEvent(e);
+            }
+            if (!Double.isNaN(step)) events.afterSimStep(step);
             events.finishProcessing();
             sw.psimMillis = System.currentTimeMillis() - start;
         }
@@ -258,6 +299,8 @@ public final class NycPSim {
             return new double[]{totMean, totGeo, totFf, legs, nLinks, Double.isNaN(firstDep) ? 0 : firstDep / 3600, congested / (double) Math.max(nLinks, 1)};
         }
         private static double orElse(double v, double fallback) { return Double.isNaN(v) ? fallback : v; }
+        /** QSim emits whole-second event times; flooring is monotone, so each person's event order is preserved. */
+        private static double sec(double t) { return Math.floor(t); }
 
         private List<Event> replay(Plan plan) {
             double factor = correction == null ? 1 : correction.factor(features(plan));
@@ -267,7 +310,7 @@ public final class NycPSim {
             double t = 0;
             for (int i = 0; i < elements.size(); i += 2) {
                 Activity act = (Activity) elements.get(i);
-                if (i > 0) out.add(new ActivityStartEvent(t, pid, act.getLinkId(), act.getFacilityId(), act.getType(), act.getCoord()));
+                if (i > 0) out.add(new ActivityStartEvent(sec(t), pid, act.getLinkId(), act.getFacilityId(), act.getType(), act.getCoord()));
                 if (i == elements.size() - 1) break;
                 double end = act.getEndTime().isDefined() ? Math.max(t, act.getEndTime().seconds())
                         : t + act.getMaximumDuration().orElse(0);
@@ -276,33 +319,34 @@ public final class NycPSim {
                 Leg leg = (Leg) elements.get(i + 1);
                 Activity next = (Activity) elements.get(i + 2);
                 String mode = leg.getMode();
-                out.add(new ActivityEndEvent(t, pid, act.getLinkId(), act.getFacilityId(), act.getType(), act.getCoord()));
-                out.add(new PersonDepartureEvent(t, pid, act.getLinkId(), mode, TripStructureUtils.getRoutingMode(leg)));
+                out.add(new ActivityEndEvent(sec(t), pid, act.getLinkId(), act.getFacilityId(), act.getType(), act.getCoord()));
+                out.add(new PersonDepartureEvent(sec(t), pid, act.getLinkId(), mode, TripStructureUtils.getRoutingMode(leg)));
                 if (NETWORK_MODES.contains(mode) && leg.getRoute() instanceof org.matsim.core.population.routes.NetworkRoute route) {
                     Id<Vehicle> v = VehicleUtils.getVehicleId(person, mode);
-                    out.add(new PersonEntersVehicleEvent(t, pid, v));
-                    out.add(new VehicleEntersTrafficEvent(t, pid, route.getStartLinkId(), v, mode, 1.0));
+                    out.add(new PersonEntersVehicleEvent(sec(t), pid, v));
+                    out.add(new VehicleEntersTrafficEvent(sec(t), pid, route.getStartLinkId(), v, mode, 1.0));
                     if (!route.getStartLinkId().equals(route.getEndLinkId())) {
-                        out.add(new LinkLeaveEvent(t, v, route.getStartLinkId()));
+                        out.add(new LinkLeaveEvent(sec(t), v, route.getStartLinkId()));
                         for (Id<Link> l : route.getLinkIds()) {
-                            out.add(new LinkEnterEvent(t, v, l));
+                            out.add(new LinkEnterEvent(sec(t), v, l));
                             t += factor * linkTime(mode, links.get(l), t, false);
-                            out.add(new LinkLeaveEvent(t, v, l));
+                            out.add(new LinkLeaveEvent(sec(t), v, l));
                         }
-                        out.add(new LinkEnterEvent(t, v, route.getEndLinkId()));
+                        out.add(new LinkEnterEvent(sec(t), v, route.getEndLinkId()));
                         t += factor * linkTime(mode, links.get(route.getEndLinkId()), t, true);
                     }
                     if (t > endTime) { out.add(new PersonStuckEvent(endTime, pid, route.getEndLinkId(), mode)); return out; }
-                    out.add(new VehicleLeavesTrafficEvent(t, pid, route.getEndLinkId(), v, mode, 1.0));
-                    out.add(new PersonLeavesVehicleEvent(t, pid, v));
+                    out.add(new VehicleLeavesTrafficEvent(sec(t), pid, route.getEndLinkId(), v, mode, 1.0));
+                    out.add(new PersonLeavesVehicleEvent(sec(t), pid, v));
                 } else {
                     Route route = leg.getRoute();
                     double travel = route != null && route.getTravelTime().isDefined() ? route.getTravelTime().seconds() : leg.getTravelTime().orElse(0);
+                    if ("pt".equals(mode) && sw != null && sw.ptRatio != null) travel *= sw.ptRatio[(int) Math.min(30, t / 3600)];
                     t += Math.max(0, travel);
                     if (t > endTime) { out.add(new PersonStuckEvent(endTime, pid, next.getLinkId(), mode)); return out; }
-                    if (route != null) out.add(new TeleportationArrivalEvent(t, pid, route.getDistance(), mode));
+                    if (route != null) out.add(new TeleportationArrivalEvent(sec(t), pid, route.getDistance(), mode));
                 }
-                out.add(new PersonArrivalEvent(t, pid, next.getLinkId(), mode));
+                out.add(new PersonArrivalEvent(sec(t), pid, next.getLinkId(), mode));
             }
             return out;
         }

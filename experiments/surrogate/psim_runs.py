@@ -18,6 +18,9 @@ BASE = {('controller', 'writeEventsInterval'): '0'}
 ARMS = {'qsim-ref': ('cycle:1', 'mean', None), 'psim3-mean': ('cycle:3', 'mean', None), 'psim3-geo': ('cycle:3', 'geometric', None),
         'psim6-mean': ('cycle:6', 'mean', None)}
 MODEL = ROOT/'outputs/surrogate-analysis/models/psim-correction.txt'
+ARMS['qsim-ref-clean'] = ARMS['qsim-ref']   # rerun with no concurrent load, for timing
+PT_OBSERVED = {'psim3-pt', 'psim6-pt'}       # transit legs scaled by the last QSim's experienced/routed ratio
+ARMS['psim3-pt'] = ('cycle:3', 'mean', None); ARMS['psim6-pt'] = ('cycle:6', 'mean', None)
 for name, schedule in [('psim3-learned', 'cycle:3'), ('psim6-learned', 'cycle:6'), ('drift-learned', 'drift:0.5'), ('drift-mean', 'drift:0.5')]:
     ARMS[name] = (schedule, 'mean', None if name.endswith('mean') else MODEL)
 
@@ -25,7 +28,7 @@ for name, schedule in [('psim3-learned', 'cycle:3'), ('psim6-learned', 'cycle:6'
 def register():
     for name, (schedule, link, model) in ARMS.items():
         props = ['-Dnyc.onlineMetrics=true', f'-Dnyc.psim={schedule}', f'-Dnyc.psim.linkTime={link}']
-        R.ARMS[name] = ('psim.jar', BASE, props + ([f'-Dnyc.psim.model={model}'] if model else []))
+        R.ARMS[name] = ('psim.jar', BASE, props + ([f'-Dnyc.psim.model={model}'] if model else []) + (['-Dnyc.psim.pt=observed'] if name in PT_OBSERVED else []))
 
 
 def prepare(out, arms, after=None):
@@ -52,9 +55,9 @@ def wait_for(after):
     if not after:
         return
     after = Path(after)
-    while json.loads((after/'manifest.json').read_text()).get('status') in ('prepared', 'screening', 'running', 'full_validation') \
-            or json.loads((after/'budget.json').read_text())['active'] or not (after/'executor.out').exists() \
-            or 'exit' not in (after/'executor.out').read_text():
+    # The earlier runner appends 'exit N' when it stops (success or failure); its ledger must show no active run.
+    while not (after/'executor.out').exists() or 'exit' not in (after/'executor.out').read_text() \
+            or json.loads((after/'budget.json').read_text())['active']:
         time.sleep(30)
 
 
