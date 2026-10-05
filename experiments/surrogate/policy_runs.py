@@ -12,7 +12,8 @@ SCALES = ['0.0', '0.5', '1.5', '2.0']
 
 def register():
     for s in SCALES:
-        R.ARMS[f'scale-{s}'] = ('policy.jar', {('controller', 'writeEventsInterval'): '0'}, ['-Dnyc.onlineMetrics=true', f'-Dnyc.pricing.scale={s}'])
+        for suffix in ('', '-r2'):
+            R.ARMS[f'scale-{s}{suffix}'] = ('policy.jar', {('controller', 'writeEventsInterval'): '0'}, ['-Dnyc.onlineMetrics=true', f'-Dnyc.pricing.scale={s}'])
 
 
 def prepare(out, after):
@@ -46,7 +47,12 @@ def run(out):
     wait_for(json.loads((out/'manifest.json').read_text()).get('after'))
     m = json.loads((out/'manifest.json').read_text()); register()
     ledger = json.loads(Path(m['ledger']).read_text())
+    if any(a['status'] != 'complete' and not a.get('reviewed_failure') for a in m['attempts']):
+        raise RuntimeError('Inspect incomplete attempt first; no automatic retry')
     for name in m['order']:
+        # A manually reviewed failure is retried once under a new name; its partial outputs are kept.
+        if any(a['name'] == name and a.get('reviewed_failure') for a in m['attempts']):
+            name += '-r2'
         if not any(a['name'] == name for a in m['attempts']):
             R.execute(out, m, ledger, name, name, 12, 'full')
     m['status'] = 'complete'; D.save(out/'manifest.json', m)
