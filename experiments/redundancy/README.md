@@ -29,20 +29,20 @@ and outcome), same choice but different outcome, or changed choice.
 
 | Iteration | Exact replay | Same choice, outcome changed | Choice changed | Changed choices returning to an earlier plan | Same choice, \|ΔT\| ≤ 60 s | Same choice, \|ΔT\| > 15 min | Entries on link-hours changing ≤ 5%* |
 |---:|---:|---:|---:|---:|---:|---:|---:|
-| 1 | 13.0% | 75.1% | 11.9% | 0% | 52.8% | 23.5% | 34.1% |
-| 4 | 10.7% | 69.9% | 19.4% | 44.2% | 54.3% | 16.9% | 33.9% |
-| 8 | 9.0% | 65.5% | 25.5% | 59.4% | 53.1% | 16.4% | 31.4% |
-| 9 | 10.8% | 72.0% | 17.2% | 98.0% | 53.0% | 17.3% | 30.0% |
-| 11 | 12.9% | 77.0% | 10.0% | 98.8% | 57.3% | 9.2% | 44.8% |
+| 1 | 13.0% | 75.1% | 11.9% | 0% | 52.8% | 23.5% | 34.4% |
+| 4 | 10.7% | 69.9% | 19.4% | 44.2% | 54.3% | 16.9% | 34.3% |
+| 8 | 9.0% | 65.5% | 25.5% | 59.4% | 53.1% | 16.4% | 31.9% |
+| 9 | 10.8% | 72.0% | 17.2% | 98.0% | 53.0% | 17.3% | 30.3% |
+| 11 | 12.9% | 77.0% | 10.0% | 98.8% | 57.3% | 9.2% | 45.0% |
 
 ΔT is the change in a person's total travel time over completed legs. Each iteration has about 76–96 million events.
-Full per-iteration data: `redundancy.json`, `magnitude.json`, `revisits.json`.
+Full per-iteration data: `redundancy.json`, `magnitude.json`, `revisits.json` (column \* from `outputs/redundancy-20261005-fixed/cold/`).
 
-\* **Correction pending (2026-10-05).** The extractor paired a vehicle's arrival link with its next departure from
-the same link, so parked durations could be counted as link traversal times. This affects only the link-hour
-*time* column marked \*; person-level columns use departure/arrival times and are unaffected. The extractor is
-fixed (`iteration_redundancy.py` now drops the pending link entry on `vehicle leaves traffic` / `vehicle aborts`)
-and this column will be recomputed.
+\* **Recomputed (2026-10-05).** The extractor used to pair a vehicle's arrival link with its next departure from
+the same link, so parked durations could be counted as link traversal times. Only the link-hour column marked \*
+depends on traversal times; it was recomputed with the fixed extractor (`iteration_redundancy.py` drops the pending
+link entry on `vehicle leaves traffic` / `vehicle aborts`) and moved by at most 0.5 percentage points. Person-level
+columns use departure/arrival times and are unchanged.
 
 ## Four kinds of redundancy observed
 
