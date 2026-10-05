@@ -72,6 +72,10 @@ def road_state(events, bin_seconds=3600):
                 s = entered.pop(v, None)
                 if s and s[0] == a[b'link']:
                     d = t - s[1]; c = links[(s[0], int(s[1] // bin_seconds))]; c[0] += 1; c[1] += d; c[2] += math.log1p(d)
+        elif typ == b'vehicle leaves traffic' or typ == b'vehicle aborts':
+            # The arrival link is entered but never left; without this a later departure from the same link
+            # would count the parked duration as link travel time.
+            entered.pop(dict(ATTR.findall(line))[b'vehicle'], None)
         elif typ == b'departure' or typ == b'arrival':
             a = dict(ATTR.findall(line))
             if a.get(b'legMode') not in NETWORK_MODES:

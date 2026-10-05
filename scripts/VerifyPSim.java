@@ -65,8 +65,17 @@ public final class VerifyPSim {
   if(!sw.isQSim())throw new AssertionError("iteration 3 must be QSim");
   sw.notifyIterationStarts(new IterationStartsEvent(null,11,true));
   if(!sw.isQSim())throw new AssertionError("last iteration must be QSim");
+  // drift:0.5 refresh: each PSim iteration below changes 1 of 3 selected plans (share 1/3).
+  var dr=new NycPSim.Switch(s,Integer.MAX_VALUE,0,11,dir);dr.drift=0.5;var seq=new ArrayList<Boolean>();
+  for(int it=1;it<=4;it++){
+   dr.notifyIterationStarts(new IterationStartsEvent(null,it,false));seq.add(dr.isQSim());
+   var alt=person(s,"alt"+it,3600,"car",ids).getSelectedPlan();s.getPopulation().removePerson(Id.createPersonId("alt"+it));
+   c.addPlan(alt);c.setSelectedPlan(alt);dr.notifyBeforeMobsim(new BeforeMobsimEvent(null,it,false));
+   dr.notifyIterationEnds(new IterationEndsEvent(null,it,false));
+  }
+  if(!seq.equals(List.of(false,false,true,false)))throw new AssertionError("drift schedule "+seq);
   Files.walk(dir).sorted(Comparator.reverseOrder()).forEach(p->p.toFile().delete());
-  System.out.println("PASS: PSim evaluates only changed plans, restores kept scores, network-mode vehicles/events/times, end-link rule, stuck legs");
+  System.out.println("PASS: PSim evaluates only changed plans, drift refresh, restores kept scores, network-mode vehicles/events/times, end-link rule, stuck legs");
  }
  static Person person(Scenario s,String id,double end,String mode,List<Id<Link>> ids){
   var f=s.getPopulation().getFactory();var p=f.createPerson(Id.createPersonId(id));var plan=f.createPlan();
