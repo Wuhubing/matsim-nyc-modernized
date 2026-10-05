@@ -70,22 +70,29 @@ def l2(campaigns, spread, reference):
 
 
 def l3(policy, spread, scale1):
+    """Predict held-out charge scales from full runs at training scales {0, 1, 2}: linear interpolation between the
+    nearest available training points, and a quadratic through all three once they exist."""
     points = {1.0: scale1}
     for name, (status, _) in manifest_times(policy).items():
         if status == 'complete':
             points[float(name.split('-')[1])] = indicators(policy/name)
+    train = [s for s in (0.0, 1.0, 2.0) if s in points]
     out = {}
-    if not all(s in points for s in (0.0, 1.0, 2.0)):
-        return {'available_scales': sorted(points)}
-    for test in [s for s in points if s not in (0.0, 1.0, 2.0)]:
+    for test in sorted(s for s in points if s not in (0.0, 1.0, 2.0)):
+        lo = max((s for s in train if s < test), default=None); hi = min((s for s in train if s > test), default=None)
+        if lo is None or hi is None:
+            continue
         out[test] = {}
         for k in INDICATORS:
-            y0, y1, y2 = points[0.0][k], points[1.0][k], points[2.0][k]
-            quad = y0 + (y1 - y0) * test + ((y2 - 2 * y1 + y0) / 2) * test * (test - 1)   # Newton form through 0,1,2
-            lin = y0 + (y1 - y0) * test if test <= 1 else y1 + (y2 - y1) * (test - 1)
             truth = points[test][k]; sd = spread[k]['sd']
-            out[test][k] = {'truth': truth, 'quadratic': quad, 'linear': lin,
-                            'z_quadratic': (quad - truth) / sd if sd else None, 'z_linear': (lin - truth) / sd if sd else None}
+            lin = points[lo][k] + (points[hi][k] - points[lo][k]) * (test - lo) / (hi - lo)
+            row = {'truth': truth, 'linear': lin, 'z_linear': (lin - truth) / sd if sd else None,
+                   'rel_linear': (lin - truth) / abs(truth) if truth else None}
+            if len(train) == 3:
+                y0, y1, y2 = points[0.0][k], points[1.0][k], points[2.0][k]
+                quad = y0 + (y1 - y0) * test + ((y2 - 2 * y1 + y0) / 2) * test * (test - 1)   # Newton form through 0,1,2
+                row.update(quadratic=quad, z_quadratic=(quad - truth) / sd if sd else None, rel_quadratic=(quad - truth) / abs(truth) if truth else None)
+            out[test][k] = row
     return {'available_scales': sorted(points), 'points': {str(s): v for s, v in points.items()}, 'holdout': {str(k): v for k, v in out.items()}}
 
 
@@ -110,10 +117,14 @@ def main():
         print(f"{name:14s} wall {r['wall_seconds']:7.0f}s qsim_its {r['qsim_iterations']:2d} max|z| {max(zs):6.2f} within-1sd {sum(z <= 1 for z in zs)}/{len(zs)}"
               f" max|rel| {100*max(rel):5.2f}% within-1% {sum(x <= .01 for x in rel)}/{len(rel)}")
         print('   rel%', ' '.join(f"{k}={100*v:+.2f}" for k, v in r['relative'].items()))
-    if 'l3' in result and 'holdout' in result['l3']:
-        for s, ks in result['l3']['holdout'].items():
-            print('L3 scale', s, 'quadratic max|z|', round(max(abs(v['z_quadratic']) for v in ks.values()), 2),
-                  'linear max|z|', round(max(abs(v['z_linear']) for v in ks.values()), 2))
+    if 'l3' in result:
+        print('L3 scales available:', result['l3']['available_scales'])
+        for s, ks in result['l3'].get('holdout', {}).items():
+            for method in ('linear', 'quadratic'):
+                if all(f'z_{method}' in v for v in ks.values()):
+                    print(f'L3 scale {s} {method:9s} max|z| {max(abs(v[f"z_{method}"]) for v in ks.values()):6.2f} '
+                          f'max|rel| {100*max(abs(v[f"rel_{method}"]) for v in ks.values()):5.2f}%  ' +
+                          ' '.join(f'{k}={100*v[f"rel_{method}"]:+.2f}%' for k, v in ks.items()))
 
 
 if __name__ == '__main__':

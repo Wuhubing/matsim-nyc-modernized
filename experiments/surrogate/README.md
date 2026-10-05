@@ -87,7 +87,27 @@ This matches the Amdahl bound above: PSim alone cannot approach 20–30×.
 
 ### L3: policy response (congestion-charge scale)
 
-Pending (`policy_runs.py`).
+All-QSim 12-iteration runs at charge scales 0, 0.5 and 1 (scale 1 is the existing reference run); scales 1.5 and
+2.0 were still running when this was written (`policy_runs.py`; `evaluate.py` adds the quadratic fit through
+0/1/2 once they finish). One run (scale 0.5) was stopped by the swap-growth guard under memory pressure from
+other applications and retried once (`reviewed_failure` in the manifest).
+
+| Scale | 0 | 0.5 | 1.0 |
+|---|---:|---:|---:|
+| Private-car cordon entries | 27,697 | 20,489 | 19,733 |
+| Net charge revenue (sample USD) | 49,970 | 115,133 | 174,857 |
+| Car share | 0.2922 | 0.2921 | 0.2921 |
+
+Linear interpolation from scales 0 and 1 predicting 0.5: mode shares, unfinished persons, waiting and
+not-boarded counts within 0.5%, car-leg time −0.4%, score +1.3%, revenue −2.4%, but **cordon entries +15.8%**.
+
+- System-wide indicators barely move across charge levels (differences of the order of the seed spread), so
+  their interpolation is accurate for a trivial reason.
+- Cordon-local indicators respond with a kink near zero: introducing any charge removes most of the entries
+  (27.7k → 20.5k at half the charge, 19.7k at the full charge) while the car share is unchanged, i.e. people
+  re-route or re-time rather than switch mode.
+- Uniform design points plus interpolation are therefore inadequate for the indicators that matter most; a
+  policy-level surrogate needs adaptive sampling where the response is curved (here, near zero).
 
 ## Corrections made during the study (kept for the record)
 
