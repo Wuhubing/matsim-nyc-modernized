@@ -65,6 +65,7 @@ car share 0.0002, so every arm is far outside seed noise; |z| reported as max ov
 | drift-mean (θ = 0.5) | 5 | −29.9% | +2.0% | +11.8% | +9.4% | +9.0% | −2.0% | −2.5% | 77 |
 | psim3-learned (road correction) | 5 | −26.1% | +2.4% | +10.3% | +8.6% | +7.9% | −2.8% | −4.8% | 94 |
 | **psim3-pt (observed transit times)** | 5 | **−20.3%** | **+0.8%** | **+7.3%** | +5.9% | +5.7% | −2.1% | −3.3% | **34** |
+| psim6-pt (observed transit times) | 3 | −60.5% | +2.2% | +24.1% | +17.7% | +18.4% | −2.7% | −4.5% | 101 |
 
 Diagnosis: the bias grows with the number of PSim iterations and always points the same way — more transit,
 more people not boarded, lower executed score. Experienced transit legs in QSim take **1.6–2.8× their routed
@@ -76,7 +77,8 @@ experienced/routed ratio per departure hour removes about two thirds of the tran
 Cost: wall times drifted by up to ~25% over the session because of other load on the machine (an all-QSim
 reference took 1,574 s at one time and 1,955 s later), so speedups are computed within each run from its own
 QSim and PSim iteration durations: a PSim iteration costs 0.28–0.35 of a QSim iteration (replanning/routing
-dominates), giving **1.6× (QSim every 3rd iteration) to 2.2× (every 6th)** over the iterations, startup excluded.
+dominates), giving **1.6× (QSim every 3rd iteration) to 2.2× (every 6th)** over the iterations, startup excluded
+(psim3-pt 1.58×, psim6-pt 2.00×).
 This matches the Amdahl bound above: PSim alone cannot approach 20–30×.
 
 ### L3: policy response (congestion-charge scale)
