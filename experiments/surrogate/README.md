@@ -87,27 +87,33 @@ This matches the Amdahl bound above: PSim alone cannot approach 20–30×.
 
 ### L3: policy response (congestion-charge scale)
 
-All-QSim 12-iteration runs at charge scales 0, 0.5 and 1 (scale 1 is the existing reference run); scales 1.5 and
-2.0 were still running when this was written (`policy_runs.py`; `evaluate.py` adds the quadratic fit through
-0/1/2 once they finish). One run (scale 0.5) was stopped by the swap-growth guard under memory pressure from
-other applications and retried once (`reviewed_failure` in the manifest).
+All-QSim 12-iteration runs at charge scales 0, 0.5, 1, 1.5 and 2 (scale 1 is the existing reference run).
+Two runs (0.5 and 1.5) were stopped by the swap-growth guard under memory pressure from outside the experiment
+and retried once (`reviewed_failure` in the manifest). Training points 0/1/2, held-out points 0.5 and 1.5.
 
-| Scale | 0 | 0.5 | 1.0 |
-|---|---:|---:|---:|
-| Private-car cordon entries | 27,697 | 20,489 | 19,733 |
-| Net charge revenue (sample USD) | 49,970 | 115,133 | 174,857 |
-| Car share | 0.2922 | 0.2921 | 0.2921 |
+| Scale | 0 | 0.5 | 1.0 | 1.5 | 2.0 |
+|---|---:|---:|---:|---:|---:|
+| Private-car cordon entries | 27,697 | 20,489 | 19,733 | 19,560 | 19,020 |
+| Net charge revenue (sample USD) | 49,970 | 115,133 | 174,857 | 235,300 | 291,300 |
+| Car share | 0.2922 | 0.2921 | 0.2921 | 0.2917 | 0.2913 |
 
-Linear interpolation from scales 0 and 1 predicting 0.5: mode shares, unfinished persons, waiting and
-not-boarded counts within 0.5%, car-leg time −0.4%, score +1.3%, revenue −2.4%, but **cordon entries +15.8%**.
+Prediction error at held-out scales (relative to the simulated value):
 
-- System-wide indicators barely move across charge levels (differences of the order of the seed spread), so
-  their interpolation is accurate for a trivial reason.
-- Cordon-local indicators respond with a kink near zero: introducing any charge removes most of the entries
-  (27.7k → 20.5k at half the charge, 19.7k at the full charge) while the car share is unchanged, i.e. people
-  re-route or re-time rather than switch mode.
-- Uniform design points plus interpolation are therefore inadequate for the indicators that matter most; a
-  policy-level surrogate needs adaptive sampling where the response is curved (here, near zero).
+| Held-out scale | Method | Cordon entries | Revenue | Score | Other indicators |
+|---|---|---:|---:|---:|---|
+| 0.5 | linear (0–1) | +15.8% | −2.4% | +1.3% | within 0.5% |
+| 0.5 | quadratic (0/1/2) | +11.3% | −1.4% | +0.9% | within 0.5% |
+| 1.5 | linear (1–2) | −0.9% | −1.0% | +0.9% | within 0.5% |
+| 1.5 | quadratic (0/1/2) | −5.6% | −0.5% | +0.5% | within 0.4% |
+
+- System-wide indicators barely move across charge levels, so their interpolation is accurate for a trivial reason.
+- Cordon entries have a kink near zero: any charge removes most entries (27.7k → 20.5k at half the charge), while
+  car share is unchanged — people re-route or re-time rather than switch mode. Above scale 1 the response is
+  nearly linear and piecewise-linear interpolation is within 1%.
+- A global quadratic is worse than piecewise-linear on the smooth part (−5.6% vs −0.9% at 1.5) because the kink
+  distorts it, and still misses the kink (+11.3% at 0.5). Errors are far outside the (very small) seed spread.
+- Implication: a policy-level surrogate needs adaptive design points where the response is curved (here, near
+  zero) and a model class that allows kinks; uniform grids with global polynomials are inadequate.
 
 ## Corrections made during the study (kept for the record)
 
