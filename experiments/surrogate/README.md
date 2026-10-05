@@ -47,8 +47,12 @@ Held-out iteration 6 of seed 4712 (trained on iterations 1–5):
 | Previous QSim outcome (what PSim keeps for unchanged plans) | — | 490 s / 187 s |
 | Gradient-boosted correction of the replay (features PSim can compute) | 535 s / 192 s | 862 s / — |
 
+Held-out run (trained on seed 4712 iterations 1–6, tested on seed 4713 iteration 6): changed-plan MAE
+574 s (replay) → 525 s (learned), median 208 → 193 s — the gain generalizes across seeds but stays small.
+
 A learned correction improves the replay by only ~8%; most of the error comes from interaction effects
-a frozen-time replay cannot represent, not from how link times are aggregated.
+a frozen-time replay cannot represent, not from how link times are aggregated. End to end (L2 below) the
+road-time correction barely changes the outcome, because the dominant bias is in transit.
 
 ### L2: PSim hybrids, end to end (seed 4711, 12 iterations, final iteration is QSim)
 
