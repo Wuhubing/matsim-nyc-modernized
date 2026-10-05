@@ -2,48 +2,60 @@
 
 A Java 25 / MATSim 2026.0 modernization of C2SMART's released NYC model, with a baseline, reconstructed Schema 1 cordon, and a modeled launch-2025 congestion-pricing policy. This is an independent research workspace, not an official MTA model or a validated forecast of 2025 outcomes.
 
-## 本 fork 的二次开发：仿真加速（分支 `perf/simulation-redundancy`）
+## This fork: simulation acceleration (branch `perf/simulation-redundancy`)
 
-本 fork 基于 [harrrisw/matsim-nyc-modernized](https://github.com/harrrisw/matsim-nyc-modernized) 做二次开发。
-目标是在**结果严格不变**的前提下缩短多轮 MATSim 仿真的耗时，并把仿真过程中的冗余整理成可以度量的研究问题。
+This fork builds on [harrrisw/matsim-nyc-modernized](https://github.com/harrrisw/matsim-nyc-modernized).
+Its goal is to shorten multi-iteration MATSim runs **without changing results**, and to turn the redundancy
+inside the simulation into measurable research questions.
 
-### 优化内容与效果
+### What was optimized, and the effect
 
-测试条件：2025 收费情景，全人口 389,301，种子 4711，16 线程，12 轮，单次配对。
+Setting: 2025 pricing scenario, full population (389,301 agents), seed 4711, 16 threads, 12 iterations, one paired run.
 
-| | 原版 | 本 fork | 变化 |
+| | Upstream | This fork | Change |
 |---|---:|---:|---:|
-| 12 轮总耗时 | 2,139.9 s | 1,574.0 s | **−26.4%** |
-| 交通仿真（mobsim）合计 | 1,611 s | 1,063 s | **−34%** |
-| 输出体积 | 15.1 GB | 2.9 GB | −81% |
-| 逐轮指标差异 | — | **0 项** | 计数和美分精确相等，其余 rtol 1e-9 |
+| 12-iteration wall time | 2,139.9 s | 1,574.0 s | **−26.4%** |
+| Traffic simulation (mobsim), total | 1,611 s | 1,063 s | **−34%** |
+| Output size | 15.1 GB | 2.9 GB | −81% |
+| Per-iteration metric differences | — | **0** | counts and cents exactly equal; other values within rtol 1e-9 |
 
-1. **在线指标替代逐轮事件写出（E1，带来几乎全部收益）。**
-   原版每轮把约 8,000 万条事件写成约 1.1 GB 的 XML，只为在离线阶段从中统计指标。写出发生在单一事件线程上，会拖慢交通仿真。
-   新增 `IterationMetrics`（`-Dnyc.onlineMetrics=true`），在仿真过程中直接计算同一组指标：收费区进入、car leg 时长、候车与未上车、收费收入、未完成出行等。
-   每轮写出 `iteration-metrics-N.json`，并配合 `controller.writeEventsInterval=0` 使用。
-2. **收费与历史成本查表（E2）。**
-   `Pricing2025` 和 `LegacyCosts` 原来在路由和事件处理中，每次调用都要把 link ID 转成字符串再查集合；现在改为按 `Id.index()` 预先算好的标志数组查表。
-   结果逐位一致，但耗时变化在噪声范围内（短跑 −2.9%）。
-3. **仿真冗余度量（研究部分）。** 逐轮比较 12 轮的事件，发现：
-   - 只有 9–13% 的人被原样重放；
-   - 约 40% 的人方式和路线不变，出行时间变化不超过 1 分钟；
-   - 换计划的人里，回到自己以前试过的计划的比例从第 8 轮的 59% 升到关闭创新后的约 99%；
-   - 交通状态的变化是全局性的，不是局部的。
-   这说明剩余的耗时来自交通交互本身，需要用近似或学习方法处理。
+1. **Online metrics instead of per-iteration event output (E1; almost all of the gain).**
+   Upstream writes about 80 million events (≈1.1 GB of XML) every iteration only so that indicators can be
+   computed offline afterwards. The writing happens on the single events thread and slows the traffic simulation.
+   `IterationMetrics` (`-Dnyc.onlineMetrics=true`) computes the same indicators during the run — cordon entries,
+   car-leg durations, waiting and not-boarded passengers, charge revenue, unfinished trips — and writes
+   `iteration-metrics-N.json` per iteration. Use it together with `controller.writeEventsInterval=0`.
+2. **Index-based pricing lookups (E2).** `Pricing2025` and `LegacyCosts` converted every link ID to a string
+   for set lookups in routing and event handling; they now use per-link flag arrays indexed by `Id.index()`.
+   Results are bit-identical, but the timing change is within noise (−2.9% in screening).
+3. **Measuring in-simulation redundancy (research).** Comparing consecutive iterations of a 12-iteration run:
+   - only 9–13% of agents are replayed event-for-event;
+   - about 40% keep the same modes and routes and their travel time changes by at most one minute;
+   - among agents who switch plans, the share returning to a plan they already tried rises from 59%
+     (iteration 8) to about 99% once innovation is switched off;
+   - changes in traffic state are global rather than local.
 
-### 如何验证结果不变
+   The remaining cost therefore comes from the traffic interaction itself, which calls for approximate or learned methods.
+   Follow-up work on pseudo-simulation and learned surrogates is in progress under `experiments/surrogate/`;
+   it is not yet a validated result.
 
-- `scripts/VerifyPricingReplay.java`：把一整轮真实事件重放给新代码，569,387 条收费事件按顺序完全一致；路由收费在 1.1 亿个 link × 时间单元上逐位一致。
-- `scripts/ReplayIterationMetrics.java`：在线指标与离线扫描事件文件的结果完全相同。
-- `experiments/performance/redundancy_campaign.py`：在独立账本上跑配对计时，并比较 12 轮逐轮指标。
-- `experiments/redundancy/`：冗余度量脚本与中文方法说明（`README.md`）。
+### How "unchanged results" is verified
 
-### 注意
+- `scripts/VerifyPricingReplay.java`: replaying a full real iteration through the new code reproduces all
+  569,387 charge events in the same order; route-search tolls are bit-identical on 112.6 million link × time cells.
+- `scripts/ReplayIterationMetrics.java`: the online metrics equal an offline scan of the event file.
+- `experiments/performance/redundancy_campaign.py`: paired timing on an independent ledger with a
+  per-iteration comparison of all 12 iterations.
+- `experiments/redundancy/`: redundancy measurement scripts and the method write-up.
 
-- 开启 E1 后默认不写任何事件文件。依赖事件的工具（如 `scripts/compare.py`）需要时，可设 `writeEventsInterval` 等于最后一轮的轮号，这样只写第 0 轮和最后一轮。
-- 以上为单一情景、单一种子的结果。只证明已观测指标一致，不涉及事件顺序、个体轨迹、收敛性或现实效度。
-- 上游的署名与 GPL-3.0 许可证保持不变。
+### Caveats
+
+- With E1, no event files are written at all by default. If tools that need events (e.g. `scripts/compare.py`)
+  are used, set `writeEventsInterval` to the last iteration number so that only iteration 0 and the last
+  iteration are written.
+- Single scenario and seed. Only the observed indicators are shown to be identical; event order, individual
+  trajectories, convergence and real-world validity are not claimed.
+- Upstream attribution and the GPL-3.0 license are unchanged.
 
 ## Included
 

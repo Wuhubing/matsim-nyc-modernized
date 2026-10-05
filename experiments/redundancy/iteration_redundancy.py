@@ -52,8 +52,9 @@ def extract(events, dest):
         if typ == b'vehicle enters traffic':
             e = dict(ATTR.findall(line)); driver[e[b'vehicle']] = e[b'person']
             continue
-        if typ == b'vehicle leaves traffic':
-            driver.pop(field(line, b'vehicle="'), None)
+        if typ == b'vehicle leaves traffic' or typ == b'vehicle aborts':
+            v = field(line, b'vehicle="'); driver.pop(v, None)
+            entered.pop(v, None)   # arrival link is never left; do not pair it with a later departure
             continue
         if typ not in PERSON_TYPES:
             continue
