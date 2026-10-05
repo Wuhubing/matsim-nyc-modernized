@@ -107,6 +107,8 @@ public final class RunNyc {
                 }
             });
         }
+        String psim = System.getProperty("nyc.psim");
+        if (psim != null) NycPSim.install(controler, scenario, psim, System.getProperty("nyc.psim.linkTime", "mean"));
         controler.run();
     }
 }

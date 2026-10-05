@@ -144,7 +144,9 @@ def execute(out, m, ledger, name, arm, iterations, phase):
         a.update(elapsed_seconds=elapsed, ended_utc=D.now(), peak_rss_bytes=peak, exit_code=proc.returncode if proc else None, reason=reason, status='interrupted')
         D.save(out/'manifest.json', m)
     log = (dest/'run.log').read_text(errors='replace'); sim = dest/'simulation'
-    per_iteration = (lambda i: (sim/f'iteration-metrics-{i}.json').exists()) if arm == 'e12' else (lambda i: any((sim/f'ITERS/it.{i}').glob('*.events.xml*')))
+    # Arms writing no event XML (writeEventsInterval=0) must instead have online metrics for every iteration.
+    no_events = ARMS[arm][1].get(('controller', 'writeEventsInterval')) == '0'
+    per_iteration = (lambda i: (sim/f'iteration-metrics-{i}.json').exists()) if no_events else (lambda i: any((sim/f'ITERS/it.{i}').glob('*.events.xml*')))
     complete = (proc.returncode == 0 and not reason and 'shutdown completed' in log.lower()
                 and all(f'ITERATION {i} ENDS' in log for i in range(iterations)) and (sim/'BUILT.output_config.xml').exists()
                 and all(per_iteration(i) for i in range(iterations)))

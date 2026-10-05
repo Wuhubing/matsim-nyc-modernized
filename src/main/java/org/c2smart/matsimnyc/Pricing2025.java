@@ -28,7 +28,10 @@ public final class Pricing2025 implements VehicleEntersTrafficEventHandler,
     private static final Set<String> MTA_OUT = Set.of("46469739_0","5681925_0");
     // The detailed published schedule explicitly labels the daily maximum $5,
     // separately from its Phase-1 per-crossing amounts ($3 / $1.50).
-    private static final double DAILY_CREDIT_CAP = 5;
+    // Policy lever for response-surface experiments: scales private-car charges and credits together.
+    // The default 1.0 leaves every amount bit-identical (x * 1.0 == x).
+    static final double SCALE = Double.parseDouble(System.getProperty("nyc.pricing.scale", "1.0"));
+    private static final double DAILY_CREDIT_CAP = 5 * SCALE;
     private final Map<Id<Vehicle>, Trip> trips = new HashMap<>();
     private final Map<Id<Vehicle>, Map<Long, Day>> paidDays = new HashMap<>();
     private final Map<Id<Person>,Integer> departureCursor = new HashMap<>();
@@ -64,7 +67,7 @@ public final class Pricing2025 implements VehicleEntersTrafficEventHandler,
     }
     private boolean is(Id<Link> link, byte flag) { int i=link.index(); return i<flags.length && (flags[i]&flag)!=0; }
     public static boolean peak(double time) { double h=(time%86400)/3600; return h>=5 && h<21; }
-    public static double carRate(double time, boolean tunnel) { return peak(time) ? (tunnel?6:9) : 2.25; }
+    public static double carRate(double time, boolean tunnel) { return (peak(time) ? (tunnel?6:9) : 2.25) * SCALE; }
     @Override public void reset(int iteration) { trips.clear(); paidDays.clear(); departureCursor.clear(); }
     @Override public void handleEvent(PersonDepartureEvent e) {
         String mode=e.getLegMode();
@@ -96,11 +99,11 @@ public final class Pricing2025 implements VehicleEntersTrafficEventHandler,
     @Override public void handleEvent(LinkEnterEvent e) {
         Trip t=trips.get(e.getVehicleId()); if(t==null) return;
         Id<Link> link=e.getLinkId();
-        if (is(link,TUNNEL)) t.tunnelCredit=peak(e.getTime())?(is(link,MTA_IN_FLAG)?1.5:3):0;
+        if (is(link,TUNNEL)) t.tunnelCredit=peak(e.getTime())?(is(link,MTA_IN_FLAG)?1.5:3)*SCALE:0;
         if(t.mode.equals("car") && is(link,MTA_OUT_FLAG) && t.touchedZone && peak(e.getTime())) {
             Day d=day(e.getVehicleId(),e.getTime());
-            if(!d.paid) d.pending=Math.min(DAILY_CREDIT_CAP,d.pending+1.5);
-            else credit(t,d,e.getTime(),1.5);
+            if(!d.paid) d.pending=Math.min(DAILY_CREDIT_CAP,d.pending+1.5*SCALE);
+            else credit(t,d,e.getTime(),1.5*SCALE);
         }
         if (t.mode.equals("car") && is(link,ENTRY)) {
             Day d=day(e.getVehicleId(),e.getTime());
@@ -129,7 +132,7 @@ public final class Pricing2025 implements VehicleEntersTrafficEventHandler,
     }
     /** First-entry toll approximation used in route search only. */
     double routingToll(Id<Link> id,double time) {
-        return is(id,ENTRY)?carRate(time,false)-(peak(time)&&is(id,TUNNEL)?(is(id,MTA_IN_FLAG)?1.5:3):0):0;
+        return is(id,ENTRY)?carRate(time,false)-(peak(time)&&is(id,TUNNEL)?(is(id,MTA_IN_FLAG)?1.5:3)*SCALE:0):0;
     }
     public AbstractModule module() {
         Pricing2025 self=this;
