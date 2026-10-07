@@ -90,8 +90,11 @@ def run(args):
     dest = Path(args.out or ROOT/'outputs'/f'reference-s{args.seed}-{args.iterations}it-{stamp}').resolve()
     dest.mkdir(parents=True, exist_ok=False)
     cfg = write_config(dest, args.seed, args.iterations, args.events, args.plans_every or max(1, args.iterations - 1), args.threads)
+    # Each run loads a private copy of the JAR, so rebuilding target/ cannot change a running job.
+    jar = dest/'runner.jar'
+    shutil.copy2(JAR, jar)
     cmd = [java(), '-Duser.language=en', '-Duser.country=US', f'-Xmx{args.heap}', '-Dnyc.onlineMetrics=true',
-           '-Xlog:gc*:file=' + str(dest/'gc.log') + ':time,uptime,level,tags', '-jar', str(JAR), str(cfg)]
+           '-Xlog:gc*:file=' + str(dest/'gc.log') + ':time,uptime,level,tags', '-jar', str(jar), str(cfg)]
     commit = subprocess.run(['git', 'rev-parse', 'HEAD'], cwd=ROOT, capture_output=True, text=True).stdout.strip()
     meta = {'seed': args.seed, 'iterations': args.iterations, 'events': args.events, 'threads': args.threads, 'heap': args.heap,
             'command': cmd, 'commit': commit, 'host': os.uname().nodename, 'started': datetime.datetime.now().isoformat()}
