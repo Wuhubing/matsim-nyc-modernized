@@ -43,6 +43,15 @@ class ReferenceTests(unittest.TestCase):
             with contextlib.redirect_stdout(io.StringIO()),self.assertRaises(SystemExit) as cm:R.verify(args)
             self.assertEqual(cm.exception.code,1)
             self.assertFalse(json.loads((path/'verification.json').read_text())['passed'])
+    def test_actual_matsim_duplicate_stopwatch_headers(self):
+        with tempfile.TemporaryDirectory() as d:
+            path=Path(d)/'stopwatch.csv'
+            path.write_text('iteration;BEGIN iteration;mobsim;replanning;iteration\n0;00:11:46;00:02:34;;00:03:27\n1;00:15:13;00:02:35;00:00:32;00:03:49\n')
+            rows=R.stopwatch_table(path)
+            self.assertEqual([int(r['iteration']) for r in rows],[0,1])
+            self.assertEqual([R.secs(r['iteration_duration']) for r in rows],[207,229])
+            self.assertEqual(R.secs(rows[1]['replanning']),32)
+
     def test_login_node_guard(self):
         with patch.dict(R.os.environ,{},clear=True),self.assertRaises(SystemExit) as cm:R.run(None)
         self.assertIn('Slurm',str(cm.exception))

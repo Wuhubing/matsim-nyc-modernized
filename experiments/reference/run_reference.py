@@ -215,11 +215,28 @@ def table(path):
         return list(csv.DictReader(f, delimiter=';'))
 
 
+def stopwatch_table(path):
+    # MATSim 2026 writes both the integer index and the duration as "iteration".
+    # csv.DictReader silently overwrites the former with the latter.
+    with open(path, newline='') as f:
+        reader = csv.reader(f, delimiter=';')
+        header = next(reader)
+        seen_index = False
+        names = []
+        for name in header:
+            if name == 'iteration':
+                names.append('iteration_duration' if seen_index else 'iteration')
+                seen_index = True
+            else:
+                names.append(name)
+        return [dict(zip(names, row)) for row in reader if row]
+
+
 def summarize_dir(dest):
     sim = Path(dest)/'simulation'
     scores = {int(r['iteration']): float(r['avg_executed']) for r in table(sim/'BUILT.scorestats.csv')}
     modes = {int(r['iteration']): r for r in table(sim/'BUILT.modestats.csv')}
-    watch = {int(r['iteration']): r for r in table(sim/'BUILT.stopwatch.csv')}
+    watch = {int(r['iteration']): r for r in stopwatch_table(sim/'BUILT.stopwatch.csv')}
     rows = []
     for i in sorted(scores):
         m = json.loads((sim/f'iteration-metrics-{i}.json').read_text()) if (sim/f'iteration-metrics-{i}.json').exists() else {}
