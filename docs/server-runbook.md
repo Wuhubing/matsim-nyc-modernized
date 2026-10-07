@@ -39,6 +39,37 @@ Each validation has one hour **after allocation**, independently of any interact
 use that shell's allocation time. Batch jobs persist after disconnecting. Query with `squeue -u "$USER"`; if absent, inspect
 `sacct -j JOBID --format=JobID,State,ExitCode,Elapsed,MaxRSS` and logs. The agent's sandbox may lack network access even when SSH works.
 
+## Automatic continuation to 100 iterations
+
+Use a newly prepared snapshot containing the deferred-output initialization fix. The older validation array 25112271
+had two research-enabled startup failures and must not be used to release a long campaign. Its files remain as evidence.
+
+```sh
+# One SSH command after preparing the fixed snapshot:
+bash ~/matsim-work/start-research.sh auto
+```
+
+`auto` submits three jobs to Slurm immediately:
+
+1. The validation array (three tasks as above), or reuses the validation job receipt in this exact snapshot.
+2. A 1-CPU, 4-GiB, 15-minute gate with `afterok` on the entire validation array. It checks the recorded results,
+   pairwise equivalence, research audits, input/build provenance and the projected 100-iteration time (30% margin).
+3. The 100-iteration **historical baseline** array for seeds 4711, 4712, 4713, with `afterok` on the gate.
+   Each task requests 16 CPUs, 32 GiB and 8 hours. It also verifies a snapshot-bound release marker before executing.
+
+All dependent submissions use `--kill-on-invalid-dep=yes`: a failed prerequisite cancels the downstream pending job
+instead of running invalid experiments. Dependencies wait without occupying compute nodes. The SSH session need not
+stay connected. Successful checks enable scheduling; actual start still depends on available resources.
+
+`auto-chain.json` stores job IDs and submission intent under a file lock. Repeating `auto` reuses known jobs. If a submission
+reply was lost/failed ambiguously, the script stops rather than risking a duplicate; inspect `squeue`/`sacct` and the saved
+intent before repairing that state. A previously submitted manual baseline blocks creation of another baseline array.
+Do not run the separate manual `baseline` command after using `auto`.
+
+The chain does not submit policy scenarios: baseline convergence and calibration diagnostics must be reviewed before
+choosing warm-start policies. A failed historical comparison or time estimate requires investigation, not bypassing the gate.
+Slurm dependency semantics: https://slurm.schedmd.com/job_array.html and https://slurm.schedmd.com/sbatch.html.
+
 ## Filesystem and provenance
 
 Code/snapshots stay under shared `~/matsim-work`. Large results go under the unique snapshot directory beneath

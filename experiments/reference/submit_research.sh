@@ -13,6 +13,9 @@ mkdir -p "$output"
 df -hT "$output"
 if command -v quota >/dev/null; then timeout 15 quota -s || true; fi
 case "$phase" in
+  auto)
+    exec .venv/bin/python experiments/reference/auto_chain.py "$root"
+    ;;
   validation)
     [[ ! -f validation-job-id.txt ]] || { echo 'Validation already submitted:'; cat validation-job-id.txt; exit 1; }
     mkdir -p "$output/validation"
@@ -39,5 +42,5 @@ PYCODE
     printf '%s\n' "$job" > baseline-job-id.txt
     echo "Baseline array submitted: $job"
     ;;
-  *) echo 'Usage: submit_research.sh [validation|baseline]'; exit 2 ;;
+  *) echo 'Usage: submit_research.sh [validation|baseline|auto]'; exit 2 ;;
 esac

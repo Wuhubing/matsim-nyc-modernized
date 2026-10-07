@@ -9,4 +9,4 @@ mvn -o -Dmatsim.build.directory=target-research -DskipTests package
 snapshot=$(.venv/bin/python experiments/reference/snapshot.py)
 printf '%s\n' "$snapshot" > "$HOME/matsim-work/latest-research-snapshot.txt"
 printf 'Prepared snapshot: %s\n' "$snapshot"
-if [[ "${1:-}" != --prepare-only ]]; then bash "$snapshot/experiments/reference/submit_research.sh" validation; fi
+if [[ "${1:-}" != --prepare-only ]]; then bash "$snapshot/experiments/reference/submit_research.sh" "${1:-validation}"; fi

@@ -27,6 +27,7 @@ public class VerifyResearchMetrics {
         Files.writeString(polygon,"{\"geometry\":{\"coordinates\":[[[0,0],[1,0],[1,1],[0,1],[0,0]]]}}");
         var entry=dir.resolve("entries.csv");Files.writeString(entry,"link,entry\nl,1\n");System.setProperty("nyc.metricLinks",entry.toString());
         var m=new ResearchMetrics(s,dir,polygon);
+        check(!Files.exists(dir.resolve("research")),"Constructor must not create controller output files");
         check(ResearchMetrics.inside(0,0.5,new double[][]{{0,0},{1,0},{1,1},{0,1},{0,0}}),"boundary inclusion");
         String choice=ResearchMetrics.fingerprint(plan,false),full=ResearchMetrics.fingerprint(plan,true);
         leg.setTravelTime(999);plan.setScore(4.0);
@@ -66,6 +67,20 @@ public class VerifyResearchMetrics {
         check(read(dir.resolve("research/persons-1.csv.gz")).contains(",false,false,"),"previous signatures survive reset");
         check(read(dir.resolve("research/link-hours-1.csv.gz")).lines().count()==1,"link state resets");
         check(Files.readString(dir.resolve("research/diagnostics-0.json")).contains("\"errors\" : { }"),"event conservation");
+        // Exercise actual MATSim output-directory initialization, not only handler methods.
+        var startupConfig=ConfigUtils.createConfig();startupConfig.global().setCoordinateSystem("EPSG:4326");startupConfig.qsim().setEndTime(60);
+        startupConfig.controller().setOutputDirectory(dir.resolve("startup-simulation").toString());
+        var startupScenario=ScenarioUtils.createScenario(startupConfig);
+        var startupMetrics=new ResearchMetrics(startupScenario,dir.resolve("startup-simulation"),polygon);
+        var controller=new org.matsim.core.controler.Controler(startupScenario);
+        controller.addOverridingModule(new org.matsim.core.controler.AbstractModule(){
+            @Override public void install(){addEventHandlerBinding().toInstance(startupMetrics);addControllerListenerBinding().toInstance(startupMetrics);}
+        });
+        controller.getInjector();
+        check(Files.isDirectory(dir.resolve("startup-simulation")),"MATSim owns output directory initialization");
+        startupMetrics.notifyBeforeMobsim(new BeforeMobsimEvent(null,0,false));
+        check(Files.isRegularFile(dir.resolve("startup-simulation/research/schema.json")),"Deferred metadata written after initialization");
+        System.out.println("PASS: controller startup and deferred output creation");
         System.out.println("PASS: research cohorts, signatures, group counters, link-hour pairing, exit/abort, reset, observational plan state");
     }
 }

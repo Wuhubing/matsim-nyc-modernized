@@ -37,6 +37,8 @@ public final class ResearchMetrics implements BeforeMobsimListener, IterationEnd
     private final Set<Integer> entryLinks = new HashSet<>();
     private double cutoff;
     private long beforeNanos;
+    private final Map<String,Object> metadata = new LinkedHashMap<>();
+    private boolean metadataWritten;
     private static final ObjectMapper JSON = new ObjectMapper();
     static final class Mode {
         public long departures, completed, stuck;
@@ -73,7 +75,6 @@ public final class ResearchMetrics implements BeforeMobsimListener, IterationEnd
         this.scenario=scenario;this.directory=directory.resolve("research");
         cutoff=scenario.getConfig().qsim().getEndTime().seconds();
         try {
-            Files.createDirectories(this.directory);
             String entryFile=System.getProperty("nyc.metricLinks");
             if(entryFile!=null) {
                 var rows=Files.readAllLines(Path.of(entryFile));
@@ -91,7 +92,6 @@ public final class ResearchMetrics implements BeforeMobsimListener, IterationEnd
             }
             for(var p:scenario.getPopulation().getPersons().values())persons.put(p.getId(),new State(p,cohort(p,points)));
             for(var l:scenario.getNetwork().getLinks().values())linkNames.put(l.getId().index(),l.getId().toString());
-            var metadata=new LinkedHashMap<String,Object>();
             metadata.put("schema_version",1);
             metadata.put("cohort_definition","Fixed from loaded selected-plan non-stage activity coordinates: any origin/destination inside reconstructed Schema-1 polygon, all modes. Boundary included. Missing coordinates -> unknown unless another activity is inside. Never recomputed after replanning.");
             metadata.put("polygon",polygon.toString());
@@ -101,11 +101,18 @@ public final class ResearchMetrics implements BeforeMobsimListener, IterationEnd
             metadata.put("signature_definition","SHA-256 planned choice excludes timing; planned full includes activity/leg timing but excludes mutable travel-time estimates and score. Realized choice/outcome are rolling 64-bit diagnostics (possible collisions), not proof of identical event streams.");
             metadata.put("entry_crossing_definition","Private car entries use nyc.metricLinks (2025 geofence) for all scenarios, to preserve legacy metric equivalence; NOT Schema-1 toll crossings.");
             metadata.put("units","Unexpanded synthetic agents, legs, vehicles and dollars; no countsScaleFactor applied. Mode rows describe legs, not whole trips. Score is total executed-plan utility, not paper travel consumer surplus.");
+        }catch(IOException e){throw new UncheckedIOException(e);}
+    }
+    private void writeMetadata() {
+        if(metadataWritten)return;
+        try {
+            Files.createDirectories(directory);
             JSON.writerWithDefaultPrettyPrinter().writeValue(this.directory.resolve("schema.json").toFile(),metadata);
             try(var w=writer("cohorts.csv.gz")) {
                 w.write("person_id,subpopulation,charging_cohort\n");
                 for(var s:persons.values())w.write(csv(s.person.getId())+","+csv(s.subpopulation)+","+csv(s.cohort)+"\n");
             }
+            metadataWritten=true;
         }catch(IOException e){throw new UncheckedIOException(e);}
     }
     static boolean inside(double x,double y,double[][] ring) {
@@ -143,6 +150,7 @@ public final class ResearchMetrics implements BeforeMobsimListener, IterationEnd
         traffic.clear();links.clear();groups.clear();errors.clear();for(var s:persons.values())s.clear();
     }
     @Override public void notifyBeforeMobsim(BeforeMobsimEvent event) {
+        writeMetadata();
         long t=System.nanoTime();
         for(var s:persons.values()) {s.choice=fingerprint(s.person.getSelectedPlan(),false);s.full=fingerprint(s.person.getSelectedPlan(),true);}
         beforeNanos=System.nanoTime()-t;
