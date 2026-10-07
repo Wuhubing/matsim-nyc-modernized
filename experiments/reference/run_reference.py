@@ -48,7 +48,7 @@ def build_inputs(args):
 
 
 def write_config(dest, seed, iterations, events_interval, plans_every, threads, *, scenario='actual2025',
-                 plans=None, innovation_until=None, factors=FACTORS):
+                 plans=None, innovation_until=None, factors=FACTORS, events_threads=None):
     base = ROOT/f'scenarios/nyc-zip-aligned/config-{scenario}.xml'
     root = ET.parse(base).getroot()
     folder = base.parent
@@ -78,6 +78,10 @@ def write_config(dest, seed, iterations, events_interval, plans_every, threads, 
                                 ('controller', 'createGraphsInterval', 1), ('global', 'randomSeed', seed),
                                 ('global', 'numberOfThreads', threads), ('qsim', 'numberOfThreads', threads)]:
         P.setparam(root, module, name, str(value))
+    if events_threads:
+        # MATSim's SimStepParallelEventsManagerImpl with this many threads (default: 1); handlers are spread over them.
+        if root.find("module[@name='eventsManager']") is None: ET.SubElement(root, 'module', name='eventsManager')
+        P.setparam(root, 'eventsManager', 'numberOfThreads', str(events_threads))
     ET.indent(root)
     path = dest/'config.xml'
     path.write_text('<?xml version="1.0" encoding="utf-8"?>\n<!DOCTYPE config SYSTEM "http://www.matsim.org/files/dtd/config_v2.dtd">\n' + ET.tostring(root, encoding='unicode'))
@@ -160,7 +164,7 @@ def run(args):
         events_interval = 10 if args.research and args.events == 'none' else {'none': 0, 'last': max(1, args.iterations - 1), 'all': 1}[args.events]
     plans_every = args.plans_every or max(1, args.iterations - 1)
     cfg = write_config(dest, args.seed, args.iterations, events_interval, plans_every, args.threads, scenario=args.scenario,
-                       plans=plans, innovation_until=args.innovation_until, factors=args.factors)
+                       plans=plans, innovation_until=args.innovation_until, factors=args.factors, events_threads=args.events_threads)
     check = subprocess.run([java(), '-cp', str(jar), 'org.c2smart.matsimnyc.ReferenceConfigCheck', str(cfg), str(args.iterations),
                             str(-1 if args.innovation_until is None else args.innovation_until), str(events_interval), str(plans_every)],
                            capture_output=True, text=True)
@@ -192,7 +196,7 @@ def run(args):
             'plans': str(plans), 'expected_persons': json.loads((INPUTS/'cold.json').read_text())['persons'] if plans == INPUTS/'cold.xml.gz' and (INPUTS/'cold.json').exists() else None,
             'metric_links': str(metric_links), 'cohort_polygon': str(polygon) if args.research else None,
             'inputs_checked': inputs_checked, 'config_check': config_check,
-            'threads': args.threads, 'heap': args.heap, 'jfr': args.jfr, 'command': cmd,
+            'threads': args.threads, 'events_threads': args.events_threads, 'heap': args.heap, 'jfr': args.jfr, 'command': cmd,
             'commit': commit, 'worktree_dirty': bool(dirty), 'sha256': files,
             'host': os.uname().nodename, 'platform': platform.platform(),
             'java_version': subprocess.run([java(), '-version'], capture_output=True, text=True).stderr,
@@ -331,6 +335,7 @@ def main():
     r.add_argument('--cohort-polygon', default=str(ROOT/'scenarios/nyc-schema1/cordon-outline.geojson'), help='GeoJSON polygon defining the charging-related cohort')
     r.add_argument('--jfr', action='store_true', help='bounded Java Flight Recorder profile')
     r.add_argument('--min-free-gib', type=float, default=5)
+    r.add_argument('--events-threads', type=int, help="eventsManager.numberOfThreads (MATSim default 1); must be verified against the expected values")
     s = sub.add_parser('summarize'); s.add_argument('run_dir')
     v = sub.add_parser('verify'); v.add_argument('run_dir')
     args = ap.parse_args()

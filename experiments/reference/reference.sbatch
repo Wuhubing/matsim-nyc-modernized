@@ -10,7 +10,8 @@
 #     sbatch --array=0-2 experiments/reference/reference.sbatch      # tasks 0,1,2 -> seeds 4711,4712,4713
 #
 # Environment options: SEED, ITERS, OUT, PLANS_EVERY (10), RESEARCH (0), EVENTS_INTERVAL (runner default),
-# INNOVATION_UNTIL (unset = historical fraction 0.8), HEAP (16g), JFR (0), RUN_ARGS (passed through).
+# INNOVATION_UNTIL (unset = historical fraction 0.8), HEAP (16g), JFR (0), EVENTS_THREADS (MATSim default 1),
+# RUN_ARGS (passed through).
 # Set the partition for your cluster with -p (see `sinfo`), on the command line or below.
 #SBATCH --job-name=matsim-ref
 #SBATCH --cpus-per-task=16
@@ -34,6 +35,7 @@ if [[ "${RESEARCH:-0}" == 1 ]]; then args+=(--research); fi
 if [[ -n "${EVENTS_INTERVAL:-}" ]]; then args+=(--events-interval "$EVENTS_INTERVAL"); fi
 if [[ -n "${INNOVATION_UNTIL:-}" ]]; then args+=(--innovation-until "$INNOVATION_UNTIL"); fi
 if [[ "${JFR:-0}" == 1 ]]; then args+=(--jfr); fi
+if [[ -n "${EVENTS_THREADS:-}" ]]; then args+=(--events-threads "$EVENTS_THREADS"); fi
 # The runner runs in the background so that Slurm's TERM (120 s before the limit) reaches it.
 .venv/bin/python experiments/reference/run_reference.py "${args[@]}" ${RUN_ARGS:-} &
 runner=$!
