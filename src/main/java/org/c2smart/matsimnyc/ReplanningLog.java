@@ -114,7 +114,8 @@ public final class ReplanningLog implements StartupListener, BeforeMobsimListene
         Object v = plan.getAttributes().getAttribute(PlanInheritanceModule.ITERATION_CREATED);
         return v == null ? -1 : (int) v;
     }
-    private static String num(Double v) { return v == null ? "" : Double.toString(v); }
+    /** Scores at float precision (about 7 significant digits) keep the log within 10 MB per iteration. */
+    private static String num(Double v) { return v == null ? "" : Float.toString(v.floatValue()); }
     private static List<String> modes(List<Leg> legs) { List<String> m = new ArrayList<>(); for (Leg l : legs) m.add(l.getMode()); return m; }
     private static List<Object> routes(List<Leg> legs) {
         List<Object> r = new ArrayList<>();
