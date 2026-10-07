@@ -317,6 +317,29 @@ iteration for fingerprints and writing. Peak RSS unchanged (25.6 vs 25.5 GB; the
 iteration: persons 53 MB, link-hours 23 MB, groups < 0.01 MB, i.e. ≈75 MB per iteration; events 1.1 GB and plans
 0.43 GB (+ experienced plans 0.28 GB) per snapshot.
 
+**Where an iteration's time goes (RQ0 seed 4711, iterations 40–65, 16 cores, recorder and JFR on).** Mobsim
+245 s (78%) using **3.8 of 16 cores**, replanning 35 s (11%) using 13.9 cores, before-mobsim 14 s, after-mobsim to
+iteration end 19 s, GC pauses 1.5% of wall; over the whole run the process averages ≈5 cores. Events are handled
+on one thread (`SimStepParallelEventsManagerImpl`, threads = 1), QSim synchronises with it every simulated second,
+and the slowest simulated hours are the peaks (7–9 h and 15–17 h: 17–22 s of wall time per simulated hour). This
+**overturns** the statement in Section 1 that exact engineering has brought the cost per iteration close to its
+floor: most cores are idle during mobsim.
+
+**More event threads (12-iteration checks, `--events-threads`).** With `eventsManager.numberOfThreads` = 4 and 8
+the run stays **identical** to the expected values (jobs 25181738 and 25181739), but mobsim barely gets faster:
+
+| Events threads | Node | Mobsim, iterations 1–9 | Cores during mobsim | Wall |
+|---:|---|---:|---:|---:|
+| 1 (W0, job 25171033) | node3105 | 133.6 s | — | 2,347 s |
+| 1 (recorder off, job 25172621) | node3104 | 122.1 s | 4.6 | 2,242 s |
+| 4 (job 25181738) | node1602 | 123.7 s | 6.2 | 2,128 s |
+| 8 (job 25181739) | node3108 | 115.7 s | 8.1 | 2,008 s |
+
+CPU use rises with the thread count, time falls by at most 5–13%, inside the ≈20% spread between nodes. The
+limit is therefore not the number of event threads: a single heavy handler (each handler runs on one thread) or
+QSim's per-second synchronisation remains. The JFR profiles of the RQ0 runs (written when they end) are the next
+step to name it. The option stays available; it is safe but not worth relying on for speed.
+
 **Resources for 100-iteration runs with the recorder** (events and plans every 10 iterations): ≈7.5 GB records +
 ≈12 GB events (iterations 0, 10, …, 90, 99) + ≈7 GB plans ≈ **27–30 GB per run**, so outputs belong on scratch,
 not home (200 GB quota). Wall time: if the +35% holds, a run that takes 7–9 h without the recorder takes 9.5–12 h,
