@@ -295,6 +295,35 @@ Checks: confirm in the MATSim 2026 source that `chooseStrategy` is called sequen
 (`GenericStrategyManagerImpl`) before relying on unsynchronised state in W3; the `outside` subpopulation is never
 targeted; W6 must leave access/egress legs of re-routed trips consistent.
 
+### 9.1 Status and acceptance (2026-10-07)
+
+All 12-iteration checks: seed 4711, launch-2025, historical innovation schedule (iterations 0–8), ORCD
+`mit_normal`, 16 threads. "Identical" means `run_reference.py verify`: all 12 `iteration-metrics-N.json` and
+average executed scores equal `expected-seed4711-12it.json`.
+
+| Item | Result | Evidence |
+|---|---|---|
+| W0 | **Accepted.** Identical; wall 2,347 s, peak RSS 17.5 GB. The perf code itself (75abcdd) is also identical on ORCD (job 25110162, 2,919 s on another node: node speed varies by ≈20%) | job 25171033, commit 03004ff |
+| W1 | **Accepted.** Log on: identical; wall 2,161 s, peak RSS 17.6 GB. Size 6.6–10.9 MB per iteration with double-precision scores (over the 10 MB target in innovation iterations 2–8); scores are now written at float precision (d4c8e0e), which re-encoding the run's files puts at ≈8 MB per innovation iteration (not re-run) | job 25171696, commit 29d6683 |
+| W2 | **Accepted** (synthetic): same decisions and same `MatsimRandom` stream as `WeightedStrategyChooser` over 5 iterations × 1,200 agents | `scripts/VerifyReplanningChoosers.java` |
+| W3 | **Accepted** (synthetic): exactly B = round(0.3 N) innovators (270 by priority + 30 random at ε = 0.1); `outside` never innovates; B = 0 when innovation weights are 0; at ε = 1 strategy shares within 0.005 of the default over 400 iterations and per-agent innovation rates 0.225–0.370 around 0.3 | same |
+| W4 | **Implemented**, synthetic tests pass (`experiments/l2seg/test_l2seg.py`); runs on the real W1 log in 19 s / 0.5 GB | `experiments/l2seg/` |
+| Detailed recorder (ResearchMetrics, ported from `research/reference-instrumentation`) | synthetic checks pass; 12-iteration off/on pair running (jobs 25172621/25172622) | `scripts/VerifyResearchMetrics.java`, `experiments/reference/audit_research.py` |
+
+MATSim 2026.0 source checks: `chooseStrategy` is called sequentially per person in `GenericStrategyManagerImpl.run`
+(lines 223–247), with `beforeReplanning` once per iteration, so W3's unsynchronised state is safe. Plan
+inheritance is **off** by default and `Plan.getIterationCreated()` throws a `NullPointerException` for plans that
+never had it set; the log enables inheritance and reads the attribute defensively. A strategy's selector first
+picks any unscored plan (`RandomUnscoredPlanSelector`), so "selector" strategies can also switch plans. Plans are
+dumped only at `it % N == 0` (and up to `writePlansUntilIteration` = 1), not in the last iteration; the final state
+is `output_plans`. Events are also written in the last iteration.
+
+First look at the stability curve (W1 log, 12 iterations, so not a result): exactly 30.0% of `man`/`nonman`
+innovate per iteration; the share whose final plan is newer than t (L-H) falls linearly from 65% at t = 0 to 0 at
+t = 8 (35% end on their initial plan); the selected plan changes for 30–59% per iteration during innovation and still
+for 35–44% afterwards, all of it revisits of stored plans. This is higher than perf's 10–25% choice changes because
+any change of the selected plan counts here, including plans that differ only in timing.
+
 ## 10. Compute
 
 One full run: 16 cores, 24 GB, one ORCD `mit_normal` job (12 h limit). **Revised 2026-10-07:** the earlier
