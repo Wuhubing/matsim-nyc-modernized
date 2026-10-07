@@ -20,6 +20,38 @@ Single-core speed matters more than core count for one run: the events thread is
 traffic simulation synchronises with it every simulated second. Extra cores pay off by running several
 references in parallel.
 
+## On an HPC cluster with Slurm (e.g. MIT ORCD)
+
+Do not run simulations on the login node: build and prepare there, then submit runs to compute nodes.
+
+```sh
+# on the login node, once
+git clone -b perf/simulation-redundancy https://github.com/Wuhubing/matsim-nyc-modernized.git
+cd matsim-nyc-modernized
+bash experiments/reference/setup_userspace.sh        # JDK 25 + Maven into ~/tools, no root needed
+#   add the two printed export lines to ~/.bashrc, then: source ~/.bashrc
+python3 --version                                    # needs 3.11+; otherwise load one with `module avail python`
+python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
+mvn -DskipTests package
+.venv/bin/python scripts/verify.py                   # quick synthetic checks; every line must say PASS
+.venv/bin/python experiments/reference/run_reference.py inputs
+
+# pick a partition and its time limit
+sinfo -o "%P %l %c %m %a"
+
+# reproduction check (12 iterations, compares with the recorded run at the end)
+sbatch -p <partition> --time=01:00:00 --export=ALL,SEED=4711,ITERS=12 experiments/reference/reference.sbatch
+# 100-iteration references, three seeds in parallel
+sbatch -p <partition> --array=0-2 experiments/reference/reference.sbatch
+
+squeue -u $USER                                      # job status
+tail -f slurm-matsim-ref-*.out                       # job output; run.log is in each outputs/ directory
+```
+
+Each job asks for 16 CPUs, 24 GB and 8 hours; adjust `--time` to the partition limit and the measured
+speed. Results are written under `outputs/` in the clone; keep the clone on storage that compute nodes
+mount (home or project space), not on a mount that reports errors.
+
 ## 2. Install the toolchain (Ubuntu)
 
 ```sh
