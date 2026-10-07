@@ -13,6 +13,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.release>25</maven.compiler.release>
+    <matsim.build.directory>target</matsim.build.directory>
     <matsim.version>2026.0</matsim.version>
   </properties>
 
@@ -43,6 +44,7 @@
   </dependencies>
 
   <build>
+    <directory>${matsim.build.directory}</directory>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

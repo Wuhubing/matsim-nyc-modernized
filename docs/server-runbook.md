@@ -1,192 +1,163 @@
-# Server runbook: building, checking and running long MATSim-NYC references
+# ORCD reference and research-data runbook
 
-This runbook takes a fresh Linux server to a running 100-iteration reference. Everything it needs is in this
-repository; nothing depends on files from the original workstation.
+This workflow separates historical reproducibility, observational instrumentation checks, baseline calibration diagnostics,
+and policy experiments. A completed job is not evidence of convergence, calibration, or paper reproduction.
 
-**Why this run comes next.** Every result so far uses 12 iterations, and at iteration 8 the average score is
-still rising by about 0.8 per iteration. Before judging any acceleration method we need to know how many
-iterations this model needs to settle, what the settled state looks like, and how much the seeds differ there.
+## Current validation and restart policy
 
-## 1. Server requirements
+Keep the original job 25110162 and its files as the unmodified 75abcdd reference. Do not overwrite its JAR or output.
+New builds use `target-research/`; prepared snapshots copy the JAR, source and scenario inputs into a unique directory.
+Each Java process also loads its own private `runner.jar`. New experiments start at iteration 0 in new output directories.
+No automatic cancellation, deletion, or reuse of a partial run is performed.
 
-| Resource | Minimum | Comfortable |
+Run from an ordinary ORCD SSH terminal:
+
+```sh
+cd ~/matsim-work/matsim-nyc-modernized
+bash experiments/reference/prepare_research.sh
+```
+
+This compiles offline with the cached Maven dependencies, runs synthetic regressions and Python checks, prepares inputs,
+freezes a snapshot, and submits a three-task validation array to `mit_normal`. With `--prepare-only`, it creates the snapshot
+without contacting Slurm. The latest snapshot path is saved in `~/matsim-work/latest-research-snapshot.txt`.
+
+The three checks use 16 CPUs, 32 GiB requested memory, and a 24 GiB Java heap per task:
+
+| Task | Scenario | Iterations | Additional recording |
+|---|---|---|---|
+| 0 | actual2025 | 12 | legacy metrics only, events off, JFR off |
+| 1 | actual2025 | 12 | research metrics, events every 10, JFR |
+| 2 | historical baseline | 2 | research metrics, events every iteration, JFR |
+
+Tasks 0/1 retain the historical innovation fraction of 0.8 and seed 4711. Their legacy metrics and score tables must match
+the archived Mac results exactly. Added research data lives in separate files. Verification failure is propagated to Slurm;
+there is no `|| true`. The gate also compares tasks 0 and 1 directly, checks mode shares, and checks research/legacy totals.
+A cross-platform difference blocks automatic continuation and must be investigated; never replace the expected answers to
+make a failed run pass. Timing ratios from these concurrent jobs are screening measurements, not controlled benchmarks.
+
+Each validation has one hour **after allocation**, independently of any interactive `salloc`. Builds in an interactive shell
+use that shell's allocation time. Batch jobs persist after disconnecting. Query with `squeue -u "$USER"`; if absent, inspect
+`sacct -j JOBID --format=JobID,State,ExitCode,Elapsed,MaxRSS` and logs. The agent's sandbox may lack network access even when SSH works.
+
+## Filesystem and provenance
+
+Code/snapshots stay under shared `~/matsim-work`. Large results go under the unique snapshot directory beneath
+`~/orcd/scratch/matsim-work`, which resolves to `/orcd/scratch/orcd/006/weibingw/matsim-work` in this account.
+Slurm stdout files are in the snapshot directory; detailed simulation logs are in each result directory.
+
+`df` reports filesystem-wide space, not the user's quota. The submission helper displays `df` and tries `quota -s` when
+available, but a missing or empty quota report does not prove unlimited quota. Confirm the applicable scratch quota and
+retention policy with ORCD before retaining large campaigns; copy important results to durable storage.
+
+The runner records SHA-256 hashes of the JAR, resolved config, loaded file inputs, capacity factors and cohort polygon;
+the snapshot manifest records the copied code and inputs, including uncommitted edits. It also records seed, host, job ID,
+Java heap, threads, recording settings, input plans and innovation schedule. Do not pool differently configured runs merely
+because they have the same seed. `.venv` is shared with the workspace; avoid changing dependencies during a campaign.
+
+Free filesystem space is sampled during execution, with a default 5 GiB floor that stops the run. This cannot predict
+quota exhaustion or rapid writes between samples. I/O failures are errors. Audit reports measure actual output sizes and
+provide a rough 100-iteration extrapolation; there is no guaranteed 1.1 GB/event-file size or negligible-overhead promise.
+
+## What is recorded
+
+| Data | Frequency | Interpretation |
 |---|---|---|
-| CPU | 16 cores, high single-core clock | 32–64 cores (to run several references at once) |
-| Memory | 32 GB (one run: 16 GB Java heap, ≈ 17 GB peak) | 64 GB for 2 parallel runs, 128 GB+ for 3–6 |
-| Disk | 100 GB free SSD | 500 GB+ if you write event files |
-| OS | Linux (tested commands below are for Ubuntu 22.04/24.04) | |
+| Legacy `iteration-metrics-N.json` | Every iteration | Original aggregates, unchanged schema and summation order |
+| scorestats, modestats, stopwatch | Every iteration | Score, mode shares and simulation stages |
+| countscompare | Every iteration (`writeCountsInterval=1`) | Supplied count stations and MATSim's configured scaling |
+| `research/persons-N.csv.gz` | Every iteration | Person ID, fixed cohorts, score/delta, plan memory size, SHA-256 plan/choice signatures, realized diagnostic hashes, trip-leg/wait/toll totals |
+| `research/groups-N.csv.gz` | Every iteration | All, subpopulation, charging cohort, and joint-group totals; includes score sums/denominators and plan-change counts |
+| `research/group-modes-N.csv.gz` | Every iteration | Departures/completions/stuck legs and completed travel time by group/mode |
+| `research/link-hours-N.csv.gz` | Every iteration | Every observed network link/hour/mode: entry count, matched traversal count and total traversal seconds |
+| `research/cohorts.csv.gz`, `schema.json` | Once per run | Group membership and exact definitions/limitations |
+| Plans | Every 10 iterations plus MATSim final output | Full plan sets for warm starts; inspect actual final artifacts before policy submission |
+| Full events | Every 10 iterations by default | Detailed offline analysis at saved iterations; set `EVENTS_INTERVAL=1` for all iterations |
+| `resources.jsonl`, `gc.log`, `profile.jfr` | Samples / JVM events | CPU time, RSS, threads, process I/O, disk free space, GC and bounded flight recording |
+| `research/diagnostics-N.json` | Every iteration | Invariant errors, fingerprint time and research-output time |
 
-Single-core speed matters more than core count for one run: the events thread is single-threaded and the
-traffic simulation synchronises with it every simulated second. Extra cores pay off by running several
-references in parallel.
+Full events are sampled, so they cannot reconstruct every intervening iteration. Compact diagnostics support adjacent-iteration
+analysis but are not a replacement for all event-level research: planned signatures exclude simulated travel estimates; realized
+64-bit hashes are diagnostics with collision risk and do not cover every MATSim event type. Exact replay claims require the
+full relevant event streams. For model training, split by seed/run/scenario and time as appropriate; avoid leakage across adjacent
+iterations. Resource traces and optional JFR support bottleneck analysis, not a causal attribution of every slowdown.
 
-## On an HPC cluster with Slurm (e.g. MIT ORCD)
+Link traversal statistics pair LinkEnter/LinkLeave only, assigned to entry hour. Initial partial links are omitted, and exit/abort
+clears pending entries to avoid counting parking as travel. Sparse missing cells mean zero observations. `completed_traversals`
+is the denominator for mean travel time, not entry count. These raw vehicle counts have no population expansion applied.
 
-Do not run simulations on the login node: build and prepare there, then submit runs to compute nodes.
+Group modes count **legs**, not whole origin-destination trips (transit journeys have several legs). Car-duration means cover
+completed legs; waiting includes unfinished waiting until the configured simulation cutoff. Keep censored outcomes separate
+from completed ones. `private_car_entry_crossings` retains the old 2025-geofence definition across all scenarios for compatibility;
+it is not the number of Schema-1 toll payments.
 
-```sh
-# on the login node, once
-git clone -b perf/simulation-redundancy https://github.com/Wuhubing/matsim-nyc-modernized.git
-cd matsim-nyc-modernized
-bash experiments/reference/setup_userspace.sh        # JDK 25 + Maven into ~/tools, no root needed
-#   add the two printed export lines to ~/.bashrc, then: source ~/.bashrc
-python3 --version                                    # needs 3.11+; otherwise load one with `module avail python`
-python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
-mvn -DskipTests package
-.venv/bin/python scripts/verify.py                   # quick synthetic checks; every line must say PASS
-.venv/bin/python experiments/reference/run_reference.py inputs
+## Stable cohort definition
 
-# pick a partition and its time limit
-sinfo -o "%P %l %c %m %a"
+`subpopulation` comes from the archived person attribute (`man`, `nonman`, `outside`, with explicit unknown handling).
+Charging-related means at least one non-stage activity location in the **loaded selected plan** is inside the repository's
+reconstructed Schema-1 charging polygon. This includes trips wholly inside the area and all modes. Polygon boundary points
+are included; missing coordinates produce `unknown` unless another activity establishes membership.
 
-# reproduction check (12 iterations, compares with the recorded run at the end)
-sbatch -p <partition> --time=01:00:00 --export=ALL,SEED=4711,ITERS=12 experiments/reference/reference.sbatch
-# 100-iteration references, three seeds in parallel
-sbatch -p <partition> --array=0-2 experiments/reference/reference.sbatch
+Membership is fixed before replanning and saved explicitly, not inferred from whether the person paid a toll. When comparing
+baseline and warm-start policy runs, join cohort manifests by person ID and check equality; use the baseline manifest if an
+activity-location-changing strategy is later introduced. The boundary is an exploratory reconstruction, not the original paper's
+authoritative cordon, and must be validated before claiming identical population segments.
 
-squeue -u $USER                                      # job status
-tail -f slurm-matsim-ref-*.out                       # job output; run.log is in each outputs/ directory
-```
+## Baseline campaign and convergence
 
-Each job asks for 16 CPUs, 24 GB and 8 hours; adjust `--time` to the partition limit and the measured
-speed. Results are written under `outputs/` in the clone; keep the clone on storage that compute nodes
-mount (home or project space), not on a mount that reports errors.
-
-## 2. Install the toolchain (Ubuntu)
-
-```sh
-sudo apt update
-sudo apt install -y git tmux zstd wget python3 python3-venv
-
-# Java 25 (Eclipse Temurin)
-wget -qO- https://packages.adoptium.net/artifactory/api/gpg/key/public | sudo gpg --dearmor -o /usr/share/keyrings/adoptium.gpg
-echo "deb [signed-by=/usr/share/keyrings/adoptium.gpg] https://packages.adoptium.net/artifactory/deb $(. /etc/os-release; echo $VERSION_CODENAME) main" \
-  | sudo tee /etc/apt/sources.list.d/adoptium.list
-sudo apt update && sudo apt install -y temurin-25-jdk
-java -version            # must report 25
-
-# Maven 3.9 (the distribution package may be older)
-wget https://archive.apache.org/dist/maven/maven-3/3.9.11/binaries/apache-maven-3.9.11-bin.tar.gz
-sudo tar -xzf apache-maven-3.9.11-bin.tar.gz -C /opt
-echo 'export PATH=/opt/apache-maven-3.9.11/bin:$PATH' >> ~/.bashrc && source ~/.bashrc
-mvn -version             # must report 3.9.x and Java 25
-```
-
-If `temurin-25-jdk` is not available for your release, download the JDK 25 tarball from
-[adoptium.net](https://adoptium.net/) and set `JAVA_HOME` to it.
-
-## 3. Get the code and build
+After all validation tasks finish:
 
 ```sh
-git clone -b perf/simulation-redundancy https://github.com/Wuhubing/matsim-nyc-modernized.git
-cd matsim-nyc-modernized
-python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
-mvn -DskipTests package                              # downloads dependencies on first build (a few minutes)
-JAVA_HOME=$(dirname $(dirname $(readlink -f $(which java)))) .venv/bin/python scripts/verify.py   # every line must say PASS
+snapshot=$(cat ~/matsim-work/latest-research-snapshot.txt)
+bash "$snapshot/experiments/reference/submit_research.sh" baseline
 ```
 
-## 4. Prepare the inputs (once)
+The helper reruns the validation gate and submits three baseline seeds (4711–4713), 100 iterations, at most eight hours per task.
+Read the measured validation durations first: eight hours is a resource limit, not a completion estimate. If needed, adjust the
+submission limit using a new reviewed snapshot/helper invocation; never silently shorten the scientific iteration horizon.
+
+Research runs explicitly set innovation strategies' `disableAfter=79`; they do not infer a new cutoff from the requested horizon.
+For 100 iterations (0–99), this separates the innovation and selection-only phases. A 50-iteration experiment with this schedule
+is a truncated innovative run, not a 50-iteration run that disables innovation at 40. Extension experiments must state whether they
+extend innovation or only selection. Legacy 12-iteration verification intentionally retains the old fractional schedule.
 
 ```sh
-.venv/bin/python experiments/reference/run_reference.py inputs
+.venv/bin/python experiments/reference/analyze_reference.py RUN1 RUN2 RUN3 --window 10 --out analysis.json
 ```
 
-This writes `outputs/reference-inputs/cold.xml.gz`: the selected plan of each of the 389,301 persons from
-`scenarios/nyc/population-v6.xml.gz` (man 123,290 · nonman 205,808 · outside 60,203). It is byte-identical in
-content to the input of all recorded runs. The capacity factors come from
-`assumptions/archive-capacity-factors.csv` (the paper's Table 4 values at full precision).
+The analysis reports sliding adjacent-window changes, tail means/SDs, seed spread, measured iteration times, and supplied-count
+errors. Its default 1% window flag is explicitly exploratory, **not a scientific acceptance criterion**. Predefine per-metric absolute
+and relative quality margins, group-level margins, and the required persistence window before judging acceleration. Three seeds
+provide only a preliminary variance estimate. A stable total can hide unstable groups/links; use their saved series too. A flat
+selection-only tail is not proof that the model converged while innovation was active. Shorter stopping rules require independent
+validation across seeds and policies. Do not call an empirical reference trajectory a unique ground truth.
 
-## 5. Step 1: reproduce a recorded run (≈ 25–35 min)
+## Paper reproduction versus policy extension
 
-Run the same 12-iteration, seed-4711 configuration that was recorded on the original workstation, then compare:
+Source: https://arxiv.org/abs/2008.04762 (v2, sections 4–5). The paper uses historical baseline calibration and starts policy runs
+from the baseline final plan set. Its charging-related definition uses trip origins/destinations in the charging area. We implement
+that definition on the available reconstructed boundary, and expose `--plans` for the full baseline plan set.
+
+Run the historical baseline first. For each seed, after successful completion and convergence review, locate
+`simulation/BUILT.output_plans.xml.*` and use that full plan set for matched policy runs:
 
 ```sh
-tmux new -s check
-.venv/bin/python experiments/reference/run_reference.py run --seed 4711 --iterations 12 --out outputs/check-s4711-12it
-.venv/bin/python experiments/reference/run_reference.py verify outputs/check-s4711-12it
+# From the prepared snapshot, with JAVA_HOME and OUTPUT_ROOT set:
+SCENARIO=schema1 PLANS=/absolute/baseline/simulation/BUILT.output_plans.xml.zst \
+SEED=4711 ITERS=100 RESEARCH=1 INNOVATION_UNTIL=79 EVENTS_INTERVAL=10 \
+sbatch -p mit_normal --export=ALL experiments/reference/reference.sbatch
 ```
 
-`verify` compares all 12 iterations of online metrics and average scores with
-`experiments/reference/expected-seed4711-12it.json`.
+Repeat with corresponding baseline seed/plan files; use a new OUTPUT_ROOT for each campaign to keep records clear.
+`actual2025` is a separate extension, not evidence of historical calibration. `--factors` accepts a capacity vector for future
+calibration experiments and records its hash. No optimizer is run automatically, and the old “20 hours” calibration estimate is
+not a measured budget on this cluster.
 
-- **IDENTICAL**: the server reproduces the recorded results exactly; go on.
-- **Differences**: write them down before continuing. MATSim is deterministic for a given seed and thread
-  count, but a different CPU architecture can change the last digit of some `Math.exp`/`Math.log` results,
-  which can change a plan choice and then grow. Small differences of that kind are not a bug; large or early
-  ones (iteration 0) point to a setup problem (wrong input file, Java version, or config).
+Counts comparisons must match observed stations, direction, time bins, modes and scale (currently countsScaleFactor=25).
+The analysis's all-station error is not automatically the paper's East River screenline error. The paper reports different error
+measures for screenlines, road links, speed and transit; a universal “within 5%” rule is not justified. Resolve the station mapping
+and original observation datasets before making a reproduction claim.
 
-The run's `run.json` records wall time and peak memory; `summary.csv` holds per-iteration stage times. Use
-the seconds per iteration measured here, not the workstation's, to plan the long runs.
-
-## 6. Step 2: the 100-iteration reference (≈ 3.5–5 h per run, estimate)
-
-Three seeds, same configuration, 100 iterations (new plans allowed until iteration 80, as in the paper):
-
-```sh
-tmux new -s s4711 '.venv/bin/python experiments/reference/run_reference.py run --seed 4711 --iterations 100 --plans-every 10 --out outputs/ref-s4711-100it; bash'
-tmux new -s s4712 '.venv/bin/python experiments/reference/run_reference.py run --seed 4712 --iterations 100 --plans-every 10 --out outputs/ref-s4712-100it; bash'
-tmux new -s s4713 '.venv/bin/python experiments/reference/run_reference.py run --seed 4713 --iterations 100 --plans-every 10 --out outputs/ref-s4713-100it; bash'
-```
-
-How many at once: each run uses 16 threads and ≈ 17 GB. Start one per 16 physical cores and per ≈ 20 GB of
-free memory; otherwise start them one after another. Parallel runs slow each other down slightly, so if wall
-time per run is the quantity being measured, run that one alone.
-
-Options:
-- `--events last` additionally writes event files for the last iteration(s) (≈ 1.1 GB each), useful for
-  detailed analysis. The default writes none; all indicators are computed online.
-- `--plans-every 10` keeps the plans every 10 iterations (≈ 0.4 GB each) to study how plans evolve.
-- `--threads` and `--heap` change the run; keep the defaults (16, 16g) for anything compared with earlier runs.
-
-## 7. Watching a run
-
-```sh
-tmux attach -t s4711                                   # detach again with Ctrl-b d
-grep -c "ITERATION .* ENDS" outputs/ref-s4711-100it/run.log     # iterations finished
-tail -n 3 outputs/ref-s4711-100it/simulation/BUILT.scorestats.csv
-free -h ; htop
-```
-
-If a run dies, `run.json` shows the exit code and `run.log` the Java error. Start a new run with a new
-`--out` directory; the runner never overwrites an existing one.
-
-## 8. After the runs
-
-```sh
-.venv/bin/python experiments/reference/run_reference.py summarize outputs/ref-s4711-100it   # writes summary.csv
-```
-
-`summary.csv` has, per iteration: average score, car and pt shares, unfinished persons, cordon entries,
-not-boarded passengers, charge revenue and stage times. Copy results home with, for example:
-
-```sh
-rsync -av --include='*/' --include='summary.csv' --include='run.json' --include='*.csv' --include='iteration-metrics-*.json' \
-  --exclude='*' server:matsim-nyc-modernized/outputs/ ./outputs-from-server/
-```
-
-What to read from them:
-
-1. **Settling point**: the iteration after which score and indicators stop trending while new plans are still
-   allowed (before iteration 80). That number sets the iteration budget for every later experiment.
-2. **Seed spread at the settled state**: the tolerance any acceleration method has to meet.
-3. **Calibration check**: MATSim writes `ITERS/it.N/BUILT.N.countscompare.txt` (simulated vs 2016 counts) at
-   regular iterations. If the late-iteration bridge and tunnel volumes are within the paper's 5%, the archived
-   capacity factors still hold on MATSim 2026; if not, recalibration becomes the next task (≈ 20 h estimated).
-4. **Time per iteration over 100 iterations**: replaces every estimate in the current reports.
-
-## 9. What comes after
-
-| If the reference shows | Next step |
-|---|---|
-| Settles well before iteration 80 | Shorten runs to that length; test warm start and early stopping against the settled state |
-| Still trending at 80 | Longer horizon (e.g. 150–200 iterations) before any comparison |
-| Counts within 5% | Keep the archived calibration; move to policy experiments and adaptive policy sampling (L3) |
-| Counts off by more than 5% | Re-run the capacity calibration (SPSA, 6 steps × 2 runs × 50 iterations) on the server |
-
-## Notes
-
-- `outputs/` is ignored by git. Results stay on the server until you copy them.
-- The older campaign scripts (`experiments/performance`, `experiments/surrogate`) still work; their resource
-  monitor now reads `/proc/meminfo` on Linux. They were written for one workstation and reference some files
-  under `outputs/`, so prefer `run_reference.py` on a new machine.
-- See `experiments/redundancy/README.md` and `experiments/surrogate/README.md` for what has been measured so far.
+Remaining reproduction prerequisites: authoritative/validated cordon geometry, availability and provenance of the final calibrated
+parameters and historical observations, the paper's second pricing schema if reproducing both policies, and travel-utility component
+accounting. Total selected-plan score is **not** the paper's travel consumer surplus and must not be converted directly to dollars.
+The current changes provide measurement and experiment controls; they do not certify paper reproduction.
