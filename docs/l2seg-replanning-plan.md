@@ -1,7 +1,11 @@
 # Plan: learning which agents and trips to replan in MATSim-NYC (an L2Seg analogue)
 
-Branch `research/l2seg-replanning`, started from `main` on 2026-10-07. **Nothing in this document has been run yet.**
-It is the working plan; results will be added in place as each stage finishes.
+Branch `research/l2seg-replanning`, started from `main` on 2026-10-07. It is the working plan; results are added in
+place as each stage finishes.
+
+**Status 2026-10-07.** W0–W3 are implemented and the detailed recorder (ResearchMetrics) is ported (Section 9.1);
+12-iteration acceptance runs are listed there. No study run (RQ1–RQ6) has started. The RQ0 references now running
+on ORCD are **not** the configuration this plan assumes (Section 4.1); this needs a decision before σ_x is used.
 
 Evidence cited below comes from branch `perf/simulation-redundancy` (head `75abcdd`), referred to as *perf*.
 The method being adapted is Ouyang, Li, Ma, Wu, *Learning to Segment for Vehicle Routing Problems*,
@@ -36,7 +40,9 @@ multiplied in advance.
 
 | Item | Result | Source on perf |
 |---|---|---|
-| Iteration cost | ≈118 s (replanning ≈15, mobsim ≈88.6, scoring/stats ≈14.1) on 16 threads, 389,301 persons + ≈51,000 transit drivers | 12-iteration seed-4711 run; **breakdown to be recomputed** from `stopwatch.csv` of the reference runs |
+| Iteration cost (workstation) | ≈118 s (replanning ≈15, mobsim ≈88.6, scoring/stats ≈14.1) on 16 threads, 389,301 persons + ≈51,000 transit drivers | **Source found only for mobsim:** 88.6 = 1,063 s / 12 iterations, the E1+E2 run of the perf campaign (`experiments/redundancy/README.md`, workstation). The 15 and 14.1 s have no recorded breakdown on perf and are superseded by the ORCD rows below |
+| Iteration cost (ORCD, launch-2025, E1+E2) | **223 s** mean over iterations 0–11: replanning 26.7 s in innovation iterations 1–8 and < 1 s afterwards, mobsim 179.6 s, before-mobsim listeners 5.8 s, iteration-end listeners 11.0 s; wall 2,919 s incl. ≈240 s start-up | `BUILT.stopwatch.csv` of job 25110162 (perf 75abcdd, seed 4711, 12 iterations, AMD EPYC 9474F, 16 threads; its online metrics equal `expected-seed4711-12it.json`). ORCD is ≈1.9× slower per iteration than the workstation; **the share of replanning (≈12% of an innovation iteration) is unchanged** |
+| Iteration cost (ORCD, 100-iteration baseline references, interim) | mean 268–303 s over iterations 0–40/46; iterations 31–46: replanning 32–38 s, mobsim 227–270 s; mobsim grows within the run (seed 4711: 164 s in iterations 1–10 → 227 s in 31–46) | jobs 25151308_0–2 at iterations 41–47 (2026-10-07 12:09). These runs also record ResearchMetrics and JFR (Section 4.1), so absolute times include that overhead; final numbers after the runs end |
 | Replanning | 194 s over a cold 12-iteration run (≈16 s per iteration), vs 1,602 s mobsim | `experiments/performance/README.md` |
 | Mobsim growth | 74 → 108 s per iteration within a run (after E1) | `experiments/redundancy/README.md` |
 | E1 + E2 (online metrics instead of per-iteration event XML; index-based pricing lookups) | 12-iteration wall time 2,139.9 → 1,574.0 s (−26.4%), all metrics identical; almost all of it from E1 | same, "Engineering items" |
@@ -81,7 +87,8 @@ What does not transfer:
 1. **The mechanism of the speedup.** FSTA aggregates stable segments into hypernodes, so each search step solves
    a smaller problem (L2Seg, Section 3.2, Fig. 5 plots objective against wall time). Here every agent is still
    simulated every iteration. Only the trip level (Section 7) makes replanning smaller, and replanning is
-   ≈16 of ≈118 s.
+   ≈16 of ≈118 s on the workstation and ≈27 of ≈223 s on ORCD (Section 2), about 12% of an innovation iteration
+   and ≈0 once innovation stops.
 2. **The guarantee.** FSTA's feasibility and monotonicity theorem relies on route costs being additive over
    edges, so fixed segments do not affect the rest. Agents frozen in MATSim still occupy roads and vehicles; this
    is why freezing them in the simulation (L2) was biased. We segment *replanning*, never *simulation*. The trip
@@ -99,6 +106,28 @@ What does not transfer:
 4711/4712/4713, launch-2025 configuration with `assumptions/archive-capacity-factors.csv`, as in
 `experiments/reference/run_reference.py` on perf. *Charge scale* τ multiplies all congestion charges
 (τ = 1 is launch-2025), using the pricing-scale lever already on perf.
+
+### 4.1 The RQ0 references running on ORCD (checked 2026-10-07)
+
+Jobs 25151308_0–2 (seeds 4711–4713, 100 iterations, started 08:35) were submitted from a snapshot of branch
+`research/reference-instrumentation` (runner commit 996faa0 plus the cutoff fix 7e06a3d), **not** with perf's
+`reference.sbatch`. Compared with the configuration perf's runner writes for launch-2025:
+
+- **Scenario `baseline`, not launch-2025.** `pricing2025Links` is removed and road pricing reads
+  `scenarios/nyc-schema1/control-zero-tolls.xml`: there is no 2025 congestion charge. Cordon entries are still
+  counted (on the 2025 entry links), revenue from the charge is zero. This is also not τ = 0 of the
+  `nyc.pricing.scale` lever, which leaves taxi/FHV trip fees in place.
+- Innovation cutoff set as `disableAfterIteration = 79` with fraction 1.0; for 100 iterations this is the same
+  schedule as fraction 0.8 (innovation in iterations 0–79).
+- ResearchMetrics (per-person, group and link-hour records), JFR, events every 10 iterations, 24 GB heap.
+
+Consequences: when they finish, they give T\* and σ_x **for the no-charge baseline**, not for τ = 1 as the
+definitions below assume. The instrumentation branch's design is to warm-start policy runs from the baseline's
+final plans, i.e. τ0 = baseline and τ1 = launch-2025, which is a different main-line setting from Section 5
+(τ0 = 1). **Decision needed:** either (a) adopt baseline → launch-2025 as the first policy change and take σ_x
+from the baseline references, checking it at τ = 1 with one extra seed set; or (b) run three launch-2025
+references as originally planned (3 more full runs, Section 10). Until decided, the tolerance table below is
+not filled in.
 
 **Indicators** (produced online by `IterationMetrics` on perf, plus MATSim's own stats): mean executed score,
 mode shares, car departures and completions, stuck agents, cordon entries, net charge revenue, transit waiting
@@ -229,8 +258,9 @@ FSTA's feasibility and monotonicity, in the router's cost only.
 
 ### 7.4 Expected size of the gain
 
-Replanning is ≈16 s of ≈118 s per iteration and routing is a part of it (share to be profiled, W6). In a single
-run the ceiling is therefore about 10% of iteration time. The larger value is in Section 5: under a new charge,
+Replanning is ≈16 s of ≈118 s per iteration on the workstation and ≈27 s of ≈223 s on ORCD (Section 2), and
+routing is a part of it (share to be profiled, W6). In a single run the ceiling is therefore about 10% of
+iteration time during innovation, and nothing after the 80% switch-off. The larger value is in Section 5: under a new charge,
 re-routing is how car users react, and T3 decides whom to re-route. It also matters at a cold start, where route
 preparation took 151 s (perf, R4).
 
@@ -238,7 +268,7 @@ preparation took 151 s (perf, R4).
 
 | RQ | Question | Experiment | Decisive output | Depends on |
 |---|---|---|---|---|
-| RQ0 | When do runs reach steady state, how far apart are seeds? | 3 × 100-iteration references (perf, running on ORCD) | T\*, σ_x; bridge/tunnel counts within 5% or not | — |
+| RQ0 | When do runs reach steady state, how far apart are seeds? | 3 × 100-iteration references (running on ORCD, but as the no-charge baseline, Section 4.1) | T\*, σ_x; bridge/tunnel counts within 5% or not | — |
 | RQ1 | How stable is each agent, is it predictable? | 3 log-enabled default runs (W1); stability curve (analogue of L2Seg Fig. 1); classifiers on L-H, L-U | unresolved share per iteration; AUC; recall at 30% budget | RQ0, W1 |
 | RQ2 | Ceiling of agent-level targeting in one run | Section 6.1 | T\* per arm; gate | RQ1 |
 | RQ3 | Can a model replace the oracle in one run? | model on L-U/L-H, train seeds 4711/4712, test 4713 | recall, TNR, T\* vs oracle | RQ2 gate |
@@ -267,8 +297,11 @@ targeted; W6 must leave access/egress legs of re-routed trips consistent.
 
 ## 10. Compute
 
-One full run: 16 cores, 24 GB, 3.5–5 h (estimate until RQ0 finishes), one ORCD `mit_normal` job. A 40-iteration
-warm run counts as 0.4 of a full run.
+One full run: 16 cores, 24 GB, one ORCD `mit_normal` job (12 h limit). **Revised 2026-10-07:** the earlier
+3.5–5 h estimate came from workstation speed; on ORCD a launch-2025 iteration takes ≈223 s at the start of a run
+and the baseline references are at 270–340 s per iteration by iteration 40 because mobsim grows, so a
+100-iteration run takes **≈7–9 h** (to be replaced by the measured wall time when RQ0 ends). A 40-iteration warm
+run counts as 0.4 of a full run.
 
 | Stage | Runs | Full-run equivalents |
 |---|---|---|
@@ -281,7 +314,7 @@ warm run counts as 0.4 of a full run.
 | RQ5 B1–B4 warm runs at 6 levels | 24 | 9.6 |
 | RQ5 adaptive-sampling extra levels | ≈4 | ≈1.6 |
 | RQ6 T1, T2 | 6 | 6 |
-| **Total** | **≈72** | **≈52, i.e. 180–260 run-hours, 2,900–4,200 core-hours** |
+| **Total** | **≈72** | **≈52, i.e. ≈360–470 run-hours, ≈5,800–7,500 core-hours on ORCD** (revised from 180–260 run-hours / 2,900–4,200 core-hours, which assumed workstation speed) |
 
 RQ1 runs repeat the RQ0 seeds with logging on; if W1 is passive their indicators equal RQ0's, which doubles as a
 determinism check on ORCD. Runs within a stage are independent and go into one Slurm array.
