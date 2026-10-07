@@ -308,7 +308,22 @@ average executed scores equal `expected-seed4711-12it.json`.
 | W2 | **Accepted** (synthetic): same decisions and same `MatsimRandom` stream as `WeightedStrategyChooser` over 5 iterations × 1,200 agents | `scripts/VerifyReplanningChoosers.java` |
 | W3 | **Accepted** (synthetic): exactly B = round(0.3 N) innovators (270 by priority + 30 random at ε = 0.1); `outside` never innovates; B = 0 when innovation weights are 0; at ε = 1 strategy shares within 0.005 of the default over 400 iterations and per-agent innovation rates 0.225–0.370 around 0.3 | same |
 | W4 | **Implemented**, synthetic tests pass (`experiments/l2seg/test_l2seg.py`); runs on the real W1 log in 19 s / 0.5 GB | `experiments/l2seg/` |
-| Detailed recorder (ResearchMetrics, ported from `research/reference-instrumentation`) | synthetic checks pass; 12-iteration off/on pair running (jobs 25172621/25172622) | `scripts/VerifyResearchMetrics.java`, `experiments/reference/audit_research.py` |
+| Detailed recorder (ResearchMetrics, ported from `research/reference-instrumentation`) | **Accepted.** Off/on pair with identical settings (heap 24 GB, events and plans every 10 iterations): both identical to the expected values, so the recorder leaves all indicators unchanged. Audit passed: full person coverage every iteration, every partition sums to the total, link-hour completions ≤ entries with nonnegative times, events/plans/counts files exactly where the parsed config puts them, deferred output initialization, config check by MATSim. Cost below | jobs 25172621 (off) / 25172622 (on), commit cb981aa; `research-audit.json` |
+
+**Recorder cost (12 iterations; the two jobs ran on different nodes, which differ by up to ≈20%).** Mean iteration
+170 s off vs 230 s on (+35%): mobsim +39 s (per-event handling on the events thread, mixed with node speed),
+before-mobsim +8 s (plan fingerprints), iteration end +11 s (writing); the recorder's own timers give 19 s per
+iteration for fingerprints and writing. Peak RSS unchanged (25.6 vs 25.5 GB; the 24 GB heap dominates). Disk per
+iteration: persons 53 MB, link-hours 23 MB, groups < 0.01 MB, i.e. ≈75 MB per iteration; events 1.1 GB and plans
+0.43 GB (+ experienced plans 0.28 GB) per snapshot.
+
+**Resources for 100-iteration runs with the recorder** (events and plans every 10 iterations): ≈7.5 GB records +
+≈12 GB events (iterations 0, 10, …, 90, 99) + ≈7 GB plans ≈ **27–30 GB per run**, so outputs belong on scratch,
+not home (200 GB quota). Wall time: if the +35% holds, a run that takes 7–9 h without the recorder takes 9.5–12 h,
+at the 12 h `mit_normal` limit. The RQ0 references record with ResearchMetrics and JFR, so their final wall time is
+the direct measurement; until then request `--mem=32G`, heap 24 GB, `--time=12:00:00`, and treat the recorder as
+optional for runs that only need indicators. A cheaper recorder (index-based keys instead of link-id strings in
+the per-event hashes) is the first thing to try if the limit is hit.
 
 MATSim 2026.0 source checks: `chooseStrategy` is called sequentially per person in `GenericStrategyManagerImpl.run`
 (lines 223–247), with `beforeReplanning` once per iteration, so W3's unsynchronised state is safe. Plan
