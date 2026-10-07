@@ -93,7 +93,10 @@ def run(args):
     # Each run loads a private copy of the JAR, so rebuilding target/ cannot change a running job.
     jar = dest/'runner.jar'
     shutil.copy2(JAR, jar)
-    cmd = [java(), '-Duser.language=en', '-Duser.country=US', f'-Xmx{args.heap}', '-Dnyc.onlineMetrics=true',
+    extra = (['-Dnyc.replanningLog=true'] if args.replanning_log else []) \
+        + ([f'-Dnyc.targeted.priority={Path(args.targeted_priority).resolve()}'] if args.targeted_priority else []) \
+        + ([f'-Dnyc.targeted.epsilon={args.targeted_epsilon}'] if args.targeted_epsilon is not None else [])
+    cmd = [java(), '-Duser.language=en', '-Duser.country=US', f'-Xmx{args.heap}', '-Dnyc.onlineMetrics=true', *extra,
            '-Xlog:gc*:file=' + str(dest/'gc.log') + ':time,uptime,level,tags', '-jar', str(jar), str(cfg)]
     commit = subprocess.run(['git', 'rev-parse', 'HEAD'], cwd=ROOT, capture_output=True, text=True).stdout.strip()
     meta = {'seed': args.seed, 'iterations': args.iterations, 'events': args.events, 'threads': args.threads, 'heap': args.heap,
@@ -190,6 +193,9 @@ def main():
     r.add_argument('--events', choices=['none', 'last', 'all'], default='none', help='event XML: none (default), last iteration(s), or every iteration')
     r.add_argument('--plans-every', type=int, help='write plans every N iterations (default: last iteration)')
     r.add_argument('--threads', type=int, default=16); r.add_argument('--heap', default='16g'); r.add_argument('--out')
+    r.add_argument('--replanning-log', action='store_true', help='write OUTPUT/simulation/replanning-log/ (W1)')
+    r.add_argument('--targeted-priority', help='priority CSV file or directory for the targeted chooser (W3)')
+    r.add_argument('--targeted-epsilon', type=float, help='random share of the innovation budget for the targeted chooser (W3)')
     s = sub.add_parser('summarize'); s.add_argument('run_dir')
     v = sub.add_parser('verify'); v.add_argument('run_dir')
     args = ap.parse_args()

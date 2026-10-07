@@ -9,6 +9,11 @@ import org.matsim.core.controler.AbstractModule;
 import org.matsim.contrib.roadpricing.RoadPricingConfigGroup;
 import org.matsim.contrib.roadpricing.RoadPricingModule;
 import org.matsim.core.scenario.ScenarioUtils;
+import org.matsim.api.core.v01.population.Person;
+import org.matsim.api.core.v01.population.Plan;
+import org.matsim.core.replanning.choosers.StrategyChooser;
+import org.matsim.core.replanning.choosers.WeightedStrategyChooser;
+import com.google.inject.TypeLiteral;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -102,6 +107,23 @@ public final class RunNyc {
                 @Override public void install() {
                     addEventHandlerBinding().toInstance(metrics);
                     addControllerListenerBinding().toInstance(metrics);
+                }
+            });
+        }
+        String priority = System.getProperty("nyc.targeted.priority"), epsilon = System.getProperty("nyc.targeted.epsilon");
+        boolean targeted = priority != null || epsilon != null;
+        if (Boolean.getBoolean("nyc.replanningLog") || targeted) {
+            StrategyChooser<Plan, Person> delegate = targeted
+                    ? new TargetedInnovationChooser(scenario.getPopulation(), priority == null ? null : TargetedInnovationChooser.fromFiles(Path.of(priority)),
+                        Double.parseDouble(epsilon == null ? "0.1" : epsilon), config.global().getRandomSeed())
+                    : new WeightedStrategyChooser<>();
+            RecordingStrategyChooser chooser = new RecordingStrategyChooser(delegate);
+            boolean log = Boolean.getBoolean("nyc.replanningLog");
+            if (log) config.planInheritance().setEnabled(true);
+            controler.addOverridingModule(new AbstractModule() {
+                @Override public void install() {
+                    bind(new TypeLiteral<StrategyChooser<Plan, Person>>() {}).toInstance(chooser);
+                    if (log) addControllerListenerBinding().toInstance(new ReplanningLog(scenario.getPopulation(), chooser, config.controller().getOutputDirectory()));
                 }
             });
         }

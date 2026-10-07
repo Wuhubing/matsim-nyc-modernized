@@ -3,6 +3,7 @@
 #
 #   Reproduction check (12 iterations, seed 4711):
 #     sbatch --time=01:00:00 --export=ALL,SEED=4711,ITERS=12 experiments/reference/reference.sbatch
+#   Extra runner options, e.g. the replanning log (W1): --export=ALL,SEED=4711,ITERS=12,RUN_ARGS=--replanning-log
 #   100-iteration references for three seeds (one job per seed, run in parallel):
 #     sbatch --array=0-2 experiments/reference/reference.sbatch      # tasks 0,1,2 -> seeds 4711,4712,4713
 #
@@ -23,7 +24,7 @@ OUT=${OUT:-outputs/ref-s${SEED}-${ITERS}it-job${SLURM_JOB_ID:-local}}
 echo "host $(hostname)  cpus ${SLURM_CPUS_PER_TASK:-?}  seed $SEED  iterations $ITERS  out $OUT"
 lscpu | grep -E "Model name|^CPU\(s\)" || true
 .venv/bin/python experiments/reference/run_reference.py run --seed "$SEED" --iterations "$ITERS" \
-  --plans-every "$(( ITERS < PLANS_EVERY ? ITERS - 1 : PLANS_EVERY ))" --out "$OUT"
+  --plans-every "$(( ITERS < PLANS_EVERY ? ITERS - 1 : PLANS_EVERY ))" --out "$OUT" ${RUN_ARGS:-}
 if [ "$SEED" = 4711 ] && [ "$ITERS" = 12 ]; then
   .venv/bin/python experiments/reference/run_reference.py verify "$OUT" || true
 fi
