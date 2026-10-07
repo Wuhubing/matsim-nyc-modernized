@@ -135,13 +135,24 @@ def generate_config(out, dest, iterations):
 
 def memory_sample(pgid):
     rss=0;found=False
-    for line in command(['ps','-axo','pgid=,rss=']).splitlines():
+    for line in command(['ps','-eo','pgid=,rss=']).splitlines():   # works on macOS and Linux
         parts=line.split()
         if len(parts)==2 and int(parts[0])==pgid:rss+=int(parts[1])*1024;found=True
     return rss if found else None
 
+def linux_memory():
+    """Linux equivalent of the macOS sample: level 4 (critical) when available memory is below 5% of total."""
+    info={}
+    for line in open('/proc/meminfo'):
+        k,v=line.split(':',1);info[k]=int(v.split()[0])*1024
+    level=4 if info['MemAvailable']<0.05*info['MemTotal'] else 1
+    return level,info.get('SwapTotal',0)-info.get('SwapFree',0)
+
 def system_sample():
     result={'disk_free_bytes':shutil.disk_usage(ROOT).free,'pressure_level':None,'swap_used_bytes':None}
+    if sys.platform.startswith('linux'):
+        result['pressure_level'],result['swap_used_bytes']=linux_memory()
+        return result
     for key,args in [('pressure_level',['sysctl','-n','kern.memorystatus_vm_pressure_level']),('swap_used_bytes',['sysctl','-n','vm.swapusage'])]:
         try:
             value=command(args).strip()

@@ -39,6 +39,12 @@ Setting: 2025 pricing scenario, full population (389,301 agents), seed 4711, 16 
    Follow-up work on pseudo-simulation and learned surrogates is in progress under `experiments/surrogate/`;
    it is not yet a validated result.
 
+### Running on a server
+
+[docs/server-runbook.md](docs/server-runbook.md) takes a fresh Linux server from installation to a
+reproduction check and the 100-iteration multi-seed reference run
+(`experiments/reference/run_reference.py`), using only files in this repository.
+
 ### How "unchanged results" is verified
 
 - `scripts/VerifyPricingReplay.java`: replaying a full real iteration through the new code reproduces all
