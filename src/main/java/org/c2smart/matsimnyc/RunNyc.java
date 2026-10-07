@@ -101,12 +101,24 @@ public final class RunNyc {
             });
         }
         if (Boolean.getBoolean("nyc.onlineMetrics")) {
-            if (nyc.getPricing2025Links() == null) throw new IllegalArgumentException("nyc.onlineMetrics needs pricing2025Links");
-            IterationMetrics metrics = new IterationMetrics(scenario, nyc.getPricing2025Links(), config.controller().getOutputDirectory());
+            String metricLinks = System.getProperty("nyc.metricLinks", nyc.getPricing2025Links());
+            if (metricLinks == null) throw new IllegalArgumentException("nyc.onlineMetrics needs nyc.metricLinks or pricing2025Links");
+            IterationMetrics metrics = new IterationMetrics(scenario, metricLinks, config.controller().getOutputDirectory());
             controler.addOverridingModule(new AbstractModule() {
                 @Override public void install() {
                     addEventHandlerBinding().toInstance(metrics);
                     addControllerListenerBinding().toInstance(metrics);
+                }
+            });
+        }
+        if (Boolean.getBoolean("nyc.researchMetrics")) {
+            String polygon = System.getProperty("nyc.cohortPolygon");
+            if (polygon == null) throw new IllegalArgumentException("nyc.researchMetrics needs nyc.cohortPolygon");
+            ResearchMetrics research = new ResearchMetrics(scenario, Path.of(config.controller().getOutputDirectory()), Path.of(polygon));
+            controler.addOverridingModule(new AbstractModule() {
+                @Override public void install() {
+                    addEventHandlerBinding().toInstance(research);
+                    addControllerListenerBinding().toInstance(research);
                 }
             });
         }
