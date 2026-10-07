@@ -27,11 +27,19 @@ public final class LegacyCosts implements PersonArrivalEventHandler, LinkLeaveEv
     private final Scenario scenario;
     private final boolean zipAligned;
     private final Map<Id<Vehicle>, Id<Person>> drivers = new HashMap<>();
+    private static final Set<String> NETWORK_MODES = Set.of("car", "taxi", "FHV");
+    // Facility class by Id.index(): 0 none, 1 MTA, 2 PANYNJ. MTA wins, matching toll(String,double).
+    private final byte[] facility;
 
     @com.google.inject.Inject
     public LegacyCosts(EventsManager events, Scenario scenario) {
         this.events = events; this.scenario = scenario;
         this.zipAligned=org.matsim.core.config.ConfigUtils.addOrGetModule(scenario.getConfig(),NycModelConfig.class).getZipAligned();
+        int size=0;
+        for (Set<String> ids : java.util.List.of(PANYNJ, MTA)) for (String id : ids) size=Math.max(size,Id.createLinkId(id).index()+1);
+        facility=new byte[size];
+        for (String id : PANYNJ) facility[Id.createLinkId(id).index()]=2;
+        for (String id : MTA) facility[Id.createLinkId(id).index()]=1;
     }
 
     public static void validate(Scenario scenario) {
@@ -47,8 +55,11 @@ public final class LegacyCosts implements PersonArrivalEventHandler, LinkLeaveEv
         return switch (mode) { case "car" -> 5.19; case "taxi" -> 5.80; case "FHV" -> 5.25; default -> 0; };
     }
     static double toll(String link, double time) {
-        if (MTA.contains(link)) return 6.12;
-        if (!PANYNJ.contains(link)) return 0;
+        return toll(MTA.contains(link) ? 1 : PANYNJ.contains(link) ? 2 : 0, time);
+    }
+    private static double toll(int facility, double time) {
+        if (facility == 1) return 6.12;
+        if (facility != 2) return 0;
         double hour = (time % 86400) / 3600;
         return (hour >= 6 && hour < 10 || hour >= 16 && hour < 20) ? 12.50 : 10.50;
     }
@@ -61,7 +72,7 @@ public final class LegacyCosts implements PersonArrivalEventHandler, LinkLeaveEv
         charge(e.getTime(), e.getPersonId(), fixedCost(e.getLegMode()), "nyc-legacy-" + e.getLegMode());
     }
     @Override public void handleEvent(VehicleEntersTrafficEvent e) {
-        if (Set.of("car", "taxi", "FHV").contains(e.getNetworkMode())
+        if (NETWORK_MODES.contains(e.getNetworkMode())
                 && scenario.getPopulation().getPersons().containsKey(e.getPersonId()))
             drivers.put(e.getVehicleId(), e.getPersonId());
     }
@@ -69,7 +80,8 @@ public final class LegacyCosts implements PersonArrivalEventHandler, LinkLeaveEv
     @Override public void handleEvent(LinkLeaveEvent e) {
         // Archived NewScoring keeps all times >=20:00 off-peak, including after midnight.
         double tariffTime=zipAligned && e.getTime()>=86400?0:e.getTime();
-        charge(e.getTime(), drivers.get(e.getVehicleId()), toll(e.getLinkId().toString(), tariffTime), "nyc-legacy-facility-toll");
+        int i=e.getLinkId().index();
+        charge(e.getTime(), drivers.get(e.getVehicleId()), toll(i<facility.length?facility[i]:0, tariffTime), "nyc-legacy-facility-toll");
     }
     @Override public void reset(int iteration) { drivers.clear(); }
 }
