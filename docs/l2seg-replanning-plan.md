@@ -326,6 +326,42 @@ not after it. Our references still drift strongly at iteration 49, and our seed 
 of the mean for mode trips) is an order of magnitude below the paper's 3.6%, which would fit runs that were still
 moving; the paper does not say which iteration its seed test used, so this is an inference, not a finding.
 
+**What the paper concludes** (He, Zhou, Ma, Wang, Sha, Lee, Chow, Ozbay, Transport Policy; arXiv:2008.04762,
+abstract and Section 6). Model: first open-source agent-based model of NYC, 4% sample of an 8.24 M resident + 1.5 M
+non-resident 2016 population, road network calibrated by period and road type (speeds within 7.2% freeway / 17.1%
+arterial of INRIX, East River screenline +1.8%), validated on ten subway stations (8% mean error) and 42 road
+links (39.8% mean, 29% median). Policy (RPA schema 1, $9.18, and schema 2, $14 both ways): car trips of the
+charging-related segment fall by 127 k per day, about twice RPA's 59 k, with similar revenue (≈$1.09 B per year);
+37.3% of the Manhattan and 39.9% of the non-Manhattan segment lose, but average travel consumer surplus rises for
+both; the charging-related segment gains more than twice as much (≈110%+), which argues for spending revenue on
+outer-borough transit; going from $9.18 to $14 lowers citywide consumer surplus slightly while the
+charging-related segment still gains, so the higher price favours Manhattan at the city's expense; car trips of the
+charging-related segment fall throughout the day. All of this is measured after 100 iterations warm-started from a
+base state whose convergence is not shown, so the levels (e.g. 127 k) may contain the drift of Section 4.2 as well
+as the policy effect; the direction of the effects is less exposed than their size.
+
+### 4.4 Consequences for this study: what acceleration is measured against, and credibility
+
+**There is still a baseline, but not "time to equilibrium".** With a drifting model, "faster convergence" is
+undefined. What remains well defined: (i) *reproduce the end state of a fixed, documented protocol* (the
+100-iteration reference with its innovation schedule) at lower cost, within the seed spread of that end state;
+(ii) *reproduce policy differences* (indicator at τ1 minus at τ0, same protocol) at lower cost. (ii) is the
+quantity a policy study reports and may be less sensitive to the drift than levels; whether it is, is measurable
+from the existing runs plus one policy pair and should be checked before RQ5. Both baselines make the acceleration
+a statement about the protocol, not about NYC.
+
+**Credibility is not established for policy levels.** Over the reference runs the residents move away from the mode
+shares of the initial plans, which come from the survey-validated mode choice model (Section 4.3: `nonman` car
+0.31 → 0.58, walk halves), the East River screenline ends +75%, and the paper offers no convergence evidence to fall
+back on. A trustworthy base therefore comes before policy claims: (1) define and test convergence (a longer run, e.g.
+200 iterations, needs a resume step because the 12 h limit allows ≈120 iterations); (2) recalibrate the mode
+constants so that simulated mode shares stay at the validated shares (standard MATSim practice when the scoring
+function is not the estimated choice model), together with the capacity factors against the screenline, and decide
+on toll-aware routing; (3) only then run references and policies. Acceleration fits this order: calibration needs
+many runs (SPSA: 6 steps × 2 runs), so warm starts and targeted replanning are worth most inside the calibration
+loop, where cost is the obstacle and the end state is defined by the calibration targets rather than by an
+unproven equilibrium.
+
 **Indicators** (produced online by `IterationMetrics` on perf, plus MATSim's own stats): mean executed score,
 mode shares, car departures and completions, stuck agents, cordon entries, net charge revenue, transit waiting
 time, bridge and tunnel counts.
