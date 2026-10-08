@@ -88,13 +88,10 @@ public final class RunNyc {
             controler.addOverridingModule(new Pricing2025(scenario, nyc.getPricing2025Links()).module());
         }
         if (pricing.getTollLinksFile() != null) {
-            var scheme = CarOnlyRoadPricing.load(scenario, pricing.getTollLinksFile());
-            // Opt-in speed-up (C3.2): a scheme without any positive toll charges nothing, but its handlers cost
-            // ~8% of the events thread in the baseline. Must leave a 12-iteration run identical before default use.
-            if (Boolean.getBoolean("nyc.skipZeroTollPricing") && !CarOnlyRoadPricing.hasPositiveToll(scenario, pricing.getTollLinksFile()))
-                System.out.println("Road pricing scheme has no positive toll; RoadPricingModule not installed (nyc.skipZeroTollPricing)");
-            else
-                controler.addOverridingModule(new RoadPricingModule(scheme));
+            // Kept even when every toll is zero: the module also replaces the car travel disutility, and leaving it
+            // out changes routes from iteration 0 (C3.2 check, job 25305770 vs 25218415).
+            controler.addOverridingModule(new RoadPricingModule(
+                    CarOnlyRoadPricing.load(scenario, pricing.getTollLinksFile())));
         }
         if (pricing.getTollLinksFile() != null || nyc.getPricing2025Links() != null) {
             PricingAudit audit = new PricingAudit(config.controller().getOutputDirectory());

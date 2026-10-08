@@ -50,6 +50,48 @@ targeted replanning) is used inside this loop, where it pays most.
 3. Later: cache time-variant link capacities per time bin (15% of QSim threads, 36% of routing); MATSim internals,
    larger change.
 
+**Results so far (2026-10-08).**
+
+*C1, transit level of service* (`experiments/l2seg/transit_los.py`; RQ0 seed 4711 events of iterations 0 and 99;
+`outputs/rq0/transit-los/`). The schedule is consistent: 26 subway lines (7,897 departures), 234 bus lines (43,366),
+one rail line (147), one vehicle per departure and no vehicle assigned to overlapping departures; transit vehicles
+run on time (mean delay at stops < 0.5 min at every hour). Departure ids named after other GTFS trips are pt2matsim's
+merging of identical stop sequences, not an error. The problem is **bus capacity at the stops, not frequency**:
+
+| Mean / p90 / p99 wait (min) | Iteration 0 | Iteration 99 |
+|---|---|---|
+| Subway, all | 3.3 / 6.6 / 11.8 | 2.9 / 6.2 / 11.2 |
+| Bus, `man` | 32.7 / 79.4 / 465 | 6.2 / 11.2 / 68 |
+| Bus, `nonman` | 28.8 / 69.3 / 395 | 6.1 / 10.7 / 66 |
+| Bus, `outside` | 82.7 / 248 / 738 | **67.2 / 213 / 625** |
+| PT waits never ending in a boarding (`man` / `nonman` / `outside`) | 20,154 / 17,589 / 11,730 | 326 / 355 / **7,478** |
+
+At iteration 0, 32% of bus boardings saw at least one bus of the same route leave the stop first (vehicle full);
+at iteration 99 still 14%. Two effects: (1) at the start residents' bus demand exceeds bus capacity everywhere, and
+residents adapt by leaving buses (their waits are normal by iteration 99); (2) `outside` agents, who arrive at the
+Penn Station and Port Authority gateways and can only select among their stored plans, keep a permanent queue at the
+Midtown bus stops: W 34 St/8 Av alone accumulates 60,768 waiting hours at iteration 0 (83% `outside`) and 45,690 at
+99 (99% `outside`); the next stops (W 42 St/9 Av, W 34 St/7 Av, W 42 St/8 Av, 8 Av/W 23 St) are 99% `outside` at
+99. This matches the paper's remark that rail arrivals at Penn Station were overestimated. Consequences for C2: the
+gateway transit legs of `outside` agents (routes from the gateways, or letting them re-route) and the bus capacity
+relative to resident demand are input questions to settle before tuning mode constants; tuning constants alone
+would compensate for a queue that should not exist.
+
+*C3.1, cheaper ResearchMetrics: accepted.* Job 25305768 (commit 8fe6127) vs job 25172622: run identical to the
+expected values; `groups`, `group-modes`, `link-hours`, `schema.json` and `cohorts` byte-identical; `persons`
+identical except `plan_sha256` for 2–4 persons per iteration (6 persons in all). Those six persons' dumped plans
+differ in router travel-time estimates by 1 s and in a few re-routed legs, and the two jobs ran on different CPU
+models (EPYC 9654 vs 9474F); the recorder does not touch plans, so this is floating-point routing difference across
+CPU models, which leaves all simulated indicators identical. Timing (not on the same CPU, so indicative): mobsim
+iterations 1–9 160 → 139 s, wall 3,000 → 2,769 s; without the recorder mobsim was 122 s, so its mobsim overhead
+roughly halves. **Note for all identity checks:** pin comparisons to one CPU model (e.g. `--constraint` or a node
+list), since plan-level details can differ across models.
+
+*C3.2, skipping all-zero road pricing: rejected and removed.* Job 25305770 vs 25218415 (same CPU model): indicators
+differ from iteration 0 (car departures 305,517 vs 305,518, unfinished 61,127 vs 61,054, score −18.848 vs −18.813),
+because `RoadPricingModule` also replaces the car travel disutility, so routes change even with zero tolls; no
+measurable speed gain either (mobsim 125.7 vs 127.1 s).
+
 **Gate to resume RQ1–RQ6.** Over the last 10 iterations of the chosen protocol and three seeds: main-mode shares per
 subpopulation within agreed tolerances of the targets, East River screenline within ±5%, ten stations within the
 paper's 8% mean error (transfers removed), and the convergence check passed. The tolerances themselves are agreed
