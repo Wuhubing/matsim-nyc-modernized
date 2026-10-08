@@ -362,6 +362,26 @@ many runs (SPSA: 6 steps × 2 runs), so warm starts and targeted replanning are 
 loop, where cost is the obstacle and the end state is defined by the calibration targets rather than by an
 unproven equilibrium.
 
+**When does the drift start, and does iteration 49 match the paper? (2026-10-08, read-only, `outputs/rq0/transit-check/`.)**
+Share of trips whose main mode differs from iteration 0 (half the summed absolute change of `modestats` shares),
+all three seeds alike: 3.6% at iteration 1, > 5% from iteration 3, > 10% from iteration 6–7, 13.6% at 10, 19% at 20,
+27% at 49, 33% at 99. There is no initial stable phase: agents leave the survey-validated mode shares from the first
+replanning on, and transit and walk are left first (taxi and FHV pick them up before the car does; the car share
+alone is 2 pp above iteration 0 only at iteration 10). By subpopulation (selected plans, seed 4711):
+
+| Iteration | `man` PT | `man` walk | `man` taxi+FHV | `nonman` PT | `nonman` car |
+|---:|---:|---:|---:|---:|---:|
+| 0 (initial) | 0.509 | 0.318 | 0.052 | 0.306 | 0.313 |
+| 10 | 0.353 | 0.249 | 0.170 | 0.235 | 0.325 |
+| 30 | 0.289 | 0.200 | 0.264 | 0.186 | 0.395 |
+| 50 | 0.268 | 0.175 | 0.312 | 0.158 | 0.454 |
+| 90 | 0.269 | 0.150 | 0.376 | 0.123 | 0.576 |
+
+Iteration 49/50 does **not** match the paper's validation: East River screenline +64 to +69% (paper +1.8%), ten
+subway stations +46% incl. transfers at iteration 50 (paper +8%). The screenline is within ±10% of the counts only
+around iterations 1–3 (−8% at 1, +25% at 5). So the paper's validated state is not reproduced at any iteration of
+this setup with these inputs; the 50-iteration hypothesis is ruled out.
+
 **Indicators** (produced online by `IterationMetrics` on perf, plus MATSim's own stats): mean executed score,
 mode shares, car departures and completions, stuck agents, cordon entries, net charge revenue, transit waiting
 time, bridge and tunnel counts.
