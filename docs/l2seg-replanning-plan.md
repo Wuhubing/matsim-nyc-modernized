@@ -7,6 +7,54 @@ place as each stage finishes.
 12-iteration acceptance runs are listed there. No study run (RQ1–RQ6) has started. The RQ0 references now running
 on ORCD are **not** the configuration this plan assumes (Section 4.1); this needs a decision before σ_x is used.
 
+## 0. Revised plan, 2026-10-08: credibility of the base model first
+
+**Why the plan changed.** RQ0 (Sections 4.2–4.4) showed that the base model does not settle while innovation is on,
+that agents leave the survey-validated mode shares from the first replanning on (3.6% of trips change main mode at
+iteration 1, 27% by 49, 33% by 99; `nonman` car 0.31 → 0.58), that the East River screenline ends +75% (paper +1.8%)
+and ten validation stations +46 to +50% (paper +8%), and that the paper itself shows no convergence. A study that
+accelerates this protocol would measure a protocol, not NYC. Sections 1–13 below stay as the target design; **RQ1–RQ6
+and the open decisions on the T\* rule (4.2) and the scenario choice (4.1) are paused** until the base passes the
+gate at the end of this section.
+
+Three workstreams, in this order of dependency; C3 runs in parallel.
+
+**C1 — Diagnose transit level of service (no simulation; started 2026-10-08).** At iteration 0 a PT leg waits 58 min
+on average (incl. censored) and 4.6% of PT legs never finish. Questions, each answered from existing outputs (RQ0
+seed 4711 events of iterations 0 and 99, schedule, vehicles):
+1. Denied boarding vs frequency: for each boarding, how many vehicles of the boarded line left the stop while the
+   agent waited (capacity), versus long headways (schedule).
+2. Schedule completeness: departures per line and day in `separated-schedule.xml.gz` against GTFS-level expectations
+   for major subway lines and buses.
+3. Vehicle delays: `VehicleArrivesAtFacility` delay by mode and hour (transit on separate links should run on time).
+4. Where and when waits concentrate (stops, lines, hours).
+*Output:* a cause with evidence, written to Section 4.5. *Decision point:* if supply is wrong (missing trips,
+mis-assigned vehicles, delays), fix the input and re-run a 12-iteration check before any calibration; if supply is
+plausible, go to C2.
+
+**C2 — Recalibration design (after C1).** Targets: main-mode shares per subpopulation of the initial plans (from the
+survey-validated choice model) or the 2017 Citywide Mobility Survey, East River screenline (±5% daily, as in the
+paper), the paper's ten subway stations (turnstile entries; transfers removed from the simulated count). Parameters:
+mode constants per subpopulation (iterative ln(target/simulated) updates, standard MATSim practice), the 12
+capacity factors (SPSA as in the paper), and the decision on toll-aware routing for facility tolls (Section 4.2).
+Protocol: fixed iteration schedule and an explicit convergence check (10-iteration means within 2σ, Section 4.2,
+plus a longer run of 150–200 iterations with a resume step, since 12 h allows ≈120 iterations). *Output:* a
+calibration plan with run counts and cost, for approval before any calibration run. Acceleration (warm starts,
+targeted replanning) is used inside this loop, where it pays most.
+
+**C3 — Exact engineering speed-ups (parallel; each must leave a 12-iteration run identical).**
+1. Cheaper ResearchMetrics (26% of the events thread): array-indexed person, vehicle and link-hour state, link-id
+   hashes computed once; acceptance: research files and IterationMetrics byte-identical to job 25172622.
+2. Skip road pricing when the toll file has no positive toll (baseline; 8% of the events thread); acceptance:
+   IterationMetrics and scores identical to job 25218415 (which equals the seed-4711 reference).
+3. Later: cache time-variant link capacities per time bin (15% of QSim threads, 36% of routing); MATSim internals,
+   larger change.
+
+**Gate to resume RQ1–RQ6.** Over the last 10 iterations of the chosen protocol and three seeds: main-mode shares per
+subpopulation within agreed tolerances of the targets, East River screenline within ±5%, ten stations within the
+paper's 8% mean error (transfers removed), and the convergence check passed. The tolerances themselves are agreed
+before the calibration runs start.
+
 Evidence cited below comes from branch `perf/simulation-redundancy` (head `75abcdd`), referred to as *perf*.
 The method being adapted is Ouyang, Li, Ma, Wu, *Learning to Segment for Vehicle Routing Problems*,
 arXiv:2507.01037v2 (2025), referred to as *L2Seg*.
