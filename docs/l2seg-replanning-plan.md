@@ -206,6 +206,25 @@ the gap is not caused by running 100 instead of 50 iterations. Next steps, in or
 C2SMART code routed with facility tolls; test toll-aware routing for `LegacyCosts` in a 12-iteration run (this
 changes results, so it is a model decision); only then decide on SPSA recalibration (≈20 h).
 
+**Toll-routing check (2026-10-07, 12 iterations, baseline, seed 4711, innovation to 79).** The archived C2SMART
+code (Zenodo 7430184, MD5 as in PROVENANCE.md; `Run.java` emits `TollPersonEvent1/2`, scored in `NewScoring`)
+also charges facility tolls only in scoring, so toll-blind routing is the original model's behaviour, not a
+porting loss. Job 25218415 (unchanged code) reproduces the first 12 iterations of the seed-4711 reference exactly
+(all IterationMetrics and scores), so the current branch and the RQ0 runs are interchangeable. Job 25218416 adds
+the facility tolls to car routing (`--legacy-toll-routing`, diagnostic only, off by default):
+
+| Iteration 11 | Screenline | Queens-Midtown | Hugh Carey | Queensboro | Williamsburg | Brooklyn | Car share | Score |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| Toll-blind (control) | +51% | +185% | +157% | +13% | −10% | +23% | 0.2789 | −5.065 |
+| Toll-aware routing | +48% | +76% | +72% | +49% | +11% | +52% | 0.2776 | −5.348 |
+
+Toll-aware routing moves traffic from the two tunnels to the free bridges (at iteration 0 the tunnels are 70–86%
+*below* their counts) but leaves the screenline total almost unchanged. **The screenline excess is a demand
+effect, not a route-split effect:** the total crossing volume starts 18% below the counts and grows with the car
+share over the iterations (Finding 2). Capacity recalibration (what SPSA adjusts) is therefore unlikely to remove
+it alone; the drift of mode choice towards car needs to be understood first (scoring parameters, transit
+crowding, the `outside` background traffic are candidates).
+
 **Indicators** (produced online by `IterationMetrics` on perf, plus MATSim's own stats): mean executed score,
 mode shares, car departures and completions, stuck agents, cordon entries, net charge revenue, transit waiting
 time, bridge and tunnel counts.
