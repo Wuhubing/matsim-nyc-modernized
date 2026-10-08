@@ -257,6 +257,63 @@ person in the initial plans against the paper's population summary; subway stati
 iterations 0 and 99) against the paper's turnstile validation (e.g. Times Square 191,425 observed, 202,363
 simulated in the paper); the mode constants and cost coefficients in the scoring configuration.
 
+**Checks done (2026-10-07).** Outputs in `outputs/rq0/transit-check/` (scripts `experiments/l2seg/plans_stats.py`,
+`experiments/l2seg/ridership.py`, Slurm jobs 25224295 and 25224705).
+
+1. *Real ridership.* MTA reports 2016 average weekday ridership of 5,655,755 subway entries and 2,038,119 NYCT bus
+   rides ([MTA](https://www.mta.info/agency/new-york-city-transit/subway-bus-ridership-2019),
+   [Baruch NYC Data](https://www.baruch.cuny.edu/nycdata/travel/mta-subwayridership.html)). Turnstile entries do not
+   count in-system transfers, so vehicle boardings are higher; ≈9–10 M boardings per day is the order of magnitude.
+2. *Initial and final plans (selected plans; trips split at activities; main mode = first non-walk leg).*
+
+   | Subpopulation | Trips/person | PT | Car | Taxi | FHV | Walk |
+   |---|---:|---|---|---|---|---|
+   | `man` (123,290) | 3.35 | 0.509 → 0.268 | 0.091 → 0.173 | 0.031 → 0.186 | 0.021 → 0.192 | 0.318 → 0.150 |
+   | `nonman` (205,808) | 3.28 | 0.306 → 0.123 | 0.313 → **0.576** | 0.016 → 0.089 | 0.003 → 0.026 | 0.266 → 0.135 |
+   | `outside` (60,203) | 2.45 | 0.460 → 0.458 | 0.447 → 0.447 | – | – | 0.093 → 0.095 |
+
+   (initial = `cold.xml.gz`, final = seed-4711 reference `output_plans`). Trip rates are plausible. Linked PT trips
+   are ≈485 k initially (≈12.1 M/day scaled by 25, about twice the ≈6–7 M linked transit trips implied by the
+   ridership above) and ≈261 k at the end (≈6.5 M/day, close to reality). The initial plans' PT legs (1.71 per
+   `man` resident) are not comparable with simulated legs, because routing splits trips into several PT legs.
+3. *Subway boardings at the paper's ten validation stations* (all boardings incl. transfers, × 25; turnstile data
+   exclude transfers, so transfer hubs are overstated):
+
+   | Station | Real (turnstile) | Paper simulated | Iteration 0 | Iteration 99 |
+   |---|---:|---:|---:|---:|
+   | Times Square | 202,363 | 191,425 | 225,800 (+12%) | 183,525 (−9%) |
+   | Grand Central | 158,580 | 170,025 | 226,775 (+43%) | 185,400 (+17%) |
+   | 34 St – Penn Station | 173,108 | 256,825 | 237,700 (+37%) | 221,450 (+28%) |
+   | 34 St – Herald Sq | 125,682 | 124,500 | 246,875 (+96%) | 214,050 (+70%) |
+   | 14 St – Union Sq | 106,718 | 97,825 | 237,300 (+122%) | 176,625 (+66%) |
+   | Fulton St | 85,440 | 83,025 | 102,200 (+20%) | 79,350 (−7%) |
+   | Canal St | 70,806 | 78,250 | 151,175 (+114%) | 119,675 (+69%) |
+   | 59 St – Columbus Circle | 73,836 | 75,050 | 287,950 (+290%) | 208,625 (+183%) |
+   | Atlantic Av – Barclays Ctr | 42,711 | 59,350 | 161,700 (+279%) | 117,650 (+175%) |
+   | Jackson Hts – Roosevelt Av | 52,296 | 41,200 | 210,900 (+303%) | 133,025 (+154%) |
+   | **Ten stations** | 1,091,540 | 1,177,475 (+8%) | 2,088,375 (+91%) | 1,639,375 (+50%) |
+   | All subway boardings | ≈5.7 M entries | – | 9.85 M | 6.51 M |
+
+   Stations without large transfers (Times Square, Fulton St) end within 10%; the large overshoots are at transfer
+   hubs, where this count includes transfers. Subway volume falls from ≈1.7× to ≈1.1–1.2× the entry count.
+4. *Scoring.* In-vehicle time has zero marginal utility for car, taxi, FHV, ride and PT (only walk and bike have
+   negative per-hour terms; PT has waiting −1.33/h and access/egress/transfer terms); time spent travelling costs
+   only the forgone activity utility (performing 1.747/h). This follows the paper's normalisation (Section 4.1.1,
+   Table 2: car travel time set to 0, other modes relative to it) and the PT constants match after the $2.75 fare
+   (3.126 − 0.0622·2.75 = 2.955 vs 2.95). Differences from Table 2: taxi/FHV travel time (+1.75/h for `man` in the
+   paper, 0 here), carpool travel time (+2.35 / +0.36 in the paper, 0 here), `nonman` cost coefficient (0 in the
+   paper, 0.0544 here); none of them makes driving more attractive.
+
+**Revised reading.** Transit is overloaded at the start (initial demand ≈2× real), so agents leave it, and by
+iteration 99 subway volumes are roughly realistic. But the shift does not stop at transit: walk trips halve too,
+and residents end with 58% car (`nonman`) and 55% car+taxi+FHV (`man`), far above NYC survey shares. With in-vehicle
+time free for road modes and congestion felt only through lost activity time, road modes keep gaining as long as
+innovation is on. The paper validated the base model with 50-iteration runs (and warm-started its policy runs from
+that base for 100 iterations, which is the setting of option (a) in Section 4.1); our 100-iteration cold runs keep
+drifting past that point. Candidate next steps: compare mode shares at iteration 49 with the paper's validation
+period; check whether the paper's base used the same strategy weights and plan memory; treat the iteration count
+of the base run as part of the calibration rather than as a free choice.
+
 **Indicators** (produced online by `IterationMetrics` on perf, plus MATSim's own stats): mean executed score,
 mode shares, car departures and completions, stuck agents, cordon entries, net charge revenue, transit waiting
 time, bridge and tunnel counts.
