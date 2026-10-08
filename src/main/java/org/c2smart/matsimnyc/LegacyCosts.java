@@ -51,6 +51,29 @@ public final class LegacyCosts implements PersonArrivalEventHandler, LinkLeaveEv
             }
     }
 
+    /** Diagnostic option (-Dnyc.legacyTollRouting=true), off by default: the archived model, like this port, charges
+     * facility tolls only in scoring, so car routing treats tolled bridges and tunnels as free. This adds the same
+     * tolls, in the same utility units, to the car travel disutility. It replaces the car disutility binding, so
+     * it must not be combined with another toll-aware router (RunNyc checks this). */
+    public static org.matsim.core.controler.AbstractModule tollAwareRouting(Scenario scenario) {
+        boolean zipAligned = org.matsim.core.config.ConfigUtils.addOrGetModule(scenario.getConfig(), NycModelConfig.class).getZipAligned();
+        return new org.matsim.core.controler.AbstractModule() {
+            @Override public void install() {
+                var base = new org.matsim.core.router.costcalculators.RandomizingTimeDistanceTravelDisutilityFactory("car", scenario.getConfig());
+                addTravelDisutilityFactoryBinding("car").toInstance(tt -> {
+                    var d = base.createTravelDisutility(tt);
+                    return new org.matsim.core.router.util.TravelDisutility() {
+                        public double getLinkTravelDisutility(org.matsim.api.core.v01.network.Link l, double time, Person p, Vehicle v) {
+                            double tariffTime = zipAligned && time >= 86400 ? 0 : time;
+                            return d.getLinkTravelDisutility(l, time, p, v) + toll(l.getId().toString(), tariffTime) * MONEY_UTILITY;
+                        }
+                        public double getLinkMinimumTravelDisutility(org.matsim.api.core.v01.network.Link l) { return d.getLinkMinimumTravelDisutility(l); }
+                    };
+                });
+            }
+        };
+    }
+
     static double fixedCost(String mode) {
         return switch (mode) { case "car" -> 5.19; case "taxi" -> 5.80; case "FHV" -> 5.25; default -> 0; };
     }

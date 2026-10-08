@@ -173,7 +173,8 @@ def run(args):
     extra = (['-Dnyc.replanningLog=true'] if args.replanning_log else []) \
         + ([f'-Dnyc.targeted.priority={Path(args.targeted_priority).resolve()}'] if args.targeted_priority else []) \
         + ([f'-Dnyc.targeted.epsilon={args.targeted_epsilon}'] if args.targeted_epsilon is not None else []) \
-        + (['-Dnyc.researchMetrics=true', f'-Dnyc.cohortPolygon={polygon}'] if args.research else [])
+        + (['-Dnyc.researchMetrics=true', f'-Dnyc.cohortPolygon={polygon}'] if args.research else []) \
+        + (['-Dnyc.legacyTollRouting=true'] if args.legacy_toll_routing else [])
     cmd = [java(), '-Duser.language=en', '-Duser.country=US', f'-Xmx{args.heap}', '-Dnyc.onlineMetrics=true',
            f'-Dnyc.metricLinks={metric_links}', *extra, '-Xlog:gc*:file=' + str(dest/'gc.log') + ':time,uptime,level,tags']
     if args.jfr:
@@ -190,7 +191,7 @@ def run(args):
             if path.is_absolute() and path.is_file(): files[str(path)] = sha256(path)
     meta = {'schema_version': 3, 'seed': args.seed, 'scenario': args.scenario, 'iterations': args.iterations,
             'events': args.events, 'events_interval': events_interval, 'plans_interval': plans_every,
-            'research': args.research, 'replanning_log': args.replanning_log,
+            'research': args.research, 'replanning_log': args.replanning_log, 'legacy_toll_routing': args.legacy_toll_routing,
             'targeted_priority': args.targeted_priority, 'targeted_epsilon': args.targeted_epsilon,
             'innovation_until': args.innovation_until, 'innovation_fraction': 0.8 if args.innovation_until is None else 1.0,
             'plans': str(plans), 'expected_persons': json.loads((INPUTS/'cold.json').read_text())['persons'] if plans == INPUTS/'cold.xml.gz' and (INPUTS/'cold.json').exists() else None,
@@ -335,6 +336,7 @@ def main():
     r.add_argument('--cohort-polygon', default=str(ROOT/'scenarios/nyc-schema1/cordon-outline.geojson'), help='GeoJSON polygon defining the charging-related cohort')
     r.add_argument('--jfr', action='store_true', help='bounded Java Flight Recorder profile')
     r.add_argument('--min-free-gib', type=float, default=5)
+    r.add_argument('--legacy-toll-routing', action='store_true', help='diagnostic: let car routing see the historical facility tolls (baseline only; changes results)')
     r.add_argument('--events-threads', type=int, help="eventsManager.numberOfThreads (MATSim default 1); must be verified against the expected values")
     s = sub.add_parser('summarize'); s.add_argument('run_dir')
     v = sub.add_parser('verify'); v.add_argument('run_dir')

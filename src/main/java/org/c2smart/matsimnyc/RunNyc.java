@@ -100,6 +100,12 @@ public final class RunNyc {
                 }
             });
         }
+        if (Boolean.getBoolean("nyc.legacyTollRouting")) {
+            if (!nyc.getRestoredCosts()) throw new IllegalArgumentException("nyc.legacyTollRouting needs restoredCosts");
+            if (nyc.getPricing2025Links() != null || (pricing.getTollLinksFile() != null && !pricing.getTollLinksFile().endsWith("control-zero-tolls.xml")))
+                throw new IllegalArgumentException("nyc.legacyTollRouting is only implemented for the baseline (zero road-pricing tolls)");
+            controler.addOverridingModule(LegacyCosts.tollAwareRouting(scenario));
+        }
         if (Boolean.getBoolean("nyc.onlineMetrics")) {
             String metricLinks = System.getProperty("nyc.metricLinks", nyc.getPricing2025Links());
             if (metricLinks == null) throw new IllegalArgumentException("nyc.onlineMetrics needs nyc.metricLinks or pricing2025Links");
