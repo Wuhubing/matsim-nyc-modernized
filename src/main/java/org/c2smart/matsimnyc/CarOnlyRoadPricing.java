@@ -9,6 +9,15 @@ import org.matsim.vehicles.Vehicle;
 public final class CarOnlyRoadPricing {
     private CarOnlyRoadPricing() {}
 
+    /** True if any cost amount in the toll file is positive. */
+    public static boolean hasPositiveToll(Scenario scenario, String filename) {
+        try (var in = ConfigGroup.getInputFileURL(scenario.getConfig().getContext(), filename).openStream()) {
+            var m = java.util.regex.Pattern.compile("amount=\"([^\"]+)\"").matcher(new String(in.readAllBytes()));
+            while (m.find()) if (Double.parseDouble(m.group(1)) > 0) return true;
+            return false;
+        } catch (java.io.IOException e) { throw new java.io.UncheckedIOException(e); }
+    }
+
     public static RoadPricingScheme load(Scenario scenario, String filename) {
         RoadPricingSchemeImpl base = RoadPricingUtils.addOrGetMutableRoadPricingScheme(scenario);
         new RoadPricingReaderXMLv1(base).parse(
