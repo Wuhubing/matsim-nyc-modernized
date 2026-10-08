@@ -178,13 +178,33 @@ alone but only by matching the 100-iteration end state; (ii) per the runbook, a 
 is needed to see whether the drift itself stops; (iii) the oracle and warm-start comparisons (RQ2, RQ5) remain
 well defined, because they compare end states.
 
-**Finding 3: bridge and tunnel counts are far outside 5% (calibration risk in Section 12 has materialised).**
-Daily simulated volumes over the 44 count stations (MATSim's scaled volumes, `countscompare.txt`) end **+37%**
-above the 2016 counts in total; per station the median error is +28% (quartiles −3% / +75%) and only 2 of 44
-stations are within 5%. The error grows with the car share (−34% at iteration 0, +26% at 40). Since the counts
-predate the charge, the no-charge baseline is the right scenario for this check. Caveat: this aggregate is a daily
-total; the paper's 5% may refer to a different aggregation, which should be checked before acting. If confirmed,
-the runbook's next step is recalibration (SPSA, 6 steps × 2 runs × 50 iterations, ≈20 h) before policy runs.
+**Finding 3: the East River screenline is far outside the paper's 5% (calibration risk in Section 12 has
+materialised).** What the paper says (arXiv:2008.04762, Sections 3.2 and 4.2–4.3, read 2026-10-07): the network
+was calibrated with SPSA on 12 capacity factors (2 road types × 6 periods) against 19 bridges/tunnels (Table 1),
+50 MATSim iterations per SPSA step, 6 steps "until the simulated screenline volumes were observed to be within 5%
+of the observed data"; the **5% applies to the East River screenline** (Queensboro, Williamsburg and Manhattan
+bridges, Queens-Midtown and Hugh Carey tunnels, Brooklyn Bridge), whose total daily simulated volume ended
+**+1.8%** from the counts (10.3% mean error per time period); arterial speeds were within 17.1% of INRIX and key
+road-corridor counts had a 39.8% mean / 29% median difference in validation. A 44-station total, as first reported
+here, is not the paper's measure; that number (+37%) is withdrawn as a calibration test.
+
+Mapping the count links to facilities by their coordinates (`count.xml.gz` has no names): Queensboro = stations
+5–8 and 44, Queens-Midtown = 1 and 21, Williamsburg = 16, 31, 32, Brooklyn = 19 and 20, Hugh Carey = 17 and 37;
+**the Manhattan Bridge has no count station** in the file, so the screenline below has five facilities on both
+sides (observed 509,173 vehicles per day). Baseline references, daily totals:
+
+| | Iteration 0 | 20 | 49 | 79 | 90–99 mean |
+|---|---:|---:|---:|---:|---:|
+| Screenline error, seeds 4711 / 4712 / 4713 | −18% | +60 to +63% | +64 to +69% | +69 to +72% | **+74 to +76%** |
+
+At iteration 99 by facility: Queens-Midtown **+222 to +224%**, Hugh Carey **+213 to +221%**, Brooklyn +43 to +48%,
+Queensboro +30 to +32%, Williamsburg +2%. The excess is concentrated on the two MTA-tolled tunnels. Likely cause
+(not yet tested): the facility tolls (`LegacyCosts`: $6.12 at MTA tunnels, PANYNJ tolls) are charged only as
+score money events; the router's car disutility sees only the road-pricing scheme, which in the baseline is the
+all-zero control file, so re-routing treats the tolled tunnels as free. The 50-iteration point (+64 to +69%) shows
+the gap is not caused by running 100 instead of 50 iterations. Next steps, in order: check how the archived
+C2SMART code routed with facility tolls; test toll-aware routing for `LegacyCosts` in a 12-iteration run (this
+changes results, so it is a model decision); only then decide on SPSA recalibration (≈20 h).
 
 **Indicators** (produced online by `IterationMetrics` on perf, plus MATSim's own stats): mean executed score,
 mode shares, car departures and completions, stuck agents, cordon entries, net charge revenue, transit waiting
