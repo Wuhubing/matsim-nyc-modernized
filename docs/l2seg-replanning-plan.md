@@ -314,6 +314,18 @@ drifting past that point. Candidate next steps: compare mode shares at iteration
 period; check whether the paper's base used the same strategy weights and plan memory; treat the iteration count
 of the base run as part of the calibration rather than as a free choice.
 
+**Did the paper's model converge? Not shown (paper read 2026-10-08).** The paper describes MATSim generically as
+iterating "until the agents' scores converge" (Section 2) and cites Djavadian and Chow (2017a) for stochastic user
+equilibrium in sufficiently sampled agent-based models, but it reports no score-versus-iteration curve, no
+convergence criterion and no iteration count for the base scenario. Its only stability evidence is a seed test
+(Section 4.1.3, item 6): four baseline runs with a standard deviation of trips per mode of at most 3.6% of the mean,
+which measures seed spread, not stability over iterations. Calibration used 50 iterations per SPSA step; the policy
+runs started from "the final plan set obtained from the base MATSim-NYC scenario" and ran 100 iterations. Mode shares
+were validated only for the synthetic population before simulation (against the 2017 Citywide Mobility Survey),
+not after it. Our references still drift strongly at iteration 49, and our seed spread at iterations 90–99 (≈0.2%
+of the mean for mode trips) is an order of magnitude below the paper's 3.6%, which would fit runs that were still
+moving; the paper does not say which iteration its seed test used, so this is an inference, not a finding.
+
 **Indicators** (produced online by `IterationMetrics` on perf, plus MATSim's own stats): mean executed score,
 mode shares, car departures and completions, stuck agents, cordon entries, net charge revenue, transit waiting
 time, bridge and tunnel counts.
