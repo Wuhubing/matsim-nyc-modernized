@@ -129,6 +129,63 @@ from the baseline references, checking it at τ = 1 with one extra seed set; or 
 references as originally planned (3 more full runs, Section 10). Until decided, the tolerance table below is
 not filled in.
 
+### 4.2 RQ0 results for the baseline references (finished 2026-10-07, wall 8.7–9.5 h)
+
+All three runs completed (8 h 41 min, 9 h 30 min, 8 h 48 min with ResearchMetrics and JFR on; within the 12 h limit),
+and all three research audits passed. Tolerance table (`experiments/l2seg/tolerance.py`, window 90–99,
+`outputs/rq0/tolerance-baseline.json`):
+
+| Indicator | x̄ | σ | σ / \|x̄\| |
+|---|---:|---:|---:|
+| Mean executed score | 6.769 | 0.0065 | 0.1% |
+| Car share | 0.4261 | 0.00074 | 0.17% |
+| PT share | 0.2116 | 0.00005 | 0.02% |
+| Walk / taxi / FHV / ride / bike share | 0.1350 / 0.1107 / 0.0787 / 0.0203 / 0.0166 | 0.00008 / 0.00057 / 0.00011 / 0.00003 / 0.00008 | ≤ 0.5% |
+| Car departures / completions | 522,804 / 514,621 | 920 / 917 | 0.18% |
+| Unfinished persons | 16,486 | 45 | 0.27% |
+| Cordon entries (2025 entry links) | 34,846 | 134 | 0.39% |
+| Transit waiting, person-hours | 229,770 | 579 | 0.25% |
+| Bridge/tunnel count total, simulated | 2,544,100 | 3,790 | 0.15% |
+| Net charge revenue | 0 | 0 | (no charge) |
+
+**Finding 1: the T\* rule in this section is degenerate and must be restated (overturns the rule as written).**
+σ is the spread across seeds of 10-iteration *means*, but T\* compares *single* iterations with 2σ. Within
+iterations 90–99 a single run fluctuates more than that: the within-run standard deviation is 2.0–2.1 σ for the
+score and 3.1–4.4 σ for the PT share, so only 40–60% of the references' own last iterations fall inside 2σ and
+**T\* is undefined for all three references**. The rule was fixed before seeing results, but it cannot be satisfied
+even by the runs that define it, so it is a definition error, not a threshold to tune. Proposed restatement with
+the same 2σ: T\* is the first t such that the mean over t..t+9 is within 2σ of x̄ for every indicator (the same
+quantity σ is computed from). With it, **T\* = 88, 89, 89**. Not yet adopted; needs agreement.
+
+**Finding 2: the runs do not settle while innovation is on (answers RQ0's main question; overturns the
+expectation in the runbook that runs settle before iteration 80).** 10-iteration means of seed 4711:
+
+| Iterations | Score | Car share | PT share | Unfinished | Count error (total) |
+|---|---:|---:|---:|---:|---:|
+| 0–9 | −11.25 | 0.261 | 0.341 | 43,692 | −16% |
+| 20–29 | −0.65 | 0.313 | 0.262 | 22,372 | +18% |
+| 40–49 | 2.14 | 0.352 | 0.236 | 18,944 | +26% |
+| 60–69 | 3.50 | 0.379 | 0.221 | 17,862 | +29% |
+| 70–79 | 4.00 | 0.391 | 0.215 | 17,724 | +30% |
+| 80–89 | 6.67 | 0.426 | 0.212 | 16,536 | +36% |
+| 90–99 | 6.77 | 0.426 | 0.212 | 16,460 | +37% |
+
+Score and car share still rise steadily at iteration 79; the step at 80 is the innovation switch-off (random
+innovators stop executing non-best plans), after which everything is flat. So the "steady state" of this schedule is
+produced by switching innovation off, and its level depends on how long innovation ran. Consequences: (i) a shorter
+schedule would end at a different state (lower car share), so "fewer iterations" cannot be judged against T\*
+alone but only by matching the 100-iteration end state; (ii) per the runbook, a longer horizon (150–200 iterations)
+is needed to see whether the drift itself stops; (iii) the oracle and warm-start comparisons (RQ2, RQ5) remain
+well defined, because they compare end states.
+
+**Finding 3: bridge and tunnel counts are far outside 5% (calibration risk in Section 12 has materialised).**
+Daily simulated volumes over the 44 count stations (MATSim's scaled volumes, `countscompare.txt`) end **+37%**
+above the 2016 counts in total; per station the median error is +28% (quartiles −3% / +75%) and only 2 of 44
+stations are within 5%. The error grows with the car share (−34% at iteration 0, +26% at 40). Since the counts
+predate the charge, the no-charge baseline is the right scenario for this check. Caveat: this aggregate is a daily
+total; the paper's 5% may refer to a different aggregation, which should be checked before acting. If confirmed,
+the runbook's next step is recalibration (SPSA, 6 steps × 2 runs × 50 iterations, ≈20 h) before policy runs.
+
 **Indicators** (produced online by `IterationMetrics` on perf, plus MATSim's own stats): mean executed score,
 mode shares, car departures and completions, stuck agents, cordon entries, net charge revenue, transit waiting
 time, bridge and tunnel counts.
@@ -339,6 +396,18 @@ CPU use rises with the thread count, time falls by at most 5–13%, inside the �
 limit is therefore not the number of event threads: a single heavy handler (each handler runs on one thread) or
 QSim's per-second synchronisation remains. The JFR profiles of the RQ0 runs (written when they end) are the next
 step to name it. The option stays available; it is safe but not worth relying on for speed.
+
+**JFR of RQ0 seed 4711 (whole run, 3.06 M execution samples).** QSim network threads 39% of samples, the single
+events thread 35%, routing during replanning 18%, main thread 6%. The events-thread share means it is busy for
+roughly 70% of the run's wall time, i.e. most of mobsim: it is the critical path. Inside it: **ResearchMetrics
+26%**, travel-time collection (`TravelTimeCalculator`) 17%, dispatch and queueing 16%, scoring 8%,
+`VolumesAnalyzer` 7%, **road pricing with the all-zero control toll file 8%** (`RoadPricingTollCalculator` +
+`CalcAverageTolledTripLength`), `EventsToLegs` 3%; the top frames are hash-map lookups. In QSim threads and the
+router, time-variant link attributes (archive capacity factors) cost 15% and 36% respectively, mostly binary
+searches. Exact speed-ups to test, in order: (1) a cheaper ResearchMetrics (index arrays instead of hash maps and
+link-id strings per event) or leaving it off for runs that only need indicators; (2) not installing road pricing
+when the toll file has no positive toll (baseline only); (3) caching time-variant capacities per time bin. Each
+is checked with the 12-iteration identity test.
 
 **Resources for 100-iteration runs with the recorder** (events and plans every 10 iterations): ≈7.5 GB records +
 ≈12 GB events (iterations 0, 10, …, 90, 99) + ≈7 GB plans ≈ **27–30 GB per run**, so outputs belong on scratch,
