@@ -225,6 +225,38 @@ share over the iterations (Finding 2). Capacity recalibration (what SPSA adjusts
 it alone; the drift of mode choice towards car needs to be understood first (scoring parameters, transit
 crowding, the `outside` background traffic are candidates).
 
+### 4.3 Why the car share drifts (diagnosis in progress, 2026-10-07)
+
+From the RQ0 seed-4711 records (`research/group-modes-N`, IterationMetrics), no new runs. Leg departures, iteration
+0 → 99:
+
+| Subpopulation | Car | PT | Taxi | FHV |
+|---|---|---|---|---|
+| `outside` (background, selection only) | 61,604 → 62,208 (flat) | 112,770 → 119,803 | – | – |
+| `nonman` | 207,484 → 388,612 (+87%) | 478,031 → 204,230 (**−57%**) | 10,281 → 60,340 | 1,886 → 17,827 |
+| `man` | 36,429 → 71,696 (+97%) | 496,124 → 283,103 (**−43%**) | 12,254 → 76,812 | 8,179 → 79,521 |
+
+The background traffic is ruled out. Residents leave transit for car, taxi and FHV. Transit service at the start
+is very poor and improves as riders leave:
+
+| Iteration | PT legs | PT legs unfinished at 30 h | Waiting per PT leg (incl. censored) | PT leg | Car leg |
+|---:|---:|---:|---:|---:|---:|
+| 0 | 1,086,925 | 4.6% | 58 min | 34 min | 78 min |
+| 10 | 856,123 | 2.6% | 36 min | 27 min | 55 min |
+| 40 | 688,401 | 1.5% | 25 min | 23 min | 52 min |
+| 99 | 607,136 | 1.3% | 23 min | 22 min | 46 min |
+
+Transit vehicle capacities are not under-scaled: buses carry 9–12 and subway trains 165–210 persons, about 2–3 times
+a 4% scaling of real vehicles (70–110 per bus, 1,500–2,500 per train), consistent with the paper's choice of flow
+capacity 0.15 instead of 0.04 for roads. The load comes from demand: 1.09 M PT legs at iteration 0 is 2.8 per
+person; a rough 4% scaling of NYC's ≈8.5 M daily unlinked transit trips (2016, not yet verified) gives ≈0.34 M,
+so the initial plans carry about 3× the real transit demand, and still ≈1.8× at iteration 99. Working hypothesis:
+transit is overloaded by inflated initial demand, agents shed it to road modes over 80 iterations, which raises
+cross-river car volumes (Section 4.2, Finding 3). Next checks: the real 2016 ridership figure; trips and PT legs per
+person in the initial plans against the paper's population summary; subway station boardings (events of
+iterations 0 and 99) against the paper's turnstile validation (e.g. Times Square 191,425 observed, 202,363
+simulated in the paper); the mode constants and cost coefficients in the scoring configuration.
+
 **Indicators** (produced online by `IterationMetrics` on perf, plus MATSim's own stats): mean executed score,
 mode shares, car departures and completions, stuck agents, cordon entries, net charge revenue, transit waiting
 time, bridge and tunnel counts.
