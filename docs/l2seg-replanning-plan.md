@@ -3,54 +3,39 @@
 Branch `research/l2seg-replanning`, started from `main` on 2026-10-07. It is the working plan; results are added in
 place as each stage finishes.
 
-**Status 2026-10-07.** W0–W3 are implemented and the detailed recorder (ResearchMetrics) is ported (Section 9.1);
-12-iteration acceptance runs are listed there. No study run (RQ1–RQ6) has started. The RQ0 references now running
-on ORCD are **not** the configuration this plan assumes (Section 4.1); this needs a decision before σ_x is used.
+**Status 2026-10-12.** Tooling W0–W4 and the detailed recorder are done and verified (Section 9.1); the RQ0
+references are finished (Sections 4.1–4.2). The study resumes with RQ1 under the scope decision in Section 0.
 
-## 0. Revised plan, 2026-10-08: credibility of the base model first
+## 0. Scope decision, 2026-10-12: the model is given; acceleration is measured against a fixed protocol
 
-**Why the plan changed.** RQ0 (Sections 4.2–4.4) showed that the base model does not settle while innovation is on,
-that agents leave the survey-validated mode shares from the first replanning on (3.6% of trips change main mode at
-iteration 1, 27% by 49, 33% by 99; `nonman` car 0.31 → 0.58), that the East River screenline ends +75% (paper +1.8%)
-and ten validation stations +46 to +50% (paper +8%), and that the paper itself shows no convergence. A study that
-accelerates this protocol would measure a protocol, not NYC. Sections 1–13 below stay as the target design; **RQ1–RQ6
-and the open decisions on the T\* rule (4.2) and the scenario choice (4.1) are paused** until the base passes the
-gate at the end of this section.
+**What happened (2026-10-07 to 10-08).** RQ0 showed that the released MATSim-NYC model drifts while innovation is
+on (Section 4.2), does not reproduce the paper's calibration and validation at any iteration (4.2–4.4), and
+overloads buses at the start and permanently at Midtown gateway stops for `outside` agents (record below). For a
+day this plan turned towards repairing the model (diagnosis, recalibration design). **That is withdrawn as out of
+scope:** these are properties of the published model and method, not questions of this study. This study asks
+whether the same model, run with the same protocol, reaches the same result with less computation. Model realism
+is neither required for that question nor changed by it. The model's known limitations are recorded in Sections
+4.2–4.4 and below, and are cited as context, not fixed.
 
-Three workstreams, in this order of dependency; C3 runs in parallel.
+**Decisions taken (supersede the open questions in 4.1, 4.2 and 4.4).**
+1. *Model and scenario.* The model as released in this repository, scenario `baseline` (no 2025 charge), as in the
+   finished RQ0 references; option (a) of Section 4.1. τ0 of the policy line (Section 5) is this baseline.
+2. *Protocol.* Cold start from `cold.xml.gz`, 100 iterations, innovation in iterations 0–79
+   (`disableAfterIteration = 79`), seeds 4711–4713, 16 threads, launch configuration of `run_reference.py`.
+3. *What acceleration must reproduce.* The protocol's end state: every indicator's mean over iterations 90–99 within
+   2σ of the reference mean, σ from the three references (tolerance table, Section 4.2). Because the model drifts,
+   "fewer iterations" is judged only against this end state; for policies, against the τ1 − τ0 difference.
+4. *T\* rule.* First iteration t whose mean over t..t+9 is within 2σ for every indicator (restated in 4.2, adopted);
+   for the references T\* = 88–89, i.e. after the innovation switch-off.
+5. *Model limitations* (drift, calibration, bus capacity, `outside` gateway queues, toll-blind routing) stay as
+   they are; options added for diagnosis (`--legacy-toll-routing`) stay off.
 
-**C1 — Diagnose transit level of service (no simulation; started 2026-10-08).** At iteration 0 a PT leg waits 58 min
-on average (incl. censored) and 4.6% of PT legs never finish. Questions, each answered from existing outputs (RQ0
-seed 4711 events of iterations 0 and 99, schedule, vehicles):
-1. Denied boarding vs frequency: for each boarding, how many vehicles of the boarded line left the stop while the
-   agent waited (capacity), versus long headways (schedule).
-2. Schedule completeness: departures per line and day in `separated-schedule.xml.gz` against GTFS-level expectations
-   for major subway lines and buses.
-3. Vehicle delays: `VehicleArrivesAtFacility` delay by mode and hour (transit on separate links should run on time).
-4. Where and when waits concentrate (stops, lines, hours).
-*Output:* a cause with evidence, written to Section 4.5. *Decision point:* if supply is wrong (missing trips,
-mis-assigned vehicles, delays), fix the input and re-run a 12-iteration check before any calibration; if supply is
-plausible, go to C2.
+**Next: RQ1** (Section 8): three 100-iteration runs with the protocol above and the replanning log on (W1), plus
+ResearchMetrics for features, outputs on scratch. With the log being passive, their indicators must equal the RQ0
+references exactly, which doubles as a reproducibility check on ORCD. Then W4 labels (L-H, L-U), stability curve,
+classifiers.
 
-**C2 — Recalibration design (after C1).** Targets: main-mode shares per subpopulation of the initial plans (from the
-survey-validated choice model) or the 2017 Citywide Mobility Survey, East River screenline (±5% daily, as in the
-paper), the paper's ten subway stations (turnstile entries; transfers removed from the simulated count). Parameters:
-mode constants per subpopulation (iterative ln(target/simulated) updates, standard MATSim practice), the 12
-capacity factors (SPSA as in the paper), and the decision on toll-aware routing for facility tolls (Section 4.2).
-Protocol: fixed iteration schedule and an explicit convergence check (10-iteration means within 2σ, Section 4.2,
-plus a longer run of 150–200 iterations with a resume step, since 12 h allows ≈120 iterations). *Output:* a
-calibration plan with run counts and cost, for approval before any calibration run. Acceleration (warm starts,
-targeted replanning) is used inside this loop, where it pays most.
-
-**C3 — Exact engineering speed-ups (parallel; each must leave a 12-iteration run identical).**
-1. Cheaper ResearchMetrics (26% of the events thread): array-indexed person, vehicle and link-hour state, link-id
-   hashes computed once; acceptance: research files and IterationMetrics byte-identical to job 25172622.
-2. Skip road pricing when the toll file has no positive toll (baseline; 8% of the events thread); acceptance:
-   IterationMetrics and scores identical to job 25218415 (which equals the seed-4711 reference).
-3. Later: cache time-variant link capacities per time bin (15% of QSim threads, 36% of routing); MATSim internals,
-   larger change.
-
-**Results so far (2026-10-08).**
+### 0.1 Record of the model diagnosis and engineering checks (2026-10-08; context, not to be acted on)
 
 *C1, transit level of service* (`experiments/l2seg/transit_los.py`; RQ0 seed 4711 events of iterations 0 and 99;
 `outputs/rq0/transit-los/`). The schedule is consistent: 26 subway lines (7,897 departures), 234 bus lines (43,366),
@@ -91,11 +76,6 @@ list), since plan-level details can differ across models.
 differ from iteration 0 (car departures 305,517 vs 305,518, unfinished 61,127 vs 61,054, score −18.848 vs −18.813),
 because `RoadPricingModule` also replaces the car travel disutility, so routes change even with zero tolls; no
 measurable speed gain either (mobsim 125.7 vs 127.1 s).
-
-**Gate to resume RQ1–RQ6.** Over the last 10 iterations of the chosen protocol and three seeds: main-mode shares per
-subpopulation within agreed tolerances of the targets, East River screenline within ±5%, ten stations within the
-paper's 8% mean error (transfers removed), and the convergence check passed. The tolerances themselves are agreed
-before the calibration runs start.
 
 Evidence cited below comes from branch `perf/simulation-redundancy` (head `75abcdd`), referred to as *perf*.
 The method being adapted is Ouyang, Li, Ma, Wu, *Learning to Segment for Vehicle Routing Problems*,
@@ -214,10 +194,8 @@ Jobs 25151308_0–2 (seeds 4711–4713, 100 iterations, started 08:35) were subm
 Consequences: when they finish, they give T\* and σ_x **for the no-charge baseline**, not for τ = 1 as the
 definitions below assume. The instrumentation branch's design is to warm-start policy runs from the baseline's
 final plans, i.e. τ0 = baseline and τ1 = launch-2025, which is a different main-line setting from Section 5
-(τ0 = 1). **Decision needed:** either (a) adopt baseline → launch-2025 as the first policy change and take σ_x
-from the baseline references, checking it at τ = 1 with one extra seed set; or (b) run three launch-2025
-references as originally planned (3 more full runs, Section 10). Until decided, the tolerance table below is
-not filled in.
+(τ0 = 1). **Decided 2026-10-12 (Section 0): option (a).** The baseline references define the protocol and σ_x; the first
+policy change is baseline → launch-2025. (Option (b), three launch-2025 references, is not run.)
 
 ### 4.2 RQ0 results for the baseline references (finished 2026-10-07, wall 8.7–9.5 h)
 
@@ -245,7 +223,7 @@ score and 3.1–4.4 σ for the PT share, so only 40–60% of the references' own
 **T\* is undefined for all three references**. The rule was fixed before seeing results, but it cannot be satisfied
 even by the runs that define it, so it is a definition error, not a threshold to tune. Proposed restatement with
 the same 2σ: T\* is the first t such that the mean over t..t+9 is within 2σ of x̄ for every indicator (the same
-quantity σ is computed from). With it, **T\* = 88, 89, 89**. Not yet adopted; needs agreement.
+quantity σ is computed from). With it, **T\* = 88, 89, 89**. Adopted 2026-10-12 (Section 0).
 
 **Finding 2: the runs do not settle while innovation is on (answers RQ0's main question; overturns the
 expectation in the runbook that runs settle before iteration 80).** 10-iteration means of seed 4711:
@@ -440,7 +418,7 @@ quantity a policy study reports and may be less sensitive to the drift than leve
 from the existing runs plus one policy pair and should be checked before RQ5. Both baselines make the acceleration
 a statement about the protocol, not about NYC.
 
-**Credibility is not established for policy levels.** Over the reference runs the residents move away from the mode
+*(Superseded 2026-10-12: repairing the model is out of scope, Section 0. Kept as a record.)* **Credibility is not established for policy levels.** Over the reference runs the residents move away from the mode
 shares of the initial plans, which come from the survey-validated mode choice model (Section 4.3: `nonman` car
 0.31 → 0.58, walk halves), the East River screenline ends +75%, and the paper offers no convergence evidence to fall
 back on. A trustworthy base therefore comes before policy claims: (1) define and test convergence (a longer run, e.g.
