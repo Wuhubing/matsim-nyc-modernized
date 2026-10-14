@@ -649,6 +649,49 @@ already bound it from above for L-H (savings only in iterations ≈65–79). Rec
 oracle check (one seed, L-U oracle, ε = 0.1) or skip RQ2, and move to the main line (Section 5, RQ5), where the
 signal "who is affected by a policy change" is expected to be much stronger.
 
+### 8.2 What kind of problem the innovation waste is (2026-10-14, analysis running)
+
+**Framing.** MATSim's iterations are a noisy, population-wide stochastic search for an equilibrium (a fixed point
+where every agent's plan is a best response to everyone else's), not a convex optimisation. Each iteration 30% of
+residents copy a random stored plan and mutate it once; the new plan is scored by one simulation that depends on
+all other agents; plans are chosen by ExpBeta and the worst is dropped above 5 plans. The 85% of innovations that do
+not become kept improvements (8.1) can be of three different kinds:
+
+| Kind | What it is | Avoidable? | Optimisation lever |
+|---|---|---|---|
+| A. Duplicate proposals | the mutated plan equals its parent (e.g. ReRoute returns the same route) | yes, detectable before simulation | replace by another mutation |
+| B. Clearly worse proposals | random time shift or mode change into a poor option | partly | better proposal distribution: pre-evaluate candidates with known travel times (as DiscreteModeChoice does for modes), best-of-k |
+| C. Evaluation noise and selection | a good plan scored once on an unlucky iteration, or dropped at the 5-plan limit | hard | score averaging, bandit-style selection with confidence bounds, re-evaluation of uncertain plans |
+
+The 12-iteration smoke test already shows kind A is large early on: 57% of ReRoute innovations in iterations 1–10
+return the parent's routes unchanged.
+
+**Configuration facts that matter here** (`BUILT.output_config.xml` of the RQ1 runs): `learningRate = 1.0` (a plan's
+score is overwritten by its latest single evaluation, no averaging), `fractionOfIterationsToStartScoreMSA = null`
+(MATSim's score averaging is off), and `ReplanningAnnealer` present but disabled (innovation share fixed at 30%,
+then switched to 0 at iteration 80). In gradient terms: the routing step is an informed best-response step, time
+and mode mutations have no direction, the step size never decays (a fixed step does not converge in traffic
+assignment, where MSA-type decaying steps do), and the "gradient" is never averaged. This is consistent with the
+drift of Section 4.2 and with the end state being produced by the switch-off.
+
+**Can noise be told apart during the run?** Partly. The score change of an unchanged plan between consecutive
+iterations gives each agent's indistinguishability scale; most of it is a real change of the environment (other
+agents' plans), since the pure simulation noise with fixed plans is small (perf: 93 s mean travel-time difference
+across seeds). Bandit-style selection over the ≤ 5 stored plans (confidence intervals, re-evaluate overlapping ones,
+innovate only when all stored plans are confidently poor) would allocate evaluations and innovations where they are
+uncertain.
+
+**Analysis running.** `experiments/l2seg/innovation_outcomes.py` on RQ1 seeds 4711 and 4713 (job 25862899): per
+strategy type and iteration band, the share of no-op proposals, the first-evaluation score difference to the
+previous best, the share selected again and useful, and the noise scale (|score change| of agents keeping an older
+plan). It will give the shares of A, B and C.
+
+**Candidate experiments after that (not approved yet).** MATSim-native switches, no code: `ReplanningAnnealer` with
+a decaying innovation share; score averaging (`fractionOfIterationsToStartScoreMSA` or `learningRate` < 1). Both
+change the algorithm and therefore the end state, so they need a second criterion besides "reproduce the protocol
+end state": an equilibrium-quality measure such as each agent's gap between the executed plan and a best response
+(router-estimated). One 100-iteration run each, seed 4711, would show whether they settle earlier and where.
+
 ## 9. Engineering work (on this branch, before any run)
 
 `main` does not contain the perf work, so W0 brings over only what this plan needs.
