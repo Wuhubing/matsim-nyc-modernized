@@ -686,6 +686,35 @@ strategy type and iteration band, the share of no-op proposals, the first-evalua
 previous best, the share selected again and useful, and the noise scale (|score change| of agents keeping an older
 plan). It will give the shares of A, B and C.
 
+**Result, seed 4713 (2026-10-14; run on the login node with approval, 380 s, 2.9 GB;
+`outputs/rq1/innovation-outcomes-s4713-login.*`; seed 4711 still queued as job 25862899).** Noise scale: |score change|
+of agents keeping an older plan has median 0.06 / 0.13 / 0.18 and p90 2.3 / 2.6 / 3.0 in iterations 1–10 / 11–40 /
+41–79 (heavy-tailed: most agents' scores barely move). First evaluation = new plan's score minus the previous best:
+
+| Strategy (each ≈ 1/3 of innovations) | Iterations | No-op (same routes and modes) | Useful (L-U) | Better at once | First evaluation p10 / p50 / p90 |
+|---|---|---:|---:|---:|---|
+| Subtour mode choice + reroute | 1–10 | 6% | 30% | 34% | −39.6 / −3.6 / +13.6 |
+| | 11–40 | 6% | 15% | 17% | −49.8 / −7.8 / +2.5 |
+| | 41–79 | 6% | **8%** | 9% | −54.2 / **−10.1** / 0.0 |
+| ReRoute | 1–10 | **56%** | 30% | 36% | −9.4 / 0.0 / +1.9 |
+| | 11–40 | **42%** | 11% | 15% | −17.0 / −1.1 / +0.1 |
+| | 41–79 | **27%** | 9% | 12% | −10.7 / −1.0 / 0.0 |
+| Time mutation (±30 min) | 1–10 | – | 32% | 38% | −11.0 / −0.4 / +2.6 |
+| | 11–40 | – | 18% | 23% | −15.0 / −1.6 / +1.1 |
+| | 41–79 | – | 17% | 23% | −8.1 / −1.2 / +1.0 |
+
+Reading: (1) **mode-choice innovations are mostly kind B**: their median first evaluation is 8–10 utils below the
+previous best, well beyond the noise p90 of ≈3, and only 8% are useful late in the run; random mode proposals are the
+largest single waste and the most improvable (pre-evaluate modes with router estimates, as DiscreteModeChoice does).
+(2) **ReRoute innovations are largely kind A**: 27–56% reproduce the parent's routes and modes exactly (a duplicate
+occupying an innovation slot, detectable before simulation); the rest differ from the previous best by ≈1 util, i.e.
+within noise (kind C). (3) Time mutations are a B/C mix and, late in the run, the most often useful of the three; the
+fixed ±30 min range is a candidate for shrinking over iterations. (4) Plans are re-selected far more often than they
+are better (e.g. late ReRoute: 42% selected again, 9% useful): ExpBeta keeps switching among plans whose scores differ
+by less than the noise, which is the agent-level face of the 77% per-iteration plan changes in 8.1. The waste is
+therefore not irreducible luck but three separable inefficiencies of the search: random mode proposals, duplicate
+route proposals, and selection among noise-level differences without averaging or a decaying step.
+
 **Candidate experiments after that (not approved yet).** MATSim-native switches, no code: `ReplanningAnnealer` with
 a decaying innovation share; score averaging (`fractionOfIterationsToStartScoreMSA` or `learningRate` < 1). Both
 change the algorithm and therefore the end state, so they need a second criterion besides "reproduce the protocol
