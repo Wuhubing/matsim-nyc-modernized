@@ -597,6 +597,58 @@ preparation took 151 s (perf, R4).
 | **RQ5** | **Can unaffected agents be reused across policies?** | Section 5.3–5.4 | iterations per policy (B1–B4 vs B0); runs needed for 2% interpolation error | RQ0, W5, W7 |
 | RQ6 | Does trip-level aggregation shrink replanning without hurting convergence? | T1, T2 (3 seeds × 100 iterations); T3 inside RQ5 | replanning time per iteration, routed trips, T\*, final-state match | RQ1, W6 |
 
+### 8.1 RQ1 results (2026-10-14)
+
+Runs: jobs 25673271–25673273 (protocol of Section 0, replanning log and ResearchMetrics on), wall 8 h 48 min –
+10 h 43 min, all research audits passed, and **all 100 iterations identical to the RQ0 references** (IterationMetrics,
+scores, modestats) for every seed. Analysis: job 25751708 (`experiments/l2seg/labels.py`, `predict.py`; outputs in
+`outputs/rq1/`), horizon 10, δ = 0; model trained on seeds 4711 + 4712, tested on 4713; features: plans, executed
+minus best score, plan age, switches and innovations in the last 5 iterations, score change, executed score,
+travel time and its change, subpopulation, cohort.
+
+**Stability curve** (`man` + `nonman`, identical across the three seeds to two decimals):
+
+| Iteration | 1 | 10 | 40 | 60 | 70 | 79 | 80 | 99 |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| Unresolved (L-H: final plan created later) | 0.99 | 0.96 | 0.80 | 0.53 | 0.30 | 0.00 | 0.00 | 0.00 |
+| Selected plan changed vs previous iteration | 0.30 | 0.62 | 0.74 | 0.76 | 0.77 | 0.77 | 0.68 | 0.58 |
+| … of which a revisit of a stored plan | 0.00 | 0.32 | 0.44 | 0.46 | 0.47 | 0.47 | 0.68 | 0.58 |
+
+Almost every agent ends on a plan created late in the innovation phase: the unresolved share stays above the 30%
+innovation budget until about iteration 70. This is the drift of Section 4.2 seen per agent: agents keep finding
+plans they end up using until innovation stops. L-H therefore leaves little to save by withholding innovation
+before iteration ≈65; an oracle on L-H could at most cut innovation in iterations ≈65–79.
+
+**Innovation success (L-U).** 7.8 M innovations per run (≈98,700 per iteration, exactly the 30% budget); 15.1% are
+"useful" (new plan selected again within 10 iterations and better than the previous best) in every seed. By
+iteration: 46% at 1, 40% at 2, 31% at 5, 21% at 10, 15% at 20, 12% at 40, 11% at 79. So ≈85% of innovation work
+produces plans that are not kept as improvements, and from iteration ≈20 on about 9 in 10 innovations are wasted.
+
+**Predictability (held-out seed 4713).**
+
+| Iteration | 2 | 5 | 10 | 20 | 40 | 60 | 78 |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| L-H AUC, model | 0.73 | 0.71 | 0.63 | 0.60 | 0.57 | 0.54 | 0.53 |
+| L-U AUC, model | 0.65 | 0.67 | 0.65 | 0.61 | 0.59 | 0.58 | 0.59 |
+| L-U recall of the top 30%: model / gap rule / random | 0.41 / 0.27 / 0.30 | 0.46 / 0.25 / 0.30 | 0.46 / 0.26 / 0.30 | 0.42 / 0.27 / 0.30 | 0.40 / 0.29 / 0.30 | 0.39 / 0.29 / 0.30 | 0.39 / 0.29 / 0.30 |
+| L-U precision of the top 30% / base rate | 0.54 / 0.40 | 0.46 / 0.31 | 0.33 / 0.21 | 0.21 / 0.15 | 0.16 / 0.12 | 0.15 / 0.11 | 0.14 / 0.11 |
+
+The rule "largest gap to the best stored score" is no better than random (AUC 0.46–0.51). The learned model is
+better than random but weak: AUC 0.58–0.67 for L-U, and its top 30% catch 39–46% of the useful innovations (random
+30%), a lift of ≈1.3–1.5. Equivalently, to get the useful innovations a random 30% gets, the model needs ≈20–25%
+of the agents, i.e. ≈20–30% fewer innovations. L-H is barely predictable after iteration 10 (AUC < 0.63), and with
+most agents positive its top-30% recall is ≈random by construction.
+
+**Reading for the agent level (Section 6).** Innovation is mostly wasted (85%), so the room is real, but which
+innovation succeeds is largely a matter of the random mutation drawn, not of the agent's observable state: the
+features predict it only weakly. With L2Seg's Table 5 in mind (gains collapse as recall falls toward 70%), a
+learned within-run chooser is unlikely to reach the 3× gate of Section 6.1; and since innovation only costs
+replanning time (≈11% of an iteration), fewer innovators save iterations only if they speed up the end state,
+which the drift makes doubtful. The RQ2 oracle arms (12 full runs) would quantify the ceiling, but these numbers
+already bound it from above for L-H (savings only in iterations ≈65–79). Recommendation: run at most one cheap
+oracle check (one seed, L-U oracle, ε = 0.1) or skip RQ2, and move to the main line (Section 5, RQ5), where the
+signal "who is affected by a policy change" is expected to be much stronger.
+
 ## 9. Engineering work (on this branch, before any run)
 
 `main` does not contain the perf work, so W0 brings over only what this plan needs.
