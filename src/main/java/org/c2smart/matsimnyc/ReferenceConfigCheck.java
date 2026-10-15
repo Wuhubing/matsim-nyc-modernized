@@ -26,7 +26,11 @@ public final class ReferenceConfigCheck {
         check(innovative > 0, "at least one innovation strategy");
         System.out.println("PASS: MATSim parses " + args[0] + ": " + iterations + " iterations, innovation "
                 + (until >= 0 ? "until " + until : "fraction " + c.replanning().getFractionOfIterationsToDisableInnovation())
-                + " (" + innovative + " strategies), events every " + args[3] + ", plans every " + args[4]);
+                + " (" + innovative + " strategies), events every " + args[3] + ", plans every " + args[4]
+                + ", score MSA from fraction " + c.scoring().getFractionOfIterationsToStartScoreMSA()
+                + ", innovation annealing " + (c.replanningAnnealer().isActivateAnnealingModule()
+                    ? c.replanningAnnealer().getAllAnnealingVariables().stream().map(v -> v.getAnnealParameter() + ":" + v.getAnnealType() + ":" + v.getStartValue() + "->" + v.getEndValue() + ":" + v.getSubpopulation()).toList()
+                    : "off"));
     }
 
     private static void check(boolean ok, String what) { if (!ok) throw new IllegalStateException("config check failed: " + what); }

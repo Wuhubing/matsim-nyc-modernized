@@ -48,7 +48,8 @@ def build_inputs(args):
 
 
 def write_config(dest, seed, iterations, events_interval, plans_every, threads, *, scenario='actual2025',
-                 plans=None, innovation_until=None, factors=FACTORS, events_threads=None):
+                 plans=None, innovation_until=None, factors=FACTORS, events_threads=None,
+                 score_msa_start=None, anneal=None, anneal_start=0.3, anneal_subpopulations=('man', 'nonman')):
     base = ROOT/f'scenarios/nyc-zip-aligned/config-{scenario}.xml'
     root = ET.parse(base).getroot()
     folder = base.parent
@@ -78,6 +79,20 @@ def write_config(dest, seed, iterations, events_interval, plans_every, threads, 
                                 ('controller', 'createGraphsInterval', 1), ('global', 'randomSeed', seed),
                                 ('global', 'numberOfThreads', threads), ('qsim', 'numberOfThreads', threads)]:
         P.setparam(root, module, name, str(value))
+    if score_msa_start is not None:
+        # MATSim ScoringConfigGroup: from this fraction of the iterations on, a plan's score is the mean of its evaluations.
+        P.setparam(root, 'scoring', 'fractionOfIterationsToStartScoreMSA', str(score_msa_start))
+    if anneal:
+        # MATSim ReplanningAnnealer: anneals the total innovation share per subpopulation (relative weights kept) and
+        # sets it to 0 after the innovation stop (disableAfterIteration / fraction).
+        mod = root.find("module[@name='replanningAnnealer']")
+        if mod is None: mod = ET.SubElement(root, 'module', name='replanningAnnealer')
+        P.setparam(root, 'replanningAnnealer', 'activateAnnealingModule', 'true')
+        for sub in anneal_subpopulations:
+            ps = ET.SubElement(mod, 'parameterset', type='AnnealingVariable')
+            for k, v in [('annealParameter', 'globalInnovationRate'), ('annealType', anneal), ('startValue', anneal_start),
+                         ('endValue', 0.0001), ('subpopulation', sub)]:
+                ET.SubElement(ps, 'param', name=k, value=str(v))
     if events_threads:
         # MATSim's SimStepParallelEventsManagerImpl with this many threads (default: 1); handlers are spread over them.
         if root.find("module[@name='eventsManager']") is None: ET.SubElement(root, 'module', name='eventsManager')
@@ -164,7 +179,8 @@ def run(args):
         events_interval = 10 if args.research and args.events == 'none' else {'none': 0, 'last': max(1, args.iterations - 1), 'all': 1}[args.events]
     plans_every = args.plans_every or max(1, args.iterations - 1)
     cfg = write_config(dest, args.seed, args.iterations, events_interval, plans_every, args.threads, scenario=args.scenario,
-                       plans=plans, innovation_until=args.innovation_until, factors=args.factors, events_threads=args.events_threads)
+                       plans=plans, innovation_until=args.innovation_until, factors=args.factors, events_threads=args.events_threads,
+                       score_msa_start=args.score_msa_start, anneal=args.anneal_innovation, anneal_start=args.anneal_start)
     check = subprocess.run([java(), '-cp', str(jar), 'org.c2smart.matsimnyc.ReferenceConfigCheck', str(cfg), str(args.iterations),
                             str(-1 if args.innovation_until is None else args.innovation_until), str(events_interval), str(plans_every)],
                            capture_output=True, text=True)
@@ -197,6 +213,7 @@ def run(args):
             'plans': str(plans), 'expected_persons': json.loads((INPUTS/'cold.json').read_text())['persons'] if plans == INPUTS/'cold.xml.gz' and (INPUTS/'cold.json').exists() else None,
             'metric_links': str(metric_links), 'cohort_polygon': str(polygon) if args.research else None,
             'inputs_checked': inputs_checked, 'config_check': config_check,
+            'score_msa_start': args.score_msa_start, 'anneal_innovation': args.anneal_innovation, 'anneal_start': args.anneal_start if args.anneal_innovation else None,
             'threads': args.threads, 'events_threads': args.events_threads, 'heap': args.heap, 'jfr': args.jfr, 'command': cmd,
             'commit': commit, 'worktree_dirty': bool(dirty), 'sha256': files,
             'host': os.uname().nodename, 'platform': platform.platform(),
@@ -337,6 +354,9 @@ def main():
     r.add_argument('--jfr', action='store_true', help='bounded Java Flight Recorder profile')
     r.add_argument('--min-free-gib', type=float, default=5)
     r.add_argument('--legacy-toll-routing', action='store_true', help='diagnostic: let car routing see the historical facility tolls (baseline only; changes results)')
+    r.add_argument('--score-msa-start', type=float, help='MATSim scoring.fractionOfIterationsToStartScoreMSA (plan score = mean of its evaluations from then on); changes results')
+    r.add_argument('--anneal-innovation', choices=['linear', 'geometric', 'exponential', 'msa', 'sigmoid'], help='MATSim ReplanningAnnealer on the total innovation share of man/nonman; changes results')
+    r.add_argument('--anneal-start', type=float, default=0.3, help='start value of the annealed innovation share (default 0.3 = configured share)')
     r.add_argument('--events-threads', type=int, help="eventsManager.numberOfThreads (MATSim default 1); must be verified against the expected values")
     s = sub.add_parser('summarize'); s.add_argument('run_dir')
     v = sub.add_parser('verify'); v.add_argument('run_dir')
