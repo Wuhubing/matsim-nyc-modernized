@@ -735,6 +735,15 @@ linear decline ending at iteration 79. Comparison against RQ1 seed 4711: iterati
 the RQ0 tolerance, per-iteration plan changes and revisits, innovation success (L-U), and the end state (score, mode
 shares, screenline) relative to the protocol's end state.
 
+**First submission failed (heap too small, my error), resubmitted 2026-10-15.** Jobs 25871514/25871518 used the
+`reference.sbatch` defaults (heap 16 GB, `--mem=24G`), which only fit 12-iteration runs; RQ0/RQ1 ran with heap 24 GB and
+32 GB, and RQ1 seed 4711 already holds ≈24 GB live after full/remark collections. E1 ran out of heap in iteration 22
+(`OutOfMemoryError` in activity scoring after the mobsim, 1 h 44 min); E2 was in repeated full collections at
+iteration 10 and was cancelled. E2's `annealingRates.txt` for iterations 0–9 confirmed the schedule (0.3000, −0.0038
+per iteration, i.e. 0.0001 at 79, both subpopulations). The partial outputs are kept as `*-oom16g`. Resubmitted with
+`HEAP=24g`, `--mem=32G`, everything else unchanged: E1 job 25891637, E2 job 25891638. **Rule: every 100-iteration run
+uses HEAP=24g and --mem=32G.**
+
 ## 9. Engineering work (on this branch, before any run)
 
 `main` does not contain the perf work, so W0 brings over only what this plan needs.
