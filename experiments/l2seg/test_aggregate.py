@@ -195,6 +195,15 @@ class Dynamics(unittest.TestCase):
         self.assertAlmostEqual(final_prediction.fit_lin_predict(t, y, range(70, 80)), 2 + 0.05 * 74.5, places=3)
 
 
+class Proposals(unittest.TestCase):
+    def test_helpers(self):
+        import directed_proposals as dp
+        c = np.array([[0, 0, 0, 2, 0, 0, 0, 1], [0] * 8, [1, 0, 0, 1, 0, 0, 0, 0]])
+        self.assertEqual(list(dp.dom(c)), [3, -1, 0])                        # most trips; none -> -1; tie -> first mode
+        s = np.array([[0.1, 0.5, 0.2, 0, 0, 0, 0, 0]] * 2)
+        self.assertEqual(list(dp.best_other(s, np.array([1, 0]))), [2, 1])   # own mode excluded
+
+
 class Links(unittest.TestCase):
     def test_end_to_end(self):
         """Persons x and y re-route at 11 from parents created at 5 (by ReRoute). x's links keep their travel time and
