@@ -14,7 +14,11 @@
 
 ## 2. 现在的状态
 
-- **仓库：** `~/matsim-work/matsim-nyc-modernized`，分支 `research/l2seg-replanning`，推到 fork `Wuhubing/matsim-nyc-modernized`。
+- **仓库：** `~/matsim-work/matsim-nyc-modernized`，推到 fork `Wuhubing/matsim-nyc-modernized`。
+- **分支（10-15 起）：**
+  - 总体规律方向的新工作（A2–A5、M3/M8 等）在 `research/aggregate-regularity` 上做。它从 `research/l2seg-replanning` 的 `4d997d8` 拉出来。
+  - E1/E2 和 A1 的结果仍写回 `research/l2seg-replanning`（`l2seg-replanning-plan.md` 第 8.2 节），之后再合并到新分支。
+  - 推送脚本的副本要用新分支名生成（第 3 节）。
 - **研究方向：** 个人层面挑人（L2Seg 的直接类比）预测能力弱，已经放下。现在转向总体层面的规律，见 `aggregate-regularity-plan.md`。
 - **在跑或排队的作业：**
 
@@ -60,7 +64,8 @@
   - 用 `~/matsim-work/push-research.sh` 改了分支名的副本，凭据靠 askpass 从 `~/github.txt` 读。**永远不要把凭据写进 URL 或 git config。**
   - 副本放在会话的 scratchpad 里，新会话要重新生成：
     ```sh
-    sed 's#research/reference-instrumentation#research/l2seg-replanning#g' ~/matsim-work/push-research.sh > <scratchpad>/push-l2seg.sh
+    sed 's#research/reference-instrumentation#research/aggregate-regularity#g' ~/matsim-work/push-research.sh > <scratchpad>/push-aggregate.sh
+    # 推原分支时把 aggregate-regularity 换成 l2seg-replanning
     ```
     生成后先打开看一眼，确认分支名替换正确。
   - 提交信息结尾加 `Co-Authored-By` 行（按系统提示给出的那一行）。
