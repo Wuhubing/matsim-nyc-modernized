@@ -1,9 +1,9 @@
-<title>MATSim-NYC 加速研究进展</title>
+<title>MATSim-NYC 加速研究</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;700&family=Noto+Sans+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap">
 <style>
-/* Layout: one reading column (~820px); tables, the diagram and charts sit in bordered blocks inside it. */
+/* Layout: one reading column (~860px) in four numbered parts that follow the meeting agenda; tables, the diagram and charts sit in bordered blocks inside it. */
 :root {
   --bg: #f5f7f9; --surface: #ffffff; --ink: #14202c; --ink-2: #44515f; --muted: #6a7684; --rule: #d9dfe5;
   --accent: #1d4f91; --accent-soft: #e5edf7;
@@ -31,19 +31,27 @@
   --s1: #3987e5; --s2: #d95926; --s3: #199e70; color-scheme: dark;
 }
 body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 15.5px; line-height: 1.75; }
-.page { max-width: 820px; margin: 0 auto; padding-block: 40px 72px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 56px; }
+.page { max-width: 860px; margin: 0 auto; padding-block: 40px 72px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 64px; }
 h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; margin: 0; line-height: 1.3; }
 h1 { font-size: clamp(1.9rem, 4.6vw, 2.6rem); letter-spacing: 0.01em; }
-h2 { font-size: 1.45rem; }
+h2 { font-size: 1.5rem; }
 h3 { font-size: 1.05rem; font-family: var(--font-body); font-weight: 700; }
-p { margin: 0; max-width: 40em; }
+p { margin: 0; max-width: 42em; }
 .eyebrow { font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.06em; color: var(--muted); text-transform: uppercase; }
-section { display: grid; gap: 18px; padding-top: 28px; border-top: 1px solid var(--rule); min-width: 0; }
-section > header { display: grid; gap: 6px; }
+section.part { display: grid; gap: 22px; padding-top: 28px; border-top: 2px solid var(--ink); min-width: 0; }
+.part-head { display: grid; grid-template-columns: auto 1fr; gap: 4px 16px; align-items: baseline; }
+.part-num { font-family: var(--font-mono); font-size: 2rem; font-weight: 500; color: var(--accent); line-height: 1; grid-row: span 2; }
+.sub { display: grid; gap: 14px; min-width: 0; }
+.sub > h3 { padding-bottom: 6px; border-bottom: 1px solid var(--rule); }
 .lede { font-size: 1.08rem; color: var(--ink-2); }
-.hero { display: grid; gap: 14px; }
+.hero { display: grid; gap: 16px; }
 .verdict { background: var(--surface); border: 1px solid var(--rule); border-left: 4px solid var(--accent); border-radius: 6px; padding: 16px 18px; display: grid; gap: 8px; }
 .verdict strong { color: var(--accent); }
+.agenda { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 8px; margin: 0; padding: 0; list-style: none; }
+.agenda a { display: grid; gap: 2px; padding: 10px 12px; border: 1px solid var(--rule); border-radius: 6px; background: var(--surface); color: var(--ink); text-decoration: none; font-size: 0.9rem; line-height: 1.45; }
+.agenda a:hover { border-color: var(--accent); }
+.agenda a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.agenda .mono { color: var(--accent); }
 code, .mono { font-family: var(--font-mono); font-size: 0.86em; }
 code { background: var(--idle-soft); padding: 1px 5px; border-radius: 4px; }
 .note { font-size: 0.85rem; color: var(--muted); }
@@ -54,15 +62,14 @@ code { background: var(--idle-soft); padding: 1px 5px; border-radius: 4px; }
 .fact .k { font-size: 0.82rem; color: var(--muted); line-height: 1.4; }
 /* tables */
 .table-wrap { overflow-x: auto; border: 1px solid var(--rule); border-radius: 6px; background: var(--surface); }
-table { border-collapse: collapse; width: 100%; font-size: 0.92rem; line-height: 1.55; }
+table { border-collapse: collapse; width: 100%; font-size: 0.9rem; line-height: 1.55; }
 th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--rule); vertical-align: top; }
 th { font-size: 0.78rem; letter-spacing: 0.04em; color: var(--muted); font-weight: 500; background: var(--bg); white-space: nowrap; }
 tr:last-child td { border-bottom: 0; }
 td.n, th.n { text-align: right; font-family: var(--font-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
-.matrix th[scope="row"] { color: var(--ink); font-size: 0.86rem; letter-spacing: 0; background: var(--surface); }
-.matrix td .pill { margin: 2px 4px 2px 0; white-space: normal; }
-.approaches tr.grp td { background: var(--bg); font-weight: 700; font-size: 0.86rem; color: var(--accent); padding-top: 12px; }
-.approaches td:first-child { min-width: 14em; }
+tr.grp td { background: var(--bg); font-weight: 700; font-size: 0.86rem; color: var(--accent); padding-top: 12px; }
+td.first { min-width: 11em; font-weight: 500; }
+.wide td:nth-child(3), .wide td:nth-child(4) { min-width: 13em; }
 /* pills */
 .pill { display: inline-flex; align-items: center; gap: 5px; font-size: 0.78rem; font-weight: 500; padding: 1px 9px; border-radius: 999px; white-space: nowrap; }
 .pill::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex: none; }
@@ -71,6 +78,7 @@ td.n, th.n { text-align: right; font-family: var(--font-mono); font-variant-nume
 .p-bad { color: var(--bad); background: var(--bad-soft); }
 .p-info { color: var(--info); background: var(--info-soft); }
 .p-idle { color: var(--idle); background: var(--idle-soft); }
+.legend-pills { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 0.85rem; }
 /* diagram */
 .diagram { margin: 0; display: grid; gap: 10px; background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; padding: 14px; min-width: 0; }
 .diagram-scroll { overflow-x: auto; }
@@ -82,15 +90,12 @@ td.n, th.n { text-align: right; font-family: var(--font-mono); font-variant-nume
 .seg-b { background: var(--warn-soft); border: 1px solid var(--warn); }
 .seg-c { background: var(--idle-soft); border: 1px solid var(--rule); }
 .bar-caption { display: flex; flex-wrap: wrap; gap: 4px 12px; justify-content: space-between; font-size: 0.8rem; color: var(--muted); font-family: var(--font-mono); }
-/* evidence chain: a real sequence of questions */
-ol.chain { list-style: none; margin: 0; padding: 0; counter-reset: c; display: grid; gap: 12px; }
-ol.chain li { counter-increment: c; display: grid; grid-template-columns: 34px 1fr; gap: 12px; background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; padding: 14px 16px; }
-ol.chain li::before { content: counter(c); font-family: var(--font-mono); font-weight: 500; color: var(--accent); background: var(--accent-soft); width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; font-size: 0.85rem; }
-.chain-body { display: grid; gap: 4px; min-width: 0; }
-.chain-body .q { font-weight: 700; }
-.chain-body .e { font-size: 0.92rem; color: var(--ink-2); }
-.chain-body .c { font-size: 0.92rem; }
-.chain-body .c b { color: var(--accent); }
+/* cost formula */
+.formula { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 0.95rem; }
+.formula .term { background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; padding: 6px 12px; display: grid; gap: 0; line-height: 1.35; }
+.formula .term small { color: var(--muted); font-size: 0.78rem; }
+.formula .term.hot { border-color: var(--accent); background: var(--accent-soft); }
+.formula .op { font-family: var(--font-mono); color: var(--muted); }
 /* charts */
 figure.chart-fig { margin: 0; display: grid; gap: 10px; background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; padding: 16px 16px 12px; min-width: 0; }
 figcaption { display: grid; gap: 4px; }
@@ -115,109 +120,263 @@ details summary:focus-visible { outline: 2px solid var(--accent); outline-offset
 .two { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
 .card { background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; padding: 14px 16px; display: grid; gap: 8px; align-content: start; min-width: 0; }
 .card p, .card li { font-size: 0.92rem; color: var(--ink-2); }
-.card ul { margin: 0; padding-left: 1.2em; display: grid; gap: 4px; }
+.card ul, .card ol { margin: 0; padding-left: 1.2em; display: grid; gap: 4px; }
+.card .tag { font-family: var(--font-mono); font-size: 0.78rem; color: var(--accent); }
+.card .from { font-size: 0.82rem; color: var(--muted); border-top: 1px dashed var(--rule); padding-top: 6px; }
 .pending { border-style: dashed; }
 footer { font-size: 0.82rem; color: var(--muted); display: grid; gap: 6px; border-top: 1px solid var(--rule); padding-top: 20px; }
-@media (max-width: 520px) { body { font-size: 15px; } }
+@media (max-width: 520px) { body { font-size: 15px; } .part-num { font-size: 1.5rem; } }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 </style>
 
 <main class="page">
 
 <div class="hero">
-  <div class="eyebrow">MATSim-NYC · 2026-10-15</div>
-  <h1>MATSim-NYC 加速研究进展</h1>
-  <p class="lede">目标：用更少的计算，得到原流程（100 轮，第 80 轮关闭创新）跑满会给出的结果。这一页总结 MATSim 的机制、试过的方法、怎样一步步找到瓶颈，以及接下来做什么。</p>
+  <div class="eyebrow">MATSim-NYC · 会议参考 · 2026-10-15</div>
+  <h1>MATSim-NYC 加速研究</h1>
+  <p class="lede">目标是找到加速这类迭代式交通仿真的方法论：找出迭代过程里的冗余，利用仿真中和之前运行中已有的信息，减少搜索和试错，从而减少轮数或每轮的问题规模。工程提速不是重点。</p>
   <div class="verdict">
-    <div><strong>目前的判断：</strong>瓶颈不在“哪些人已经稳定”，也不再主要在每轮的计算成本，而在<strong>漂移阶段太长</strong>：前 80 轮里，随机提出的新方案很少命中更好的选择，大家发现好方案太慢。</div>
-    <div class="note">每轮成本的工程优化已拿到 −26%（结果逐位一致）。新的加速方法还没有在真实运行里证明能省下计算；最有希望的是“让试探更有用”的自适应提议，以及政策场景的热启动。</div>
+    <div><strong>目前的判断：</strong>每轮的计算已经压到工程能做的程度（−26%），剩下的大头在<strong>迭代之间的搜索</strong>。每轮 30% 的人随机试新方案，85% 的试探没有用；系统在 80 轮里一直缓慢漂移，结束靠的是规定轮数，而不是收敛。</div>
+    <div class="note">下一步的度量是“离均衡还有多远”（均衡差距），方法上主攻“有信息的提议”，再看能否把已接近最优的人聚合成背景负荷，以及新政策能否从已有均衡热启动。</div>
   </div>
+  <ul class="agenda">
+    <li><a href="#background"><span class="mono">1</span>MATSim 背景和 NYC 场景</a></li>
+    <li><a href="#iterations"><span class="mono">2</span>要跑多少轮，有没有均衡</a></li>
+    <li><a href="#cost"><span class="mono">3</span>成本在哪里，怎么发现的</a></li>
+    <li><a href="#methods"><span class="mono">4</span>方法：试过的、借鉴的、接下来的</a></li>
+  </ul>
 </div>
 
-<section id="mechanism">
-  <header>
+<!-- ============ 1 ============ -->
+<section class="part" id="background">
+  <div class="part-head">
+    <span class="part-num">1</span>
     <div class="eyebrow">背景</div>
-    <h2>MATSim 每一轮迭代在做什么</h2>
-  </header>
-  <p>MATSim 把一天的出行当成反复演练：每个人手里最多存 5 套出行方案，每一轮先改方案，再让所有人同时上路，最后按实际体验给方案打分。重复 100 轮，交通状态逐渐稳定下来。</p>
-  <figure class="diagram">
-    <div class="diagram-scroll">
-    <svg viewBox="0 0 960 432" role="img" aria-label="MATSim 一轮迭代的架构：输入的人口、路网和公交时刻表进入重新规划；重新规划里 70% 的人从已有方案中按得分抽一个，30% 的人随机生成新方案；仿真执行所有人选中的方案并产生事件流；事件流用于打分、统计路段通行时间和输出统计；得分和通行时间反馈到下一轮的重新规划。第 0 到 79 轮选和试都开，第 80 到 99 轮只选。" style="color:var(--ink)">
-      <defs>
-        <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker>
-        <marker id="arA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--accent)"/></marker>
-      </defs>
-      <g font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif" font-size="12" fill="currentColor">
-        <text x="16" y="22" style="fill:var(--muted)" font-size="11">输入</text>
-        <rect x="16" y="40" width="164" height="60" rx="6" style="fill:var(--surface);stroke:var(--rule)"/>
-        <text x="28" y="64" font-weight="700">人口 389,301 人</text>
-        <text x="28" y="84" style="fill:var(--ink-2)">每人 ≤5 套方案</text>
-        <rect x="16" y="120" width="164" height="60" rx="6" style="fill:var(--surface);stroke:var(--rule)"/>
-        <text x="28" y="144" font-weight="700">路网 465,386 路段</text>
-        <text x="28" y="164" style="fill:var(--ink-2)">容量按 6 个时段变化</text>
-        <rect x="16" y="200" width="164" height="60" rx="6" style="fill:var(--surface);stroke:var(--rule)"/>
-        <text x="28" y="224" font-weight="700">公交时刻表 262 线</text>
-        <text x="28" y="244" style="fill:var(--ink-2)">地铁、公交车、铁路</text>
-        <line x1="180" y1="70" x2="214" y2="92" stroke="currentColor" stroke-width="1.4" marker-end="url(#ar)"/>
-        <line x1="180" y1="150" x2="214" y2="150" stroke="currentColor" stroke-width="1.4" marker-end="url(#ar)"/>
-        <line x1="180" y1="230" x2="214" y2="208" stroke="currentColor" stroke-width="1.4" marker-end="url(#ar)"/>
+    <h2>MATSim 是什么，NYC 场景有多大</h2>
+  </div>
 
-        <rect x="216" y="30" width="264" height="240" rx="8" style="fill:var(--bg);stroke:var(--ink-2)"/>
-        <text x="232" y="54" font-weight="700" font-size="13">① 重新规划</text>
-        <text x="464" y="54" text-anchor="end" style="fill:var(--muted)" font-size="11">约 11% 用时</text>
-        <rect x="232" y="66" width="232" height="54" rx="6" style="fill:var(--surface);stroke:var(--rule)"/>
-        <text x="244" y="88" font-weight="700">选 · 70% 的人</text>
-        <text x="244" y="108" style="fill:var(--ink-2)">按得分从已有方案里抽一个</text>
-        <rect x="232" y="130" width="232" height="96" rx="6" style="fill:var(--accent-soft);stroke:var(--accent)" stroke-width="1.5"/>
-        <text x="244" y="152" font-weight="700" style="fill:var(--accent)">试 · 30% 的人（随机）</text>
-        <text x="244" y="172" style="fill:var(--ink-2)">随机挑一套方案，复制后改：</text>
-        <text x="244" y="192" style="fill:var(--ink-2)">改时间 · 重新找路 · 换方式</text>
-        <text x="244" y="212" style="fill:var(--ink-2)">各占 10%，下一轮去执行</text>
-        <text x="244" y="252" style="fill:var(--muted)" font-size="11">新方案进记忆，超过 5 套删最差的</text>
+  <div class="sub">
+    <h3>一轮迭代在做什么</h3>
+    <p>MATSim 是基于个体的交通仿真。每个人带着一天的活动安排（在家、上班、购物……）和最多 5 套出行方案。每一轮先改方案，再让所有人同时上路，最后按实际体验给方案打分。重复固定的轮数，交通状态逐渐稳定下来。</p>
+    <figure class="diagram">
+      <div class="diagram-scroll">
+      <svg viewBox="0 0 960 432" role="img" aria-label="MATSim 一轮迭代的结构：输入的人口、路网和公交时刻表进入重新规划；重新规划里 70% 的人从已有方案中按得分抽一个，30% 的人随机生成新方案；仿真执行所有人选中的方案并产生事件流；事件流用于打分、统计路段通行时间和输出统计；得分和通行时间反馈到下一轮的重新规划。第 0 到 79 轮选和试都开，第 80 到 99 轮只选。" style="color:var(--ink)">
+        <defs>
+          <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker>
+          <marker id="arA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--accent)"/></marker>
+        </defs>
+        <g font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif" font-size="12" fill="currentColor">
+          <text x="16" y="22" style="fill:var(--muted)" font-size="11">输入</text>
+          <rect x="16" y="40" width="164" height="60" rx="6" style="fill:var(--surface);stroke:var(--rule)"/>
+          <text x="28" y="64" font-weight="700">人口 389,301 人</text>
+          <text x="28" y="84" style="fill:var(--ink-2)">每人 ≤5 套方案</text>
+          <rect x="16" y="120" width="164" height="60" rx="6" style="fill:var(--surface);stroke:var(--rule)"/>
+          <text x="28" y="144" font-weight="700">路网 465,386 路段</text>
+          <text x="28" y="164" style="fill:var(--ink-2)">容量按 6 个时段变化</text>
+          <rect x="16" y="200" width="164" height="60" rx="6" style="fill:var(--surface);stroke:var(--rule)"/>
+          <text x="28" y="224" font-weight="700">公交时刻表 262 线</text>
+          <text x="28" y="244" style="fill:var(--ink-2)">地铁、公交车、铁路</text>
+          <line x1="180" y1="70" x2="214" y2="92" stroke="currentColor" stroke-width="1.4" marker-end="url(#ar)"/>
+          <line x1="180" y1="150" x2="214" y2="150" stroke="currentColor" stroke-width="1.4" marker-end="url(#ar)"/>
+          <line x1="180" y1="230" x2="214" y2="208" stroke="currentColor" stroke-width="1.4" marker-end="url(#ar)"/>
 
-        <line x1="480" y1="100" x2="518" y2="100" stroke="currentColor" stroke-width="1.4" marker-end="url(#ar)"/>
-        <text x="499" y="92" text-anchor="middle" style="fill:var(--muted)" font-size="11">选中的方案</text>
+          <rect x="216" y="30" width="264" height="240" rx="8" style="fill:var(--bg);stroke:var(--ink-2)"/>
+          <text x="232" y="54" font-weight="700" font-size="13">① 重新规划</text>
+          <text x="464" y="54" text-anchor="end" style="fill:var(--muted)" font-size="11">约 11% 用时</text>
+          <rect x="232" y="66" width="232" height="54" rx="6" style="fill:var(--surface);stroke:var(--rule)"/>
+          <text x="244" y="88" font-weight="700">选 · 70% 的人</text>
+          <text x="244" y="108" style="fill:var(--ink-2)">按得分从已有方案里抽一个</text>
+          <rect x="232" y="130" width="232" height="96" rx="6" style="fill:var(--accent-soft);stroke:var(--accent)" stroke-width="1.5"/>
+          <text x="244" y="152" font-weight="700" style="fill:var(--accent)">试 · 30% 的人（随机）</text>
+          <text x="244" y="172" style="fill:var(--ink-2)">随机挑一套方案，复制后改：</text>
+          <text x="244" y="192" style="fill:var(--ink-2)">改时间 · 重新找路 · 换方式</text>
+          <text x="244" y="212" style="fill:var(--ink-2)">各占 10%，下一轮去执行</text>
+          <text x="244" y="252" style="fill:var(--muted)" font-size="11">新方案进记忆，超过 5 套删最差的</text>
 
-        <rect x="520" y="40" width="196" height="120" rx="8" style="fill:var(--bg);stroke:var(--ink-2)"/>
-        <text x="536" y="64" font-weight="700" font-size="13">② 仿真 QSim</text>
-        <text x="700" y="64" text-anchor="end" style="fill:var(--muted)" font-size="11">约 78%</text>
-        <text x="536" y="88" style="fill:var(--ink-2)">所有人同时执行方案</text>
-        <text x="536" y="108" style="fill:var(--ink-2)">车辆在路段上排队</text>
-        <text x="536" y="128" style="fill:var(--ink-2)">公交按时刻表载客</text>
-        <text x="536" y="148" style="fill:var(--muted)" font-size="11">事件处理是单线程瓶颈</text>
+          <line x1="480" y1="100" x2="518" y2="100" stroke="currentColor" stroke-width="1.4" marker-end="url(#ar)"/>
+          <text x="499" y="92" text-anchor="middle" style="fill:var(--muted)" font-size="11">选中的方案</text>
 
-        <line x1="716" y1="100" x2="736" y2="100" stroke="currentColor" stroke-width="1.4"/>
-        <line x1="736" y1="64" x2="736" y2="224" stroke="currentColor" stroke-width="1.4"/>
-        <text x="726" y="190" text-anchor="end" style="fill:var(--muted)" font-size="11">事件流</text>
-        <line x1="736" y1="64" x2="758" y2="64" stroke="currentColor" stroke-width="1.4" marker-end="url(#ar)"/>
-        <line x1="736" y1="144" x2="758" y2="144" stroke="currentColor" stroke-width="1.4" marker-end="url(#ar)"/>
-        <line x1="736" y1="224" x2="758" y2="224" stroke="currentColor" stroke-width="1.4" marker-end="url(#ar)"/>
+          <rect x="520" y="40" width="196" height="120" rx="8" style="fill:var(--bg);stroke:var(--ink-2)"/>
+          <text x="536" y="64" font-weight="700" font-size="13">② 仿真 QSim</text>
+          <text x="700" y="64" text-anchor="end" style="fill:var(--muted)" font-size="11">约 78%</text>
+          <text x="536" y="88" style="fill:var(--ink-2)">所有人同时执行方案</text>
+          <text x="536" y="108" style="fill:var(--ink-2)">车辆在路段上排队</text>
+          <text x="536" y="128" style="fill:var(--ink-2)">公交按时刻表载客</text>
+          <text x="536" y="148" style="fill:var(--muted)" font-size="11">事件处理是单线程瓶颈</text>
 
-        <rect x="760" y="36" width="184" height="56" rx="6" style="fill:var(--surface);stroke:var(--rule)"/>
-        <text x="772" y="58" font-weight="700">统计与输出</text>
-        <text x="772" y="78" style="fill:var(--ink-2)">方式占比、计数、得分表</text>
-        <rect x="760" y="116" width="184" height="56" rx="6" style="fill:var(--surface);stroke:var(--rule)"/>
-        <text x="772" y="138" font-weight="700">路段通行时间</text>
-        <text x="772" y="158" style="fill:var(--ink-2)">每条路、每个时段</text>
-        <rect x="760" y="196" width="184" height="56" rx="6" style="fill:var(--surface);stroke:var(--rule)"/>
-        <text x="772" y="218" font-weight="700">③ 打分</text>
-        <text x="772" y="238" style="fill:var(--ink-2)">活动、时间、等车、费用</text>
+          <line x1="716" y1="100" x2="736" y2="100" stroke="currentColor" stroke-width="1.4"/>
+          <line x1="736" y1="64" x2="736" y2="224" stroke="currentColor" stroke-width="1.4"/>
+          <text x="726" y="190" text-anchor="end" style="fill:var(--muted)" font-size="11">事件流</text>
+          <line x1="736" y1="64" x2="758" y2="64" stroke="currentColor" stroke-width="1.4" marker-end="url(#ar)"/>
+          <line x1="736" y1="144" x2="758" y2="144" stroke="currentColor" stroke-width="1.4" marker-end="url(#ar)"/>
+          <line x1="736" y1="224" x2="758" y2="224" stroke="currentColor" stroke-width="1.4" marker-end="url(#ar)"/>
 
-        <polyline points="852,252 852,300 400,300 400,274" fill="none" style="stroke:var(--accent)" stroke-width="1.6" marker-end="url(#arA)"/>
-        <text x="626" y="293" text-anchor="middle" style="fill:var(--accent)">得分 → 下一轮被抽中的概率</text>
-        <polyline points="944,144 954,144 954,332 260,332 260,274" fill="none" style="stroke:var(--accent)" stroke-width="1.6" marker-end="url(#arA)"/>
-        <text x="626" y="325" text-anchor="middle" style="fill:var(--accent)">通行时间 → 下一轮重新找路（用的是上一轮的路况）</text>
+          <rect x="760" y="36" width="184" height="56" rx="6" style="fill:var(--surface);stroke:var(--rule)"/>
+          <text x="772" y="58" font-weight="700">统计与输出</text>
+          <text x="772" y="78" style="fill:var(--ink-2)">方式占比、计数、得分表</text>
+          <rect x="760" y="116" width="184" height="56" rx="6" style="fill:var(--surface);stroke:var(--rule)"/>
+          <text x="772" y="138" font-weight="700">路段通行时间</text>
+          <text x="772" y="158" style="fill:var(--ink-2)">每条路、每个时段</text>
+          <rect x="760" y="196" width="184" height="56" rx="6" style="fill:var(--surface);stroke:var(--rule)"/>
+          <text x="772" y="218" font-weight="700">③ 打分</text>
+          <text x="772" y="238" style="fill:var(--ink-2)">活动、时间、等车、费用</text>
 
-        <text x="216" y="370" style="fill:var(--muted)" font-size="11">迭代控制：重复 100 轮</text>
-        <rect x="216" y="380" width="580" height="34" rx="5" style="fill:var(--accent-soft);stroke:var(--accent)"/>
-        <text x="228" y="402">第 0–79 轮：选 + 试（创新期，状态一直在漂移）</text>
-        <rect x="800" y="380" width="144" height="34" rx="5" style="fill:var(--surface);stroke:var(--rule)"/>
-        <text x="812" y="402">80–99：只选</text>
-      </g>
-    </svg>
+          <polyline points="852,252 852,300 400,300 400,274" fill="none" style="stroke:var(--accent)" stroke-width="1.6" marker-end="url(#arA)"/>
+          <text x="626" y="293" text-anchor="middle" style="fill:var(--accent)">得分 → 下一轮被抽中的概率</text>
+          <polyline points="944,144 954,144 954,332 260,332 260,274" fill="none" style="stroke:var(--accent)" stroke-width="1.6" marker-end="url(#arA)"/>
+          <text x="626" y="325" text-anchor="middle" style="fill:var(--accent)">通行时间 → 下一轮重新找路（用的是上一轮的路况）</text>
+
+          <text x="216" y="370" style="fill:var(--muted)" font-size="11">迭代控制：重复 100 轮</text>
+          <rect x="216" y="380" width="580" height="34" rx="5" style="fill:var(--accent-soft);stroke:var(--accent)"/>
+          <text x="228" y="402">第 0–79 轮：选 + 试（创新期，状态一直在漂移）</text>
+          <rect x="800" y="380" width="144" height="34" rx="5" style="fill:var(--surface);stroke:var(--rule)"/>
+          <text x="812" y="402">80–99：只选</text>
+        </g>
+      </svg>
+      </div>
+      <figcaption>人和人之间不直接交流，只通过两条反馈互相影响：仿真产生的<b>得分</b>决定下一轮选哪套方案，仿真产生的<b>路段通行时间</b>决定下一轮怎么找路。蓝色框是“试新方案”：新方案是随机生成的，第 3 部分会看到这是主要的浪费所在。</figcaption>
+    </figure>
+  </div>
+
+  <div class="sub">
+    <h3>MATSim-NYC 场景</h3>
+    <p>来自 C2SMART 的开源纽约模型（He 等，Transport Policy；arXiv 2008.04762）：2016 年人口的 4% 抽样，路网按时段和道路类型标定。本研究按发布的版本使用模型，不修改模型本身。</p>
+    <div class="facts">
+      <div class="fact"><span class="v">389,301</span><span class="k">仿真人口（约 4% 抽样，计数放大 25 倍），另有约 5.1 万公交司机</span></div>
+      <div class="fact"><span class="v">465,386</span><span class="k">路段</span></div>
+      <div class="fact"><span class="v">262</span><span class="k">公交线路：地铁 26、公交车 234、铁路 1</span></div>
+      <div class="fact"><span class="v">8</span><span class="k">出行方式：公交、开车、出租车、网约车、步行、共享单车、自行车、搭车</span></div>
+      <div class="fact"><span class="v">170–300 秒</span><span class="k">每轮用时（MIT ORCD，16 线程）</span></div>
+      <div class="fact"><span class="v">≈9 小时</span><span class="k">一次 100 轮，约 140 核时；Java 堆 24 GB</span></div>
     </div>
-    <figcaption>MATSim 一轮迭代的结构。人和人之间不直接交流，只通过两条反馈互相影响：仿真产生的<b>得分</b>决定下一轮选哪套方案，仿真产生的<b>路段通行时间</b>决定下一轮怎么找路。蓝色框是“试新方案”这一步：新方案是随机生成的，这正是本页找到的瓶颈所在。</figcaption>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>配置</th><th>值</th><th>含义</th></tr></thead>
+        <tbody>
+          <tr><td>方案记忆</td><td class="mono">maxAgentPlanMemorySize = 5</td><td>每人最多存 5 套方案，多了删最差的</td></tr>
+          <tr><td>策略权重</td><td class="mono">ExpBeta 0.7 · 改时间 0.1 · 找路 0.1 · 换方式 0.1</td><td>每轮约 30% 的居民试新方案（约 9.9 万次）</td></tr>
+          <tr><td>得分更新</td><td class="mono">learningRate = 1.0，不做平均</td><td>方案得分只等于最近一次仿真的结果</td></tr>
+          <tr><td>关创新</td><td class="mono">fractionOfIterationsToDisableInnovation = 0.8</td><td>第 80 轮起只选不试</td></tr>
+          <tr><td>改时间范围</td><td class="mono">mutationRange = 1800 s</td><td>出发时间最多前后移动 30 分钟</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 2 ============ -->
+<section class="part" id="iterations">
+  <div class="part-head">
+    <span class="part-num">2</span>
+    <div class="eyebrow">轮数与均衡</div>
+    <h2>要跑多少轮，有没有凸性和均衡</h2>
+  </div>
+
+  <div class="sub">
+    <h3>原论文跑了多少轮</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>用途</th><th>原论文（He 等）</th><th>本研究</th></tr></thead>
+        <tbody>
+          <tr><td>基础场景</td><td>没有写轮数，没有得分曲线，也没有收敛标准</td><td>100 轮冷启动，第 80 轮关创新；3 个种子</td></tr>
+          <tr><td>标定</td><td>SPSA 标定 12 个容量系数，每一步跑 50 轮</td><td>不做标定，按发布的版本使用</td></tr>
+          <tr><td>政策场景</td><td>从基础场景最后的方案集热启动，再跑 100 轮</td><td>还没跑；冷启动和热启动的对比是计划中的实验</td></tr>
+          <tr><td>稳定性证据</td><td>只有一次种子测试：4 个运行，各方式出行量的标准差 ≤ 3.6%</td><td>第 90–99 轮三个种子之间只差 0.1–0.5%</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note">论文正文说 MATSim 迭代“直到得分收敛”，但没有给出收敛证据。我们的冷启动运行在第 49 轮仍在明显漂移，屏幕线计数在任何一轮都对不上论文的验证结果（论文 +1.8%，我们第 99 轮 +75%）。这是模型本身的问题，不在本研究范围内，这里只作为背景。</p>
+  </div>
+
+  <div class="sub">
+    <h3>MATSim 在逼近什么：没有凸性，均衡不唯一</h3>
+    <p>MATSim 没有显式的目标函数，只跑固定的轮数。理论上它逼近的是<b>随机用户均衡</b>：别人的选择都不变时，没有人能通过换方案明显提高自己的得分。思想和交通分配里的用户均衡相同，只是从“选路线”扩展到“选整天的方案”。按得分抽方案相当于 logit 选择，所以得分相近的方案会一直轮流被选中。</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th></th><th>经典静态交通分配</th><th>MATSim</th></tr></thead>
+        <tbody>
+          <tr><td>目标</td><td>有等价的凸优化问题，均衡唯一</td><td>没有显式目标函数，没有凸性保证</td></tr>
+          <tr><td>路网</td><td>路段费用只取决于本路段流量，单调递增</td><td>车辆排队、拥堵向上游蔓延、容量随时段变化，费用相互耦合</td></tr>
+          <tr><td>选择</td><td>只选路线，流量连续可分</td><td>离散的整天方案，每人最多记 5 套</td></tr>
+          <tr><td>步长</td><td>MSA、Frank-Wolfe 等步长逐渐变小，可以证明收敛</td><td>每轮固定 30% 的人试探，步长不衰减；第 80 轮直接关掉</td></tr>
+          <tr><td>收敛判据</td><td>相对差距（relative gap）</td><td>没有，跑满规定轮数</td></tr>
+          <tr><td>随机性</td><td>确定性</td><td>4% 抽样，加上随机抽样选择，每轮都有噪声</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="two">
+      <div class="card">
+        <h3>证据：终点取决于搜索过程</h3>
+        <p>把试探比例逐步降到几乎为 0 的对照运行，很早就稳定了，但停在一个明显更差的状态：平均得分 4.5，原流程 6.8；开车占比 0.376，原流程 0.426。同一个模型、同一个种子，只改了搜索方式，终点就不同。</p>
+        <p>所以判断加速方法时，不能只看“稳没稳”，还要看“离均衡有多远”。</p>
+      </div>
+      <div class="card pending">
+        <h3>正在建：离均衡还有多远</h3>
+        <p><b>均衡差距</b>：在当前路况下，每个人执行的方案比他的最优反应差多少。先做路线部分（用 MATSim 自己的重新找路作为最优反应，原路线和新路线放在同一份路况下比较），再加方式和出发时间。</p>
+        <p class="note">路线部分三个种子的计算正在集群上排队。以后用它取代“和第 99 轮差多少”作为主要的判断标准。</p>
+      </div>
+    </div>
+  </div>
+
+  <figure class="chart-fig">
+    <figcaption>
+      <h3>开车占比的轨迹：原流程和两种 MATSim 自带的搜索开关</h3>
+      <p>同一个种子，每轮的开车出行占比。原流程到第 79 轮还在涨，第 80 轮关创新后跳一下才停。对历次得分取平均的那次运行在第 52 轮内存不足中断。</p>
+    </figcaption>
+    <div class="legend" id="lg-car"></div>
+    <div class="chart" id="chart-car"></div>
+    <details><summary>查看数据（每 10 轮）</summary><div class="table-wrap" style="margin-top:8px"><table id="tb-car"></table></div></details>
   </figure>
+</section>
+
+<!-- ============ 3 ============ -->
+<section class="part" id="cost">
+  <div class="part-head">
+    <span class="part-num">3</span>
+    <div class="eyebrow">成本</div>
+    <h2>成本在哪里，怎么发现的</h2>
+  </div>
+
+  <div class="formula" role="img" aria-label="总成本等于运行次数乘以每次运行的轮数乘以每轮成本">
+    <span class="term">总成本</span><span class="op">=</span>
+    <span class="term">运行次数<small>政策数 × 种子数</small></span><span class="op">×</span>
+    <span class="term hot">轮数<small>100 轮，80 轮在漂移</small></span><span class="op">×</span>
+    <span class="term">每轮成本<small>170–300 秒</small></span>
+  </div>
+  <p>按四个层次逐个检查。每一层都先测量，再判断有没有倍数级的空间。</p>
+
+  <div class="table-wrap">
+    <table class="wide">
+      <thead><tr><th>层次</th><th>主要成本或冗余</th><th>怎么发现的</th><th>结论</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="first">每轮的计算</td>
+          <td>仿真占 78%，16 核只用到 3.8 核；关键路径是单个事件处理线程（约 70% 时间在忙）。重新规划 11%。</td>
+          <td>每轮分项计时（stopwatch）；JFR 剖析 306 万个采样：网络线程 39%、事件线程 35%、找路 18%</td>
+          <td><span class="pill p-good">已拿 −26%</span> 去掉每轮 1.1 GB 事件文件等，结果逐位一致；多线程处理事件只快 5–13%。剩下估计 15–30%，<b>没有倍数级空间</b></td>
+        </tr>
+        <tr>
+          <td class="first">同一轮内的人（仿真冗余）</td>
+          <td>选择和结果都和上一轮完全一样的人只有 9–13%；选择一样、出行时间变化 ≤ 1 分钟的约 40%</td>
+          <td>相邻两轮逐人比较；固定方案只换随机种子做对照（路段流量误差 1.3%，相邻两轮是 8.2%）</td>
+          <td><span class="pill p-bad">复用空间小</span> 相邻两轮的变化主要来自别人换方案，是真实的相互影响，不是噪声。“只重新仿真变了的人”行不通</td>
+        </tr>
+        <tr>
+          <td class="first">迭代之间（搜索过程）</td>
+          <td>80 轮漂移；85% 的试探没有用。随机换方式第一次评估比原来最好的低 8–10 分；重新找路 27–56% 得到同样的路线；得分不平均，在噪声之间来回选</td>
+          <td>每轮每人的重新规划日志（策略、方案来源、得分），三个种子各 100 轮；每 10 轮的方案快照</td>
+          <td><span class="pill p-good">主要空间</span> 浪费分三类：重复提议、明显更差的提议、在噪声之间选择。都是搜索算法本身的低效，可以针对</td>
+        </tr>
+        <tr>
+          <td class="first">运行之间</td>
+          <td>每个政策、每个种子都从头冷启动跑 100 轮；种子之间只差 0.1–0.5%</td>
+          <td>三个种子的轨迹对比；跨种子用另一次运行的轨迹预测终点，从第 20 轮起误差 0.1–0.7%</td>
+          <td><span class="pill p-info">待检验</span> 不同运行走的路几乎一样，之前运行的信息基本没被利用。跨政策是否成立还要验证</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
   <div style="display:grid;gap:6px">
     <div class="bar" role="img" aria-label="每轮用时构成：仿真 78%，重新规划 11%，其他 11%">
       <span class="seg-a" style="flex:78">仿真 78%（16 核只用到 3.8 核）</span>
@@ -226,181 +385,25 @@ footer { font-size: 0.82rem; color: var(--muted); display: grid; gap: 6px; borde
     </div>
     <div class="bar-caption"><span>每轮用时构成（基准运行，第 40–65 轮）</span><span>瓶颈：单线程的事件处理</span></div>
   </div>
-  <div class="card">
-    <h3>“漂移阶段太长”是什么意思</h3>
-    <p>第 0–79 轮的创新期里，全城的总体状态一直朝同一个方向缓慢移动：开车占比从 0.25 起每轮涨约 0.2 个百分点，到第 79 轮还在涨（0.39），第 80 轮一关创新就跳到 0.43。好的迭代应该较快接近终点、之后只在附近小幅波动；这里跑了 80 轮还没到，结束靠的是规定轮数，而不是自然收敛。</p>
-    <p>慢的原因在蓝色框：每轮 30% 的人试新方案，但新方案是随机的。随机换方式只有约 14% 恰好换到这个人最终会选的方式；粗算每轮真正朝终点迈一步的人约 0.3%（实测约 0.5%），而第 40 轮还有 22% 的人没找到最终的方式，所以要走几十轮。加速就是缩短这一段：让每一步更可能走对，或者从离终点更近的地方出发，然后提前收尾。</p>
-  </div>
-</section>
 
-<section id="equilibrium">
-  <header>
-    <div class="eyebrow">背景</div>
-    <h2>MATSim 在逼近什么</h2>
-  </header>
-  <p>MATSim 没有显式的目标函数，也没有收敛判据，只是跑固定的轮数。它在理论上逼近的是<b>随机用户均衡</b>：在别人的选择都不变时，没有人能通过换方案明显提高自己的得分。这和交通分配里的用户均衡是同一个思想，只是从“选路线”扩展到“选整天的方案”（出发时间、方式、路线）。按得分抽方案相当于 logit 选择，所以得分相近的方案会一直轮流被选中，不会收敛到单一选择。</p>
-  <div class="table-wrap">
-    <table>
-      <thead><tr><th></th><th>经典静态交通分配</th><th>MATSim</th></tr></thead>
-      <tbody>
-        <tr><td>目标</td><td>有等价的凸优化问题，均衡唯一</td><td>没有显式目标函数</td></tr>
-        <tr><td>路网</td><td>路段费用只取决于本路段流量，单调递增</td><td>车辆排队、拥堵向上游蔓延、容量随时段变化，费用相互耦合</td></tr>
-        <tr><td>选择</td><td>只选路线，连续的流量分配</td><td>离散的整天方案，每人最多记 5 套</td></tr>
-        <tr><td>公交</td><td>一般不建模</td><td>按时刻表运行、有载客上限</td></tr>
-        <tr><td>随机性</td><td>确定性</td><td>约 4% 抽样加随机抽样选择，每轮都有噪声</td></tr>
-      </tbody>
-    </table>
-  </div>
-  <div class="two">
-    <div class="card">
-      <h3>所以：不凸、终点不唯一</h3>
-      <p>均衡不一定唯一，最终落在哪个稳定状态取决于搜索过程。一个现成的例子：把试探逐步减少到几乎为 0 的那次对照运行，很早就稳定了，但停在一个明显更差的状态（得分 4.5，原流程 6.8；开车占比 0.376，原流程 0.426）。</p>
-      <p>因此判断加速方法时，不能只看“稳没稳”，还要看“落到哪了”、和原流程的终点差多少。</p>
-    </div>
-    <div class="card pending">
-      <h3>离均衡还有多远：路线差距</h3>
-      <p>用 MATSim 自己的重新找路作为“当前路况下的最佳回应”：同一个人的原路线和新路线，放在同一份路况下比较行程时间。<b>相对差距</b> = Σ(原路线时间 − 新路线时间) / Σ 原路线时间，越接近 0 越接近路线均衡。</p>
-      <p class="note">三个原流程运行的计算正在集群上排队，结果出来后在这里补上随轮次变化的图。</p>
+  <div class="sub">
+    <h3>为什么说搜索是主要成本</h3>
+    <div class="two">
+      <div class="card">
+        <p><b>轮数里大部分在漂移。</b>开车占比从 0.25 起每轮涨约 0.2 个百分点，到第 79 轮还在涨（0.39），关创新后跳到 0.43。第 40 轮时还有 22% 的人没找到自己最终会选的方式。</p>
+        <p><b>不能早停。</b>在第 k 轮停止试探、每人用自己最好的方案，离终点还差：第 40 轮 5.8 个百分点，第 70 轮 0.8（种子之间只差 0.2）。最多省约 10%。</p>
+      </div>
+      <div class="card">
+        <p><b>不是噪声的问题，是发现太慢。</b>把试探逐步减少，噪声小了，但停在差的状态。对得分取平均，到第 50 轮只快约 5%。</p>
+        <p><b>试探的命中率很低。</b>随机换方式只有约 14% 恰好换到这个人最终会选的方式；按全城趋势提议能到 49–56%，约 4 倍。</p>
+      </div>
     </div>
   </div>
-</section>
 
-<section id="scenario">
-  <header>
-    <div class="eyebrow">场景与计算量</div>
-    <h2>MATSim-NYC 有多大，跑一次要多久</h2>
-  </header>
-  <div class="facts">
-    <div class="fact"><span class="v">389,301</span><span class="k">仿真人口（约 4% 抽样，计数放大 25 倍）</span></div>
-    <div class="fact"><span class="v">≈51,000</span><span class="k">公交司机（另计）</span></div>
-    <div class="fact"><span class="v">465,386</span><span class="k">路段</span></div>
-    <div class="fact"><span class="v">262</span><span class="k">公交线路：地铁 26、公交车 234、铁路 1</span></div>
-    <div class="fact"><span class="v">8</span><span class="k">出行方式：公交、开车、出租车、网约车、步行、共享单车、自行车、搭车</span></div>
-    <div class="fact"><span class="v">100 轮</span><span class="k">每次运行；第 80 轮关闭创新</span></div>
-    <div class="fact"><span class="v">170–300 秒</span><span class="k">每轮用时（ORCD，随 CPU 和轮次变化）</span></div>
-    <div class="fact"><span class="v">8.95 小时</span><span class="k">一次 100 轮；开全部记录时 9–11 小时</span></div>
-    <div class="fact"><span class="v">24 GB</span><span class="k">Java 堆；峰值内存约 26 GB，启动约 4 分钟</span></div>
-    <div class="fact"><span class="v">27–30 GB</span><span class="k">一次开全部记录的 100 轮运行占用磁盘</span></div>
-  </div>
-  <div class="table-wrap">
-    <table>
-      <thead><tr><th>配置</th><th>值</th><th>含义</th></tr></thead>
-      <tbody>
-        <tr><td>方案记忆</td><td class="mono">maxAgentPlanMemorySize = 5</td><td>每人最多存 5 套方案，多了删最差的</td></tr>
-        <tr><td>策略权重</td><td class="mono">ExpBeta 0.7 · 改时间 0.1 · 找路 0.1 · 换方式 0.1</td><td>每轮约 30% 的人试新方案（约 9.9 万次）</td></tr>
-        <tr><td>关创新</td><td class="mono">fractionOfIterationsToDisableInnovation = 0.8</td><td>第 80 轮起只挑不试</td></tr>
-        <tr><td>改时间范围</td><td class="mono">mutationRange = 1800 s</td><td>出发时间最多前后移动 30 分钟</td></tr>
-        <tr><td>路段通行能力</td><td class="mono">flow 0.15 · storage 0.30</td><td>按 6 个时段变化的路网</td></tr>
-      </tbody>
-    </table>
-  </div>
-  <p class="note">计算量：截至 10-15 上午共 46 个集群作业、约 1,110 核时，其中 100 轮运行 6 次完整、2 次因内存不足失败。10-15 又跑了约 17 个分析作业（每个 1–48 分钟）和两次 100 轮对照运行；其中得分平均的那次在第 52 轮内存不足，已取消。公平份额降到约 0.06，排队变慢。</p>
-</section>
-
-<section id="approaches">
-  <header>
-    <div class="eyebrow">做了什么</div>
-    <h2>试过的方法，按性质和作用对象分类</h2>
-  </header>
-  <p>总成本 = 运行次数 × 每次运行的轮数 × 每轮成本。每个方法都作用在其中一项；按性质又分为四类：<b>工程</b>（结果逐位不变）、<b>近似仿真</b>（更便宜但结果近似）、<b>算法方法</b>（改变搜索过程，需要检验终点是否一致）、<b>流程</b>（改变怎么组织运行）。</p>
-  <div class="table-wrap">
-    <table class="matrix">
-      <thead><tr><th>作用对象 \ 性质</th><th>工程</th><th>近似仿真</th><th>算法方法</th><th>流程</th></tr></thead>
-      <tbody>
-        <tr><th scope="row">每轮成本</th>
-          <td><span class="pill p-good">在线指标等 −26%</span><span class="pill p-bad">多线程处理事件</span></td>
-          <td><span class="pill p-bad">近似仿真器 PSim</span><span class="pill p-bad">只仿真变了的人</span><span class="pill p-idle">快速仿真器 Hermes</span></td>
-          <td><span class="pill p-info">跳过必然白找的重新找路</span></td>
-          <td>—</td></tr>
-        <tr><th scope="row">轮数</th>
-          <td>—</td><td>—</td>
-          <td><span class="pill p-bad">预测个人该不该重新规划</span><span class="pill p-bad">冻结已稳定的人群</span><span class="pill p-bad">外推路段通行时间</span><span class="pill p-bad">逐步减少试探</span><span class="pill p-warn">得分平均</span><span class="pill p-warn">提前关闭创新</span><span class="pill p-good">按趋势定向提议</span><span class="pill p-good">自适应提议控制器</span></td>
-          <td><span class="pill p-good">热启动</span><span class="pill p-info">短跑加预测终点</span></td></tr>
-        <tr><th scope="row">运行次数</th>
-          <td>—</td><td>—</td><td>—</td>
-          <td><span class="pill p-info">每个政策只跑一个种子</span><span class="pill p-info">跨政策预测终点</span></td></tr>
-      </tbody>
-    </table>
-  </div>
-  <div class="legend"><span><span class="pill p-good">有效或下一步主线</span></span><span><span class="pill p-info">待检验</span></span><span><span class="pill p-warn">小幅或保底</span></span><span><span class="pill p-bad">放下</span></span><span><span class="pill p-idle">未做</span></span></div>
-
-  <div class="table-wrap">
-    <table class="approaches">
-      <thead><tr><th>方法</th><th>作用对象</th><th>怎么检验的</th><th>结果</th><th>状态</th></tr></thead>
-      <tbody>
-        <tr class="grp"><td colspan="5">工程：结果逐位不变</td></tr>
-        <tr><td>在线指标代替每轮 1.1 GB 事件文件；精确的收费查表；记录器优化</td><td>每轮成本</td><td>性能剖析；12 轮运行逐位比较</td><td>用时 −26%，结果逐位一致</td><td><span class="pill p-good">已采用</span></td></tr>
-        <tr><td>多线程处理事件（4 / 8 线程）</td><td>每轮成本</td><td>12 轮运行</td><td>只快 5–13%，瓶颈在少数重的处理器本身</td><td><span class="pill p-bad">放下</span></td></tr>
-        <tr><td>剩余的精确优化（按时段缓存路段容量等）</td><td>每轮成本</td><td>估算</td><td>可能再省 15–30%，未验证</td><td><span class="pill p-idle">待定</span></td></tr>
-
-        <tr class="grp"><td colspan="5">近似仿真：更便宜，结果近似</td></tr>
-        <tr><td>只重新仿真方案变了的人</td><td>每轮成本</td><td>统计相邻两轮完全重复的人</td><td>只有 9–13% 的人完全重复</td><td><span class="pill p-bad">放下</span></td></tr>
-        <tr><td>近似仿真器 PSim</td><td>每轮成本</td><td>混合运行，和完整仿真比较</td><td>只快 1.6–2.2 倍，公交有系统偏差</td><td><span class="pill p-bad">放下</span></td></tr>
-        <tr><td>快速仿真器 Hermes，先粗后细</td><td>每轮成本</td><td>—</td><td>MATSim 2026 自带，支持公交</td><td><span class="pill p-idle">未测</span></td></tr>
-
-        <tr class="grp"><td colspan="5">算法方法：个人层面（L2Seg 的直接类比）</td></tr>
-        <tr><td>预测谁会定下来、谁的试探有用，只让这些人重新规划</td><td>轮数</td><td>三次 100 轮原流程运行（带重新规划日志），训练分类器</td><td>AUC 0.58–0.67；挑 30% 只能覆盖 39–46% 的有用试探</td><td><span class="pill p-bad">放下</span></td></tr>
-
-        <tr class="grp"><td colspan="5">算法方法：总体层面的规律</td></tr>
-        <tr><td>冻结已稳定的人群（按出行起讫区 × 时段等分组）</td><td>轮数</td><td>分组稳定性分析：各组何时稳定、下一步哪里会变</td><td>各组几乎同时稳定（中位数约第 60 轮），变化很普遍</td><td><span class="pill p-bad">放下</span></td></tr>
-        <tr><td>外推路段通行时间</td><td>轮数</td><td>逐轮变化方向分析</td><td>路段层面是噪声加来回振荡，外推更差</td><td><span class="pill p-bad">放下</span></td></tr>
-        <tr><td>提前关闭创新</td><td>轮数</td><td>离线检验：第 k 轮每人用最好方案时离终点多远</td><td>第 70 轮才差 0.8 个百分点，最多省约 10%</td><td><span class="pill p-warn">保底</span></td></tr>
-        <tr><td>单次运行的曲线外推</td><td>轮数</td><td>用前 k 轮拟合曲线预测终点</td><td>开车类指标第 30–40 轮误差 &lt; 1%；公交、等车做不到</td><td><span class="pill p-warn">只作补充</span></td></tr>
-
-        <tr class="grp"><td colspan="5">算法方法：让试探更有用</td></tr>
-        <tr><td>跳过必然白找的重新找路（代码已写好）</td><td>每轮成本、轮数</td><td>22 万次重新找路按方案内容和来源分类</td><td>30% 必然白找（100%，无例外）；15 项检查通过</td><td><span class="pill p-info">待 12 轮测试</span></td></tr>
-        <tr><td>按趋势定向提议换成哪种方式</td><td>轮数</td><td>离线检验：提议命中最终方式的比例</td><td>随机 14%，按趋势 49–56%，约 4 倍</td><td><span class="pill p-good">下一步主线</span></td></tr>
-        <tr><td>自适应提议控制器：按成功率分配三类试探，并自适应收尾</td><td>轮数</td><td>各类试探每轮的有用比例</td><td>换方式、找路后期 7–9%，改时间约 17%</td><td><span class="pill p-good">下一步主线</span></td></tr>
-
-        <tr class="grp"><td colspan="5">算法方法：MATSim 自带的开关</td></tr>
-        <tr><td>得分平均（对历次得分取平均）</td><td>轮数</td><td>100 轮对照运行，和原流程比轨迹</td><td>到第 50 轮快约 5%；第 52 轮内存不足中断</td><td><span class="pill p-warn">需加内存重跑</span></td></tr>
-        <tr><td>逐步减少试探（创新退火）</td><td>轮数</td><td>100 轮对照运行</td><td>停在差的状态：得分 4.5 对 6.8，开车占比 0.376 对 0.426</td><td><span class="pill p-bad">放下</span></td></tr>
-
-        <tr class="grp"><td colspan="5">流程：改变怎么组织运行</td></tr>
-        <tr><td>热启动：政策场景从基准场景的终点出发</td><td>轮数</td><td>待运行：同一政策冷启动与热启动对比</td><td>依据：不同运行走的路几乎一样</td><td><span class="pill p-good">待运行检验</span></td></tr>
-        <tr><td>短跑加预测：用参考运行的走势预测终点</td><td>轮数、运行次数</td><td>三个种子轮流留一检验</td><td>同场景内第 20 轮误差 0.1–0.7%；只给总体数字</td><td><span class="pill p-info">待跨政策验证</span></td></tr>
-        <tr><td>每个政策只跑一个种子</td><td>运行次数</td><td>三个种子之间的差别</td><td>只差 0.1–0.5%</td><td><span class="pill p-info">待确认</span></td></tr>
-      </tbody>
-    </table>
-  </div>
-</section>
-
-<section id="bottleneck">
-  <header>
-    <div class="eyebrow">怎样找到瓶颈</div>
-    <h2>一步一步排除，最后落到“发现太慢”</h2>
-  </header>
-  <p>沿着“每轮成本 → 轮数 → 轮数为什么多”逐个检查，每一步都用已有运行的数据回答一个问题。</p>
-  <ol class="chain">
-    <li><div class="chain-body"><div class="q">每轮成本还能大幅降低吗？</div><div class="e">性能剖析：仿真占 78%，只用到 3.8 个核，瓶颈是单线程的事件处理。多线程处理事件只快 5–13%。</div><div class="c">工程优化已拿到 −26%，估计剩下 15–30%，<b>没有倍数级的空间</b>。</div></div></li>
-    <li><div class="chain-body"><div class="q">时间花在哪些轮上？</div><div class="e">100 轮里有 80 轮是漂移：开车占比从 0.25 慢慢涨到 0.39，第 80 轮关创新时跳到 0.43。一次运行的最后 20 轮花 1.85 小时（21%）。</div><div class="c">主要的空间在<b>轮数</b>。</div></div></li>
-    <li><div class="chain-body"><div class="q">能不能只让“需要的人”重新规划？（L2Seg 的直接类比）</div><div class="e">预测谁会成功，AUC 只有 0.58–0.67。个人每轮在得分相近的方案之间来回换（每轮 46% 的人换方案），大部分是随机性。</div><div class="c">个人层面<b>不可预测</b>。</div></div></li>
-    <li><div class="chain-body"><div class="q">能不能冻结已经稳定的人群或路段？</div><div class="e">各组几乎同时稳定，中位数约第 60 轮，第 30 轮前稳定的不到 10%；第 40 轮时 55–65% 的人所在的组仍有明显变化；路段通行时间只有噪声和来回振荡。</div><div class="c">系统是<b>整体一起漂移</b>，没有可以提前冻结的部分。</div></div></li>
-    <li><div class="chain-body"><div class="q">能不能早点停？</div><div class="e">在第 k 轮停止试探、每人用最好的方案，离终点还差：第 40 轮 5.8 个百分点，第 60 轮 2.0，第 70 轮 0.8（种子之间的差别只有 0.2）。</div><div class="c">最多省约 <b>10%</b>。</div></div></li>
-    <li><div class="chain-body"><div class="q">浪费在哪里？</div><div class="e">85% 的试探没有用。重新找路有 35% 得到同样的路线，其中“只有步行等、或含公交但不是改时间产生的方案”占 30%，22 万次里 100% 白找。换方式和找路的有用率从第 1 轮的 40–49% 降到第 60 轮的 8–9%，改时间一直约 17%。</div><div class="c">试探的<b>命中率很低</b>，而且三类按固定比例分配。</div></div></li>
-    <li><div class="chain-body"><div class="q">慢是因为噪声，还是因为没发现好方案？</div><div class="e">把试探逐步减少到几乎为 0：噪声小了，前期得分更高，但最好方案的得分在第 60 轮就停住，最终得分 4.5（原流程 6.8），开车占比 0.376（原流程 0.426）。对历次得分取平均，到第 50 轮只快约 5%。</div><div class="c">减少试探会停在差的状态：瓶颈是<b>发现</b>，不是噪声。</div></div></li>
-    <li><div class="chain-body"><div class="q">提议能不能更准？</div><div class="e">第 40 轮还有 22% 的人没找到最终方式，他们最后大多去了开车、出租车、网约车。随机换方式命中最终方式的概率 14%；按趋势提议 49–56%，约 4 倍。方向是全城一致的，分组只多约 5 个百分点。</div><div class="c">让试探更有用是<b>最直接的加速杠杆</b>。</div></div></li>
-  </ol>
-</section>
-
-<section id="charts">
-  <header>
-    <div class="eyebrow">关键证据</div>
-    <h2>两张图</h2>
-  </header>
-  <figure class="chart-fig">
-    <figcaption>
-      <h3>开车占比的轨迹：原流程和两种 MATSim 自带开关</h3>
-      <p>同一个种子，每轮的开车出行占比。得分平均的那次运行在第 52 轮内存不足中断。</p>
-    </figcaption>
-    <div class="legend" id="lg-car"></div>
-    <div class="chart" id="chart-car"></div>
-    <details><summary>查看数据（每 10 轮）</summary><div class="table-wrap" style="margin-top:8px"><table id="tb-car"></table></div></details>
-  </figure>
   <figure class="chart-fig">
     <figcaption>
       <h3>每类试探的有用比例</h3>
-      <p>第 t 轮产生的新方案中，10 轮内再被选中、且得分高于原来最好方案的比例。</p>
+      <p>第 t 轮产生的新方案中，10 轮内再被选中、且得分高于原来最好方案的比例。换方式和找路从 40–49% 降到 7–9%，改时间一直约 17%。三类试探却始终按固定的 1:1:1 分配。</p>
     </figcaption>
     <div class="legend" id="lg-useful"></div>
     <div class="chart" id="chart-useful"></div>
@@ -408,62 +411,136 @@ footer { font-size: 0.82rem; color: var(--muted); display: grid; gap: 6px; borde
   </figure>
 </section>
 
-<section id="l2seg">
-  <header>
-    <div class="eyebrow">和 L2Seg 的关系</div>
-    <h2>哪些思想搬得过来</h2>
-  </header>
-  <p>L2Seg 加速车辆路径问题的迭代求解：只看下一步，预测解里哪些部分不会变，把它们聚合成超节点，求解器只处理会变的部分，每轮重新分段。</p>
-  <div class="table-wrap">
-    <table>
-      <thead><tr><th>L2Seg 的做法</th><th>在 MATSim-NYC 里</th><th>结果</th></tr></thead>
-      <tbody>
-        <tr><td>大部分解一步之后不变</td><td>个人：每轮 46% 的人换方案；完全重复的只有 9–13%</td><td><span class="pill p-bad">不成立</span></td></tr>
-        <tr><td>预测哪里会变</td><td>个人 AUC 0.58–0.67；人群层面能预测位置，但变化很普遍</td><td><span class="pill p-bad">空间很小</span></td></tr>
-        <tr><td>冻结或聚合稳定部分</td><td>各人群一起漂移，路段是噪声加振荡</td><td><span class="pill p-bad">放下</span></td></tr>
-        <tr><td>把求解器用在有回报的地方</td><td>试探的命中率可以从 14% 提到约 50%</td><td><span class="pill p-good">可用</span></td></tr>
-        <tr><td>从求解记录中学习</td><td>不同运行的走势几乎一样，20 轮就能预测终点（同场景内 0.1–0.7%）</td><td><span class="pill p-info">待跨政策验证</span></td></tr>
-      </tbody>
-    </table>
+<!-- ============ 4 ============ -->
+<section class="part" id="methods">
+  <div class="part-head">
+    <span class="part-num">4</span>
+    <div class="eyebrow">方法</div>
+    <h2>可能的解决方法：试过的、借鉴的、接下来的</h2>
   </div>
-  <p class="note">原因是结构不同：车辆路径问题是静态的，各段可以各自先收敛；MATSim 里所有人通过同一张路网和公交互相影响，系统整体一起移动。所以搬过来的是“把力气用在有回报的地方”和“从运行记录里学”，而不是“冻结稳定部分”。</p>
-</section>
 
-<section id="next">
-  <header>
-    <div class="eyebrow">接下来</div>
-    <h2>计划和待定的事</h2>
-  </header>
+  <div class="sub">
+    <h3>接下来的主轴：把 MATSim 当作求均衡的搜索来加速</h3>
+    <p>四个假设，按顺序做。每个都事先定好放弃标准，结果出来后不改标准。</p>
+    <div class="two">
+      <div class="card">
+        <span class="tag">前提 · 度量</span>
+        <h3>均衡差距能可靠测量</h3>
+        <p>建路线、方式、出发时间三部分的差距估计；先验证估计出的差距能预测一个人换方案后的实际提升。用它画原流程和对照运行的收敛曲线，找出差距集中在哪些人、为什么。</p>
+        <p class="from">借鉴：交通分配的相对差距</p>
+      </div>
+      <div class="card">
+        <span class="tag">主线 · 少试错</span>
+        <h3>有信息的提议</h3>
+        <p>按差距大小决定谁去试探，取代随机挑 30%；换方式前先用找路结果估各方式的效用，按估计效用提议；跳过必然重复的重新找路。目标：达到同样差距的轮数少 30% 以上。</p>
+        <p class="from">借鉴：L2Seg“只处理会变的部分”、DiscreteModeChoice、多臂老虎机</p>
+      </div>
+      <div class="card">
+        <span class="tag">缩小每轮的问题</span>
+        <h3>接近最优的人聚合成背景负荷</h3>
+        <p>差距持续接近零的人不再逐个仿真，改为固定的路段-小时流量和公交载客，只仿真剩下的人。先用已有数据分析这类人占仿真的多少、代替以后误差多大，过关再实现。</p>
+        <p class="from">借鉴：L2Seg 的“稳定段聚合成超节点”</p>
+      </div>
+      <div class="card">
+        <span class="tag">利用之前的运行</span>
+        <h3>新政策从已有均衡热启动</h3>
+        <p>从基础场景的均衡方案出发，在新政策下算差距，只让受影响大的人重新搜索。和冷启动比，达到同样差距用的核时。目标：省 50% 以上。</p>
+        <p class="from">借鉴：原论文的政策运行本来就从基础场景热启动；L2Seg“从求解记录里学”</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="sub">
+    <h3>试过的方法和结果</h3>
+    <div class="legend-pills"><span class="pill p-good">采用或并入主轴</span><span class="pill p-info">待检验</span><span class="pill p-warn">小幅或保底</span><span class="pill p-bad">放下</span><span class="pill p-idle">未做</span></div>
+    <div class="table-wrap">
+      <table class="wide">
+        <thead><tr><th>方法</th><th>作用在</th><th>怎么检验的</th><th>结果和原因</th><th>状态</th></tr></thead>
+        <tbody>
+          <tr class="grp"><td colspan="5">工程：结果逐位不变</td></tr>
+          <tr><td class="first">在线统计指标代替每轮 1.1 GB 事件文件；精确的收费查表</td><td>每轮成本</td><td>12 轮运行逐位比较</td><td>用时 −26%，输出 −81%</td><td><span class="pill p-good">已采用</span></td></tr>
+          <tr><td class="first">多线程处理事件（4 / 8 线程）</td><td>每轮成本</td><td>12 轮运行</td><td>只快 5–13%，瓶颈在少数很重的处理器本身</td><td><span class="pill p-bad">放下</span></td></tr>
+
+          <tr class="grp"><td colspan="5">近似仿真：更便宜，结果近似</td></tr>
+          <tr><td class="first">只重新仿真方案变了的人</td><td>每轮成本</td><td>相邻两轮逐人比较</td><td>完全重复的人只有 9–13%，相互影响是全局的</td><td><span class="pill p-bad">放下</span></td></tr>
+          <tr><td class="first">近似仿真器 PSim 和完整仿真交替</td><td>每轮成本</td><td>12 轮混合运行</td><td>只快 1.6–2.2 倍；公交太挤，实际乘车时间是规划时间的 1.6–2.8 倍，近似结果系统偏向公交</td><td><span class="pill p-bad">放下</span></td></tr>
+
+          <tr class="grp"><td colspan="5">L2Seg 的第一次照搬：个人和人群层面</td></tr>
+          <tr><td class="first">预测谁的方案会定下来、谁的试探有用，只让这些人重新规划</td><td>轮数</td><td>三次 100 轮运行的重新规划日志，训练分类器</td><td>AUC 0.58–0.67。用“下一轮换不换方案”当标签，而每轮 46% 的人换方案大多是在得分相近的方案之间随机抽，标签本身是噪声</td><td><span class="pill p-bad">放下</span>，改用差距做标签</td></tr>
+          <tr><td class="first">冻结已经稳定的人群</td><td>轮数</td><td>按起讫区 × 时段等三种分组看稳定时间</td><td>各组几乎同时稳定（中位数约第 60 轮）；“已稳定”的组之后还在改进。而且被冻结的人照样要仿真，省不了每轮成本</td><td><span class="pill p-bad">放下</span></td></tr>
+          <tr><td class="first">外推路段通行时间</td><td>轮数</td><td>逐轮变化的方向一致性</td><td>路段层面只有噪声和来回振荡，外推比不动更差</td><td><span class="pill p-bad">放下</span></td></tr>
+
+          <tr class="grp"><td colspan="5">改搜索过程</td></tr>
+          <tr><td class="first">逐步减少试探（MATSim 自带）</td><td>轮数</td><td>100 轮对照运行</td><td>很早稳定，但停在差的状态：得分 4.5 对 6.8</td><td><span class="pill p-bad">放下</span></td></tr>
+          <tr><td class="first">对历次得分取平均（MATSim 自带）</td><td>轮数</td><td>100 轮对照运行</td><td>到第 50 轮只快约 5%；第 52 轮内存不足中断</td><td><span class="pill p-warn">作为对照</span></td></tr>
+          <tr><td class="first">提前关闭创新</td><td>轮数</td><td>离线：第 k 轮每人用最好方案离终点多远</td><td>第 70 轮才差 0.8 个百分点，最多省约 10%</td><td><span class="pill p-warn">保底</span></td></tr>
+          <tr><td class="first">跳过必然重复的重新找路</td><td>轮数、每轮成本</td><td>22 万次重新找路按方案内容和来源分类</td><td>只有步行等、或含公交但不是改时间产生的方案，重新找路 100% 不变，占 30%；代码已写，15 项检查通过</td><td><span class="pill p-good">并入主线</span></td></tr>
+          <tr><td class="first">按趋势提议换成哪种方式</td><td>轮数</td><td>离线：提议命中最终方式的比例</td><td>随机 14%，按趋势 49–56%；方向全城一致，分组只多约 5 个百分点</td><td><span class="pill p-good">并入主线</span></td></tr>
+
+          <tr class="grp"><td colspan="5">利用其他运行</td></tr>
+          <tr><td class="first">短跑加预测：用参考运行的轨迹比例预测终点</td><td>轮数、运行次数</td><td>三个种子轮流留一</td><td>同场景内第 20 轮误差 0.1–0.7%，但种子之间本来就几乎一样；只给总体数字，不产生仿真状态</td><td><span class="pill p-info">降为副产品</span></td></tr>
+          <tr><td class="first">热启动</td><td>轮数</td><td>待运行</td><td>—</td><td><span class="pill p-info">主轴之一</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <h3>从失败里得到的教训</h3>
+      <ul>
+        <li>L2Seg 的“聚合”是让问题本身变小，不是冻结。冻结的人照样参与仿真，省不了钱。</li>
+        <li>标签必须来自“往前看一步的最优反应”，而不是“下一轮换不换”。后者在 MATSim 里大部分是选择噪声。</li>
+        <li>第 80 轮关创新后的状态是人为截断的结果，不能当作要逼近的终点；需要一个均衡度量。</li>
+        <li>系统整体一起漂移，局部“先收敛先冻结”在这里不成立；能利用的是“提议的方向”和“之前运行的结果”。</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="sub">
+    <h3>借鉴的方法</h3>
+    <div class="table-wrap">
+      <table class="wide">
+        <thead><tr><th>来源</th><th>核心思想</th><th>在 MATSim-NYC 里怎么用</th><th>状态</th></tr></thead>
+        <tbody>
+          <tr><td class="first">L2Seg（Ouyang、Li、Ma、Wu，arXiv 2507.01037）</td><td>迭代求解器每步只改动一小部分；从求解记录学“下一步哪里会变”；稳定段聚合成超节点，求解器只处理会变的部分；加速 2–7 倍</td><td>用均衡差距作为“会变”的标签，决定谁去试探；差距接近零的人聚合成背景负荷</td><td><span class="pill p-good">主轴</span></td></tr>
+          <tr><td class="first">交通分配：MSA、Frank-Wolfe、相对差距</td><td>步长逐渐变小才能收敛；用相对差距判断离均衡多远</td><td>均衡差距作为主度量；得分平均（MATSim 自带的 score MSA）作为对照</td><td><span class="pill p-good">度量</span></td></tr>
+          <tr><td class="first">MATSim 扩展 DiscreteModeChoice</td><td>换方式前先用找路结果估算各方式的效用，再按效用选择</td><td>取代均匀随机的换方式提议</td><td><span class="pill p-good">主线</span></td></tr>
+          <tr><td class="first">多臂老虎机、置信上界</td><td>试探预算给成功率高、不确定性大的选项</td><td>按每类试探的成功率分配名额；只在已存方案都明显不好时才试新方案</td><td><span class="pill p-good">主线</span></td></tr>
+          <tr><td class="first">热启动、延拓法</td><td>从相近问题的解出发</td><td>新政策从基础场景的均衡出发，只让受影响的人重新搜索</td><td><span class="pill p-info">待运行</span></td></tr>
+          <tr><td class="first">学习曲线外推（Hyperband、freeze-thaw 贝叶斯优化）</td><td>从前几步的曲线预测最终结果，提前停掉</td><td>用参考运行的轨迹预测终点；只能给总体指标</td><td><span class="pill p-warn">副产品</span></td></tr>
+          <tr><td class="first">不动点加速（Aitken、Anderson）</td><td>沿最近几步的方向外推</td><td>外推路段通行时间：路段层面是振荡，不成立</td><td><span class="pill p-bad">放下</span></td></tr>
+          <tr><td class="first">多保真度（抽样人口、PSim、Hermes 快速仿真器）</td><td>前期用便宜的粗模型，后期换精细模型</td><td>前期用小样本人口或快速仿真器，后期换回完整仿真</td><td><span class="pill p-idle">暂缓</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
   <div class="two">
     <div class="card">
-      <h3>计划</h3>
+      <h3>近期计划</h3>
       <ul>
-        <li>写自适应提议控制器的第一版：按成功率决定换成哪种方式，加上自适应收尾。先跑 12 轮检查，再跑 100 轮，和原流程比较用了多少轮、终点是否一致。</li>
-        <li>热启动实验：2025 年收费方案场景，冷启动 100 轮一次、从基准场景终点热启动约 40 轮一次；冷启动那次同时检验“短跑加预测”能否跨政策。</li>
-        <li>跳过白找路线的 12 轮测试：检查和原流程逐位一致。</li>
-        <li>补上路线差距的结果和“换成哪种方式”的成功率。</li>
+        <li>完成均衡差距的估计器，验证它能预测实际提升，画出原流程和对照运行的差距曲线。</li>
+        <li>离线回答：如果按差距挑人、按估计效用提议，有多少提议会被接受。</li>
+        <li>差距出来后，分析接近最优的人占仿真的多少。</li>
       </ul>
     </div>
     <div class="card">
       <h3>需要决定</h3>
       <ul>
-        <li>判断标准：建议“误差 ≤ 政策效应的 10%”，同时报告与种子之间差别的比较。</li>
-        <li>是否同意热启动实验的两次运行（共约 13 小时）。</li>
-        <li>得分平均的对照运行是否加内存重跑（约 9 小时）。</li>
-        <li>控制器的 100 轮运行（约 9 小时），等 12 轮检查后再申请。</li>
+        <li>是否同意一次政策场景（2025 年收费方案）的 100 轮冷启动运行，作为热启动的对照（约 9 小时）。</li>
+        <li>得分平均的对照运行是否加大内存重跑（约 9 小时）。</li>
+        <li>有信息的提议的 100 轮运行，等 12 轮检查后再申请。</li>
       </ul>
     </div>
   </div>
 </section>
 
 <footer>
-  <div>数据来源：三次 100 轮基准运行、三次带重新规划日志的 100 轮原流程运行、两次 MATSim 自带开关的对照运行。分析脚本在 <code>experiments/l2seg/</code>，详细结果写在 <code>docs/aggregate-regularity-plan.md</code> 和 <code>docs/execution-plan.md</code>。</div>
-  <div>更正：此前几份脚本说明把人口写成“15% 抽样”；人口约为 4% 抽样，0.15 是路段的通行能力系数。</div>
+  <div>数据来源：三次 100 轮基准运行、三次带重新规划日志的 100 轮运行、两次 MATSim 自带开关的对照运行，均为基础场景、MIT ORCD。截至 10-15 共用约 1,100 核时。</div>
+  <div>详细记录：仓库 <code>docs/research-charter.md</code>（研究总纲）、<code>docs/matsim-nyc-findings.md</code>、<code>docs/aggregate-regularity-plan.md</code>；分析脚本在 <code>experiments/l2seg/</code>。</div>
 </footer>
 </main>
 
 <script>
-const DATA = {"RQ1": {"it": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99], "car": [0.2547, 0.2496, 0.2517, 0.2547, 0.2578, 0.2614, 0.2644, 0.2673, 0.2706, 0.2733, 0.2763, 0.2789, 0.2818, 0.2847, 0.2877, 0.2901, 0.2926, 0.2952, 0.2982, 0.3012, 0.3028, 0.3056, 0.3073, 0.3105, 0.3124, 0.3147, 0.3162, 0.3193, 0.3217, 0.3231, 0.3252, 0.3266, 0.3297, 0.3311, 0.3331, 0.3346, 0.3369, 0.3395, 0.3404, 0.342, 0.3438, 0.3456, 0.3474, 0.3492, 0.3505, 0.3521, 0.3547, 0.3555, 0.3575, 0.3586, 0.3605, 0.3614, 0.3629, 0.364, 0.3653, 0.3672, 0.3684, 0.3692, 0.3702, 0.3722, 0.3738, 0.375, 0.3761, 0.3775, 0.3781, 0.3799, 0.3806, 0.3828, 0.3833, 0.3846, 0.3858, 0.3866, 0.3876, 0.3894, 0.3899, 0.3909, 0.3925, 0.3936, 0.3941, 0.3956, 0.4274, 0.4258, 0.4258, 0.4254, 0.4259, 0.4255, 0.4256, 0.4257, 0.4258, 0.4257, 0.426, 0.4259, 0.4261, 0.4262, 0.4259, 0.4257, 0.4261, 0.426, 0.4258, 0.4259], "score": [-18.848, -16.429, -14.371, -12.615, -11.099, -9.64, -8.647, -7.708, -6.873, -6.25, -5.636, -5.065, -4.488, -4.085, -3.59, -3.29, -2.995, -2.526, -2.254, -1.968, -1.766, -1.424, -1.241, -0.905, -0.761, -0.487, -0.136, -0.233, 0.209, 0.256, 0.372, 0.264, 0.827, 0.82, 1.133, 1.236, 1.348, 1.201, 1.533, 1.353, 1.729, 1.902, 1.87, 1.902, 2.075, 2.214, 2.334, 2.379, 2.529, 2.463, 2.677, 2.532, 2.694, 2.772, 2.683, 2.745, 2.967, 3.005, 3.198, 3.163, 3.279, 3.229, 3.396, 3.608, 3.557, 3.45, 3.495, 3.671, 3.628, 3.73, 3.839, 3.816, 3.934, 3.769, 3.961, 4.026, 4.078, 4.203, 4.171, 4.241, 6.448, 6.593, 6.636, 6.664, 6.692, 6.707, 6.728, 6.742, 6.758, 6.739, 6.752, 6.773, 6.767, 6.755, 6.759, 6.774, 6.795, 6.773, 6.778, 6.788]}, "E1": {"it": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51], "car": [0.2547, 0.2496, 0.2517, 0.2547, 0.2578, 0.2614, 0.2644, 0.2673, 0.2706, 0.2733, 0.2763, 0.279, 0.2816, 0.2851, 0.2875, 0.2901, 0.2927, 0.296, 0.2982, 0.3013, 0.3037, 0.3058, 0.3083, 0.3118, 0.3136, 0.3167, 0.3183, 0.3212, 0.3233, 0.3253, 0.3276, 0.3297, 0.3324, 0.3342, 0.3365, 0.3377, 0.34, 0.3421, 0.3438, 0.3456, 0.3469, 0.3489, 0.3506, 0.352, 0.3536, 0.3553, 0.3574, 0.3588, 0.3605, 0.3619, 0.3633, 0.3647], "score": [-18.848, -16.429, -14.371, -12.615, -11.099, -9.64, -8.647, -7.708, -6.873, -6.25, -5.659, -5.086, -4.57, -4.084, -3.614, -3.289, -2.905, -2.57, -2.299, -1.928, -1.771, -1.372, -1.108, -0.958, -0.62, -0.447, -0.331, -0.036, 0.012, 0.158, 0.407, 0.613, 0.631, 0.829, 0.874, 1.014, 1.13, 1.251, 1.375, 1.49, 1.542, 1.636, 1.813, 1.895, 1.903, 1.71, 2.101, 2.22, 2.204, 2.335, 2.36, 2.53]}, "E2": {"it": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99], "car": [0.2547, 0.2495, 0.252, 0.2556, 0.2588, 0.2626, 0.265, 0.2683, 0.2711, 0.2745, 0.2777, 0.28, 0.2833, 0.286, 0.2885, 0.2916, 0.2938, 0.2964, 0.2994, 0.3019, 0.3042, 0.3066, 0.3085, 0.3112, 0.3132, 0.3152, 0.3173, 0.3193, 0.3213, 0.3232, 0.3253, 0.3267, 0.3291, 0.3307, 0.333, 0.3337, 0.3357, 0.3371, 0.3389, 0.3402, 0.3418, 0.3433, 0.3446, 0.346, 0.3475, 0.3488, 0.3496, 0.3506, 0.3519, 0.3532, 0.3544, 0.3553, 0.3563, 0.3574, 0.3583, 0.3601, 0.3603, 0.3615, 0.3627, 0.3629, 0.3642, 0.3651, 0.3655, 0.3665, 0.3673, 0.3679, 0.3686, 0.3693, 0.37, 0.3709, 0.3715, 0.3722, 0.3723, 0.3727, 0.3737, 0.3741, 0.3747, 0.375, 0.3752, 0.3758, 0.3758, 0.3759, 0.3756, 0.3757, 0.3756, 0.3757, 0.3758, 0.3757, 0.3756, 0.3757, 0.3757, 0.376, 0.3758, 0.3757, 0.3757, 0.3758, 0.3758, 0.3756, 0.3754, 0.3755], "score": [-18.848, -16.434, -14.403, -12.655, -11.132, -9.692, -8.724, -7.791, -7.027, -6.348, -5.637, -5.137, -4.642, -4.111, -3.682, -3.272, -2.852, -2.615, -2.18, -1.866, -1.575, -1.274, -1.038, -0.823, -0.597, -0.414, -0.123, 0.114, 0.333, 0.428, 0.654, 0.787, 1.026, 1.032, 1.295, 1.369, 1.518, 1.605, 1.778, 1.877, 1.935, 2.111, 2.238, 2.308, 2.364, 2.536, 2.624, 2.757, 2.808, 2.888, 2.992, 3.098, 3.173, 3.205, 3.287, 3.363, 3.442, 3.482, 3.552, 3.607, 3.682, 3.793, 3.815, 3.881, 3.913, 3.934, 4.015, 4.086, 4.103, 4.193, 4.214, 4.231, 4.291, 4.323, 4.351, 4.376, 4.423, 4.449, 4.469, 4.492, 4.479, 4.517, 4.496, 4.503, 4.508, 4.504, 4.493, 4.515, 4.53, 4.539, 4.536, 4.529, 4.526, 4.546, 4.538, 4.512, 4.545, 4.537, 4.534, 4.52]}, "useful": {"mode": [0.3976, 0.3626, 0.3397, 0.3163, 0.3062, 0.2823, 0.2733, 0.2566, 0.2404, 0.2302, 0.2247, 0.2173, 0.2029, 0.1965, 0.191, 0.1806, 0.1795, 0.1719, 0.166, 0.1649, 0.1559, 0.155, 0.1481, 0.145, 0.1408, 0.1397, 0.1348, 0.1334, 0.1249, 0.1295, 0.1206, 0.1228, 0.1165, 0.1151, 0.1167, 0.1133, 0.1081, 0.1089, 0.104, 0.1039, 0.1039, 0.1, 0.0991, 0.1006, 0.0953, 0.0973, 0.0913, 0.0907, 0.0895, 0.0901, 0.0816, 0.0904, 0.0824, 0.0828, 0.0832, 0.0836, 0.0773, 0.0831, 0.0796, 0.0784, 0.0742, 0.0753, 0.0733, 0.0715, 0.0708, 0.0718, 0.0713, 0.0711, 0.0678, 0.0649, 0.0615, 0.0627, 0.0636, 0.0645, 0.0659, 0.0671, 0.0682, 0.0642, 0.068], "route": [0.4914, 0.4114, 0.372, 0.3324, 0.3019, 0.2556, 0.2392, 0.2168, 0.1965, 0.1836, 0.1715, 0.1582, 0.1514, 0.1458, 0.1391, 0.1303, 0.1246, 0.1235, 0.1184, 0.1202, 0.1115, 0.1109, 0.1053, 0.1088, 0.1024, 0.105, 0.0999, 0.107, 0.1036, 0.0991, 0.0994, 0.0992, 0.0971, 0.1014, 0.0974, 0.1003, 0.0982, 0.0953, 0.0944, 0.0969, 0.0959, 0.0952, 0.0958, 0.0963, 0.0922, 0.0948, 0.0955, 0.0934, 0.0942, 0.0942, 0.0916, 0.0905, 0.0919, 0.0908, 0.091, 0.0947, 0.0944, 0.0917, 0.0931, 0.0889, 0.0929, 0.0887, 0.0932, 0.0911, 0.0888, 0.09, 0.0886, 0.087, 0.0903, 0.0826, 0.0807, 0.0819, 0.0782, 0.08, 0.0812, 0.0844, 0.0864, 0.087, 0.0879], "time": [0.4681, 0.4073, 0.3695, 0.342, 0.3172, 0.2881, 0.2693, 0.2537, 0.2399, 0.2257, 0.218, 0.2092, 0.2, 0.1969, 0.191, 0.1836, 0.1815, 0.1773, 0.1729, 0.1754, 0.1747, 0.1678, 0.1697, 0.1726, 0.169, 0.1634, 0.1696, 0.1715, 0.1698, 0.1712, 0.1664, 0.1706, 0.1701, 0.1731, 0.1712, 0.1724, 0.1705, 0.1705, 0.1728, 0.1681, 0.1715, 0.1719, 0.1731, 0.1771, 0.1679, 0.1718, 0.1726, 0.1724, 0.1708, 0.1736, 0.175, 0.1757, 0.1741, 0.1721, 0.1706, 0.1755, 0.1759, 0.1769, 0.1752, 0.1772, 0.1746, 0.1791, 0.1747, 0.172, 0.1746, 0.1748, 0.1729, 0.1752, 0.1748, 0.1688, 0.1695, 0.1655, 0.1687, 0.1699, 0.172, 0.1724, 0.1784, 0.1769, 0.1838]}};
+const DATA = {"RQ1": {"it": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99], "car": [0.2547, 0.2496, 0.2517, 0.2547, 0.2578, 0.2614, 0.2644, 0.2673, 0.2706, 0.2733, 0.2763, 0.2789, 0.2818, 0.2847, 0.2877, 0.2901, 0.2926, 0.2952, 0.2982, 0.3012, 0.3028, 0.3056, 0.3073, 0.3105, 0.3124, 0.3147, 0.3162, 0.3193, 0.3217, 0.3231, 0.3252, 0.3266, 0.3297, 0.3311, 0.3331, 0.3346, 0.3369, 0.3395, 0.3404, 0.342, 0.3438, 0.3456, 0.3474, 0.3492, 0.3505, 0.3521, 0.3547, 0.3555, 0.3575, 0.3586, 0.3605, 0.3614, 0.3629, 0.364, 0.3653, 0.3672, 0.3684, 0.3692, 0.3702, 0.3722, 0.3738, 0.375, 0.3761, 0.3775, 0.3781, 0.3799, 0.3806, 0.3828, 0.3833, 0.3846, 0.3858, 0.3866, 0.3876, 0.3894, 0.3899, 0.3909, 0.3925, 0.3936, 0.3941, 0.3956, 0.4274, 0.4258, 0.4258, 0.4254, 0.4259, 0.4255, 0.4256, 0.4257, 0.4258, 0.4257, 0.426, 0.4259, 0.4261, 0.4262, 0.4259, 0.4257, 0.4261, 0.426, 0.4258, 0.4259]}, "E1": {"it": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51], "car": [0.2547, 0.2496, 0.2517, 0.2547, 0.2578, 0.2614, 0.2644, 0.2673, 0.2706, 0.2733, 0.2763, 0.279, 0.2816, 0.2851, 0.2875, 0.2901, 0.2927, 0.296, 0.2982, 0.3013, 0.3037, 0.3058, 0.3083, 0.3118, 0.3136, 0.3167, 0.3183, 0.3212, 0.3233, 0.3253, 0.3276, 0.3297, 0.3324, 0.3342, 0.3365, 0.3377, 0.34, 0.3421, 0.3438, 0.3456, 0.3469, 0.3489, 0.3506, 0.352, 0.3536, 0.3553, 0.3574, 0.3588, 0.3605, 0.3619, 0.3633, 0.3647]}, "E2": {"it": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99], "car": [0.2547, 0.2495, 0.252, 0.2556, 0.2588, 0.2626, 0.265, 0.2683, 0.2711, 0.2745, 0.2777, 0.28, 0.2833, 0.286, 0.2885, 0.2916, 0.2938, 0.2964, 0.2994, 0.3019, 0.3042, 0.3066, 0.3085, 0.3112, 0.3132, 0.3152, 0.3173, 0.3193, 0.3213, 0.3232, 0.3253, 0.3267, 0.3291, 0.3307, 0.333, 0.3337, 0.3357, 0.3371, 0.3389, 0.3402, 0.3418, 0.3433, 0.3446, 0.346, 0.3475, 0.3488, 0.3496, 0.3506, 0.3519, 0.3532, 0.3544, 0.3553, 0.3563, 0.3574, 0.3583, 0.3601, 0.3603, 0.3615, 0.3627, 0.3629, 0.3642, 0.3651, 0.3655, 0.3665, 0.3673, 0.3679, 0.3686, 0.3693, 0.37, 0.3709, 0.3715, 0.3722, 0.3723, 0.3727, 0.3737, 0.3741, 0.3747, 0.375, 0.3752, 0.3758, 0.3758, 0.3759, 0.3756, 0.3757, 0.3756, 0.3757, 0.3758, 0.3757, 0.3756, 0.3757, 0.3757, 0.376, 0.3758, 0.3757, 0.3757, 0.3758, 0.3758, 0.3756, 0.3754, 0.3755]}, "useful": {"mode": [0.3976, 0.3626, 0.3397, 0.3163, 0.3062, 0.2823, 0.2733, 0.2566, 0.2404, 0.2302, 0.2247, 0.2173, 0.2029, 0.1965, 0.191, 0.1806, 0.1795, 0.1719, 0.166, 0.1649, 0.1559, 0.155, 0.1481, 0.145, 0.1408, 0.1397, 0.1348, 0.1334, 0.1249, 0.1295, 0.1206, 0.1228, 0.1165, 0.1151, 0.1167, 0.1133, 0.1081, 0.1089, 0.104, 0.1039, 0.1039, 0.1, 0.0991, 0.1006, 0.0953, 0.0973, 0.0913, 0.0907, 0.0895, 0.0901, 0.0816, 0.0904, 0.0824, 0.0828, 0.0832, 0.0836, 0.0773, 0.0831, 0.0796, 0.0784, 0.0742, 0.0753, 0.0733, 0.0715, 0.0708, 0.0718, 0.0713, 0.0711, 0.0678, 0.0649, 0.0615, 0.0627, 0.0636, 0.0645, 0.0659, 0.0671, 0.0682, 0.0642, 0.068], "route": [0.4914, 0.4114, 0.372, 0.3324, 0.3019, 0.2556, 0.2392, 0.2168, 0.1965, 0.1836, 0.1715, 0.1582, 0.1514, 0.1458, 0.1391, 0.1303, 0.1246, 0.1235, 0.1184, 0.1202, 0.1115, 0.1109, 0.1053, 0.1088, 0.1024, 0.105, 0.0999, 0.107, 0.1036, 0.0991, 0.0994, 0.0992, 0.0971, 0.1014, 0.0974, 0.1003, 0.0982, 0.0953, 0.0944, 0.0969, 0.0959, 0.0952, 0.0958, 0.0963, 0.0922, 0.0948, 0.0955, 0.0934, 0.0942, 0.0942, 0.0916, 0.0905, 0.0919, 0.0908, 0.091, 0.0947, 0.0944, 0.0917, 0.0931, 0.0889, 0.0929, 0.0887, 0.0932, 0.0911, 0.0888, 0.09, 0.0886, 0.087, 0.0903, 0.0826, 0.0807, 0.0819, 0.0782, 0.08, 0.0812, 0.0844, 0.0864, 0.087, 0.0879], "time": [0.4681, 0.4073, 0.3695, 0.342, 0.3172, 0.2881, 0.2693, 0.2537, 0.2399, 0.2257, 0.218, 0.2092, 0.2, 0.1969, 0.191, 0.1836, 0.1815, 0.1773, 0.1729, 0.1754, 0.1747, 0.1678, 0.1697, 0.1726, 0.169, 0.1634, 0.1696, 0.1715, 0.1698, 0.1712, 0.1664, 0.1706, 0.1701, 0.1731, 0.1712, 0.1724, 0.1705, 0.1705, 0.1728, 0.1681, 0.1715, 0.1719, 0.1731, 0.1771, 0.1679, 0.1718, 0.1726, 0.1724, 0.1708, 0.1736, 0.175, 0.1757, 0.1741, 0.1721, 0.1706, 0.1755, 0.1759, 0.1769, 0.1752, 0.1772, 0.1746, 0.1791, 0.1747, 0.172, 0.1746, 0.1748, 0.1729, 0.1752, 0.1748, 0.1688, 0.1695, 0.1655, 0.1687, 0.1699, 0.172, 0.1724, 0.1784, 0.1769, 0.1838]}};
 const NS = 'http://www.w3.org/2000/svg';
 function el(tag, attrs, parent) {
   const e = document.createElementNS(NS, tag);
