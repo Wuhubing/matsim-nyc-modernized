@@ -1,0 +1,453 @@
+<title>MATSim-NYC 加速研究进展</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;700&family=Noto+Sans+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one reading column (~760px) with full-width section rules; data blocks may run a little wider. */
+:root {
+  --bg: #f5f7f9; --surface: #ffffff; --ink: #14202c; --ink-2: #44515f; --muted: #6a7684; --rule: #d9dfe5;
+  --accent: #1d4f91; --accent-soft: #e5edf7;
+  --good: #19774a; --good-soft: #e3f3ea; --warn: #9a5b00; --warn-soft: #fbf0dc; --bad: #ad2f2a; --bad-soft: #f9e4e2;
+  --info: #3c4a8f; --info-soft: #e8eafa; --idle: #5b6673; --idle-soft: #eceff2;
+  --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a;
+  --font-display: "Noto Serif SC", "Songti SC", "SimSun", serif;
+  --font-body: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #10161c; --surface: #172029; --ink: #e7ecf1; --ink-2: #b6c0ca; --muted: #8a96a2; --rule: #2a3540;
+    --accent: #86b4ee; --accent-soft: #1b2a3b;
+    --good: #5cc48f; --good-soft: #15302a; --warn: #e3a94a; --warn-soft: #33281a; --bad: #ef7c76; --bad-soft: #3a1f1e;
+    --info: #a6b1f2; --info-soft: #232947; --idle: #a3adb8; --idle-soft: #232c35;
+    --s1: #3987e5; --s2: #d95926; --s3: #199e70; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #10161c; --surface: #172029; --ink: #e7ecf1; --ink-2: #b6c0ca; --muted: #8a96a2; --rule: #2a3540;
+  --accent: #86b4ee; --accent-soft: #1b2a3b;
+  --good: #5cc48f; --good-soft: #15302a; --warn: #e3a94a; --warn-soft: #33281a; --bad: #ef7c76; --bad-soft: #3a1f1e;
+  --info: #a6b1f2; --info-soft: #232947; --idle: #a3adb8; --idle-soft: #232c35;
+  --s1: #3987e5; --s2: #d95926; --s3: #199e70; color-scheme: dark;
+}
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 15.5px; line-height: 1.75; }
+.page { max-width: 820px; margin: 0 auto; padding-block: 40px 72px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 56px; }
+h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; margin: 0; line-height: 1.3; }
+h1 { font-size: clamp(1.9rem, 4.6vw, 2.6rem); letter-spacing: 0.01em; }
+h2 { font-size: 1.45rem; }
+h3 { font-size: 1.08rem; font-family: var(--font-body); font-weight: 700; }
+p { margin: 0; max-width: 40em; }
+.eyebrow { font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.06em; color: var(--muted); text-transform: uppercase; }
+section { display: grid; gap: 18px; padding-top: 28px; border-top: 1px solid var(--rule); min-width: 0; }
+section > header { display: grid; gap: 6px; }
+.lede { font-size: 1.08rem; color: var(--ink-2); }
+.hero { display: grid; gap: 14px; }
+.verdict { background: var(--surface); border: 1px solid var(--rule); border-left: 4px solid var(--accent); border-radius: 6px; padding: 16px 18px; display: grid; gap: 8px; }
+.verdict strong { color: var(--accent); }
+code, .mono { font-family: var(--font-mono); font-size: 0.86em; }
+code { background: var(--idle-soft); padding: 1px 5px; border-radius: 4px; }
+.num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+/* fact grid */
+.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 1px; background: var(--rule); border: 1px solid var(--rule); border-radius: 6px; overflow: hidden; }
+.fact { background: var(--surface); padding: 12px 14px; display: grid; gap: 2px; min-width: 0; }
+.fact .v { font-family: var(--font-mono); font-size: 1.15rem; font-weight: 500; font-variant-numeric: tabular-nums; }
+.fact .k { font-size: 0.82rem; color: var(--muted); line-height: 1.4; }
+/* tables */
+.table-wrap { overflow-x: auto; border: 1px solid var(--rule); border-radius: 6px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: 0.92rem; line-height: 1.55; }
+th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+th { font-size: 0.78rem; letter-spacing: 0.04em; color: var(--muted); font-weight: 500; background: var(--bg); white-space: nowrap; }
+tr:last-child td { border-bottom: 0; }
+td.n, th.n { text-align: right; font-family: var(--font-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+/* pills */
+.pill { display: inline-flex; align-items: center; gap: 5px; font-size: 0.78rem; font-weight: 500; padding: 1px 9px; border-radius: 999px; white-space: nowrap; }
+.pill::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.p-good { color: var(--good); background: var(--good-soft); }
+.p-warn { color: var(--warn); background: var(--warn-soft); }
+.p-bad { color: var(--bad); background: var(--bad-soft); }
+.p-info { color: var(--info); background: var(--info-soft); }
+.p-idle { color: var(--idle); background: var(--idle-soft); }
+/* iteration loop */
+.loop { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+.step { background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; padding: 14px 16px; display: grid; gap: 6px; align-content: start; min-width: 0; }
+.step .tag { font-family: var(--font-mono); font-size: 0.75rem; color: var(--accent); letter-spacing: 0.05em; }
+.step p { font-size: 0.92rem; color: var(--ink-2); }
+.bar { display: flex; height: 30px; border-radius: 5px; overflow: hidden; gap: 2px; background: var(--bg); }
+.bar > span { display: flex; align-items: center; padding: 0 10px; font-size: 0.8rem; font-weight: 500; white-space: nowrap; overflow: hidden; color: var(--ink); }
+.seg-a { background: var(--accent-soft); border: 1px solid var(--accent); }
+.seg-b { background: var(--warn-soft); border: 1px solid var(--warn); }
+.seg-c { background: var(--idle-soft); border: 1px solid var(--rule); }
+.bar-caption { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--muted); font-family: var(--font-mono); }
+/* timeline */
+ol.timeline { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; }
+ol.timeline li { display: grid; grid-template-columns: 96px 1fr; gap: 16px; padding: 12px 0; border-bottom: 1px dashed var(--rule); }
+ol.timeline li:last-child { border-bottom: 0; }
+.tl-date { font-family: var(--font-mono); font-size: 0.8rem; color: var(--muted); padding-top: 3px; }
+.tl-body { display: grid; gap: 3px; min-width: 0; }
+.tl-body p { font-size: 0.93rem; color: var(--ink-2); }
+/* evidence chain */
+ol.chain { list-style: none; margin: 0; padding: 0; counter-reset: c; display: grid; gap: 12px; }
+ol.chain li { counter-increment: c; display: grid; grid-template-columns: 34px 1fr; gap: 12px; background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; padding: 14px 16px; }
+ol.chain li::before { content: counter(c); font-family: var(--font-mono); font-weight: 500; color: var(--accent); background: var(--accent-soft); width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; font-size: 0.85rem; }
+.chain-body { display: grid; gap: 4px; min-width: 0; }
+.chain-body .q { font-weight: 700; }
+.chain-body .e { font-size: 0.92rem; color: var(--ink-2); }
+.chain-body .c { font-size: 0.92rem; }
+.chain-body .c b { color: var(--accent); }
+/* charts */
+figure { margin: 0; display: grid; gap: 10px; background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; padding: 16px 16px 12px; min-width: 0; }
+figcaption { display: grid; gap: 4px; }
+figcaption h3 { font-size: 1rem; }
+figcaption p { font-size: 0.88rem; color: var(--muted); }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 0.85rem; color: var(--ink-2); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.legend i { width: 16px; height: 3px; border-radius: 2px; display: inline-block; }
+.chart { position: relative; width: 100%; }
+.chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+.chart text { font-family: var(--font-mono); font-size: 11px; fill: var(--muted); }
+.chart .lbl { font-family: var(--font-body); font-size: 12px; fill: var(--ink-2); font-weight: 500; }
+.tip { position: absolute; pointer-events: none; background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; padding: 8px 10px; font-size: 0.8rem; line-height: 1.5; box-shadow: 0 4px 16px rgb(0 0 0 / 0.12); min-width: 150px; z-index: 2; }
+.tip .t { font-family: var(--font-mono); color: var(--muted); font-size: 0.75rem; }
+.tip .r { display: flex; align-items: center; gap: 7px; justify-content: space-between; }
+.tip .r span { display: inline-flex; align-items: center; gap: 6px; }
+.tip .r i { width: 10px; height: 3px; border-radius: 2px; display: inline-block; }
+.tip .r b { font-family: var(--font-mono); font-weight: 500; font-variant-numeric: tabular-nums; }
+details { font-size: 0.85rem; color: var(--ink-2); }
+details summary { cursor: pointer; color: var(--accent); }
+details summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.note { font-size: 0.85rem; color: var(--muted); }
+.two { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
+.card { background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; padding: 14px 16px; display: grid; gap: 6px; align-content: start; min-width: 0; }
+.card p, .card li { font-size: 0.92rem; color: var(--ink-2); }
+.card ul { margin: 0; padding-left: 1.2em; display: grid; gap: 4px; }
+footer { font-size: 0.82rem; color: var(--muted); display: grid; gap: 6px; border-top: 1px solid var(--rule); padding-top: 20px; }
+@media (max-width: 520px) {
+  ol.timeline li { grid-template-columns: 1fr; gap: 2px; }
+  body { font-size: 15px; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<main class="page">
+
+<div class="hero">
+  <div class="eyebrow">MATSim-NYC · 分支 research/aggregate-regularity · 2026-10-15</div>
+  <h1>MATSim-NYC 加速研究进展</h1>
+  <p class="lede">目标：用更少的计算，得到原流程（100 轮，第 80 轮关闭创新）跑满会给出的结果。这一页总结到目前为止做了什么、怎样一步步找到瓶颈，以及接下来做什么。</p>
+  <div class="verdict">
+    <div><strong>目前的判断：</strong>瓶颈不在“哪些人已经稳定”，也不再主要在每轮的计算成本，而在<strong>漂移阶段太长</strong>：前 80 轮里，随机提出的新方案很少命中更好的选择，大家发现好方案太慢。</div>
+    <div class="note">每轮成本的工程优化已拿到 −26%（结果逐位一致）。新的加速方法还没有在真实运行里证明能省下计算；最有希望的是“让试探更有用”的自适应提议，以及政策场景的热启动。</div>
+  </div>
+</div>
+
+<section id="mechanism">
+  <header>
+    <div class="eyebrow">MATSim 的机制</div>
+    <h2>每一轮迭代在做什么</h2>
+  </header>
+  <p>MATSim 把一天的出行当成反复演练：每个人手里最多存 5 套出行方案，每一轮先改方案，再让所有人同时上路，最后按实际体验给方案打分。重复 100 轮，交通状态逐渐稳定下来。</p>
+  <div class="loop">
+    <div class="step">
+      <div class="tag">① 重新规划 · 约 11% 用时</div>
+      <h3>挑方案，或试新方案</h3>
+      <p>man、nonman 两类人：70% 按得分从已有方案里抽一个（ExpBeta）；30% 试新方案，改出发时间、重新找路、换方式各 10%。outside 一类只挑不试。</p>
+    </div>
+    <div class="step">
+      <div class="tag">② 仿真 mobsim · 约 78% 用时</div>
+      <h3>所有人同时上路</h3>
+      <p>开车、出租车、网约车在路网上排队行驶，公交按时刻表运行并有载客上限，其他方式按距离直接计算时间。</p>
+    </div>
+    <div class="step">
+      <div class="tag">③ 打分与统计 · 其余用时</div>
+      <h3>按实际体验打分</h3>
+      <p>活动时长、出行时间、等车、费用、迟到都计入得分。得分决定下一轮被抽中的概率。</p>
+    </div>
+  </div>
+  <div style="display:grid;gap:6px">
+    <div class="bar" role="img" aria-label="每轮用时构成：仿真 78%，重新规划 11%，其他 11%">
+      <span class="seg-a" style="flex:78">仿真 78%（16 核只用到 3.8 核）</span>
+      <span class="seg-b" style="flex:11">规划 11%</span>
+      <span class="seg-c" style="flex:11">其他</span>
+    </div>
+    <div class="bar-caption"><span>每轮用时构成（RQ0，第 40–65 轮）</span><span>瓶颈：单线程的事件处理</span></div>
+  </div>
+  <div style="display:grid;gap:6px">
+    <div class="bar" role="img" aria-label="100 轮的结构：第 0 到 79 轮创新期，第 80 到 99 轮收尾">
+      <span class="seg-a" style="flex:80">第 0–79 轮：创新期（一直在漂移）</span>
+      <span class="seg-c" style="flex:20">80–99：收尾</span>
+    </div>
+    <div class="bar-caption"><span>一次运行的 100 轮</span><span>第 80 轮关创新，状态跳一下后稳定</span></div>
+  </div>
+</section>
+
+<section id="scenario">
+  <header>
+    <div class="eyebrow">场景与计算量</div>
+    <h2>MATSim-NYC 有多大，跑一次要多久</h2>
+  </header>
+  <div class="facts">
+    <div class="fact"><span class="v">389,301</span><span class="k">仿真人口（约 4% 抽样，计数放大 25 倍）</span></div>
+    <div class="fact"><span class="v">≈51,000</span><span class="k">公交司机（另计）</span></div>
+    <div class="fact"><span class="v">465,386</span><span class="k">路段</span></div>
+    <div class="fact"><span class="v">262</span><span class="k">公交线路：地铁 26、公交车 234、铁路 1</span></div>
+    <div class="fact"><span class="v">8</span><span class="k">出行方式：公交、开车、出租车、网约车、步行、共享单车、自行车、搭车</span></div>
+    <div class="fact"><span class="v">100 轮</span><span class="k">每次运行；第 80 轮关闭创新</span></div>
+    <div class="fact"><span class="v">170–300 秒</span><span class="k">每轮用时（ORCD，随 CPU 和轮次变化）</span></div>
+    <div class="fact"><span class="v">8.95 小时</span><span class="k">RQ1 种子 4711 一次 100 轮；开全部记录时 9–11 小时</span></div>
+    <div class="fact"><span class="v">24 GB</span><span class="k">Java 堆；峰值内存约 26 GB，启动约 4 分钟</span></div>
+    <div class="fact"><span class="v">27–30 GB</span><span class="k">一次开全部记录的 100 轮运行占用磁盘</span></div>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>配置</th><th>值</th><th>含义</th></tr></thead>
+      <tbody>
+        <tr><td>方案记忆</td><td class="mono">maxAgentPlanMemorySize = 5</td><td>每人最多存 5 套方案，多了删最差的</td></tr>
+        <tr><td>策略权重</td><td class="mono">ExpBeta 0.7 · 改时间 0.1 · 找路 0.1 · 换方式 0.1</td><td>每轮约 30% 的人试新方案（约 9.9 万次）</td></tr>
+        <tr><td>关创新</td><td class="mono">fractionOfIterationsToDisableInnovation = 0.8</td><td>第 80 轮起只挑不试</td></tr>
+        <tr><td>改时间范围</td><td class="mono">mutationRange = 1800 s</td><td>出发时间最多前后移动 30 分钟</td></tr>
+        <tr><td>路段通行能力</td><td class="mono">flow 0.15 · storage 0.30</td><td>按 6 个时段变化的路网</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note">计算量：截至 10-15 上午，共 46 个 Slurm 作业、约 1,110 核时，其中 100 轮运行 6 次完整（RQ0、RQ1）、2 次因堆内存不足失败。10-15 又跑了 13 个分析作业（每个 1–48 分钟），E1、E2 两次 100 轮在运行中。公平份额降到约 0.06，排队变慢。</p>
+</section>
+
+<section id="timeline">
+  <header>
+    <div class="eyebrow">做了什么</div>
+    <h2>从提速到找瓶颈的过程</h2>
+  </header>
+  <ol class="timeline">
+    <li><span class="tl-date">09-26</span><div class="tl-body"><h3>起点</h3><p>发布可移植的 NYC 场景（基于 C2SMART 原始模型）。</p></div></li>
+    <li><span class="tl-date">10-04 → 06</span><div class="tl-body"><h3>工程提速与冗余研究</h3><p>在线指标代替每轮 1.1 GB 的事件文件、精确的收费查表：用时 −26%，结果逐位一致。只有 9–13% 的人完全重复，“只仿真变了的人”行不通；近似仿真 PSim 只快 1.6–2.2 倍，公交有偏差。</p></div></li>
+    <li><span class="tl-date">10-06 → 07</span><div class="tl-body"><h3>上集群与 L2Seg 工具</h3><p>Slurm 脚本、快照、重新规划日志、定向选择器、性能剖析。确认仿真占 78%，瓶颈是单线程的事件处理。</p></div></li>
+    <li><span class="tl-date">10-07</span><div class="tl-body"><h3>RQ0：3 次 100 轮基准</h3><p>三个种子的结果只差 0.1–0.5%，得到判断用的容差表；创新期一直在漂移。</p></div></li>
+    <li><span class="tl-date">10-12 → 14</span><div class="tl-body"><h3>RQ1：个人层面能不能挑出“该重新规划的人”</h3><p>每轮约 9.9 万次创新，只有 15% 有用；但很难提前挑出谁会成功（AUC 0.58–0.67）。L2Seg 式的挑人行不通。</p></div></li>
+    <li><span class="tl-date">10-14</span><div class="tl-body"><h3>浪费分析，提交 E1/E2</h3><p>换方式大多更差，重新找路很多是重复。用 MATSim 自带的得分平均（E1）和创新退火（E2）做对照。</p></div></li>
+    <li><span class="tl-date">10-15</span><div class="tl-body"><h3>转向总体层面的规律</h3><p>重读 L2Seg 论文，做了 A1–A5、A3′、P1、重复找路调查、定向提议和提议成功率，共 13 个分析作业。结果见下一节。</p></div></li>
+  </ol>
+</section>
+
+<section id="bottleneck">
+  <header>
+    <div class="eyebrow">怎样找到瓶颈</div>
+    <h2>一步一步排除，最后落到“发现太慢”</h2>
+  </header>
+  <p>总成本 = 运行次数 × 每次运行的轮数 × 每轮成本。我们沿着这三项逐个检查，每一步都用已有运行的数据回答一个问题。</p>
+  <ol class="chain">
+    <li><div class="chain-body"><div class="q">每轮成本还能大幅降低吗？</div><div class="e">性能剖析：仿真占 78%，只用到 3.8 个核，瓶颈是单线程的事件处理。多线程处理事件只快 5–13%。</div><div class="c">工程优化已拿到 −26%，估计剩下 15–30%，<b>没有倍数级的空间</b>。</div></div></li>
+    <li><div class="chain-body"><div class="q">时间花在哪些轮上？</div><div class="e">100 轮里有 80 轮是漂移：开车占比从 0.25 慢慢涨到 0.39，第 80 轮关创新时跳到 0.43。RQ1 种子 4711 的最后 20 轮花了 1.85 小时（21%）。</div><div class="c">主要的空间在<b>轮数</b>。</div></div></li>
+    <li><div class="chain-body"><div class="q">能不能只让“需要的人”重新规划？（L2Seg 的直接类比）</div><div class="e">RQ1：预测谁会成功，AUC 只有 0.58–0.67。个人每轮在得分相近的方案之间来回换（每轮 46% 的人换方案），大部分是随机性。</div><div class="c">个人层面<b>不可预测</b>。</div></div></li>
+    <li><div class="chain-body"><div class="q">能不能冻结已经稳定的人群或路段？</div><div class="e">A3：各组几乎同时稳定，中位数约第 60 轮，第 30 轮前稳定的不到 10%。A3′：第 40 轮时 55–65% 的人所在的组仍有明显变化。A5：路段-小时的通行时间只有噪声和来回振荡。</div><div class="c">系统是<b>整体一起漂移</b>，没有可以提前冻结的部分。</div></div></li>
+    <li><div class="chain-body"><div class="q">能不能早点停？</div><div class="e">A2：在第 k 轮停止试探、每人用最好的方案，离最终状态还差：第 40 轮 5.8 个百分点，第 60 轮 2.0，第 70 轮 0.8（种子噪声 0.2）。</div><div class="c">最多省约 <b>10%</b>。</div></div></li>
+    <li><div class="chain-body"><div class="q">浪费在哪里？</div><div class="e">85% 的创新没有用。重新找路有 35% 得到同样的路线；其中“只有步行等、或含公交但不是改时间产生的方案”占 30%，22 万次里 100% 白找。换方式和找路的有用率从第 1 轮的 40–49% 降到第 60 轮的 8–9%，改时间一直约 17%。</div><div class="c">试探的<b>命中率很低</b>，而且三类按固定比例分配。</div></div></li>
+    <li><div class="chain-body"><div class="q">慢是因为噪声，还是因为没发现好方案？</div><div class="e">E2 把试探从 30% 逐步降到几乎为 0：噪声小了，前期执行得分更高，但最好方案得分在第 60 轮就停在 4.8，最终得分 4.5（原流程 6.8），开车占比 0.376（原流程 0.426）。E1（得分平均）到第 50 轮只快约 5%。</div><div class="c">减少试探会冻结在差的状态：瓶颈是<b>发现</b>，不是噪声。</div></div></li>
+    <li><div class="chain-body"><div class="q">提议能不能更准？</div><div class="e">第 40 轮还有 22% 的人没找到最终方式，他们最后大多去了开车、出租车、网约车。随机换方式命中最终方式的概率 14%；按趋势提议 49–56%，约 4 倍。方向是全城一致的，分组只多约 5 个百分点。</div><div class="c">让试探更有用是<b>最直接的加速杠杆</b>。</div></div></li>
+  </ol>
+</section>
+
+<section id="charts">
+  <header>
+    <div class="eyebrow">关键证据</div>
+    <h2>两张图</h2>
+  </header>
+  <figure>
+    <figcaption>
+      <h3>开车占比的轨迹：原流程、得分平均（E1）、创新退火（E2）</h3>
+      <p>种子 4711，每轮的开车出行占比（MATSim modestats）。E1、E2 截至 10-15 14:00 仍在运行，分别到第 51、90 轮。</p>
+    </figcaption>
+    <div class="legend" id="lg-car"></div>
+    <div class="chart" id="chart-car"></div>
+    <details><summary>查看数据（每 10 轮）</summary><div class="table-wrap" style="margin-top:8px"><table id="tb-car"></table></div></details>
+  </figure>
+  <figure>
+    <figcaption>
+      <h3>每类试探的有用比例</h3>
+      <p>种子 4711，第 t 轮产生的新方案中，10 轮内再被选中且得分高于原来最好方案的比例。</p>
+    </figcaption>
+    <div class="legend" id="lg-useful"></div>
+    <div class="chart" id="chart-useful"></div>
+    <details><summary>查看数据（每 10 轮）</summary><div class="table-wrap" style="margin-top:8px"><table id="tb-useful"></table></div></details>
+  </figure>
+</section>
+
+<section id="l2seg">
+  <header>
+    <div class="eyebrow">和 L2Seg 的关系</div>
+    <h2>哪些思想搬得过来</h2>
+  </header>
+  <p>L2Seg（arXiv 2507.01037）加速车辆路径问题的迭代求解：只看下一步，预测解里哪些部分不会变，把它们聚合成超节点，求解器只处理会变的部分，每轮重新分段。</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>L2Seg 的做法</th><th>在 MATSim-NYC 里</th><th>结果</th></tr></thead>
+      <tbody>
+        <tr><td>大部分解一步之后不变</td><td>个人：每轮 46% 的人换方案；完全重复的只有 9–13%</td><td><span class="pill p-bad">不成立</span></td></tr>
+        <tr><td>预测哪里会变</td><td>个人 AUC 0.58–0.67；组层面能预测位置，但变化很普遍</td><td><span class="pill p-bad">空间很小</span></td></tr>
+        <tr><td>冻结或聚合稳定部分</td><td>各组一起漂移，路段是噪声加振荡</td><td><span class="pill p-bad">放下</span></td></tr>
+        <tr><td>把求解器用在有回报的地方</td><td>试探的命中率可以从 14% 提到约 50%</td><td><span class="pill p-good">可用</span></td></tr>
+        <tr><td>从求解记录中学习</td><td>不同运行的走势几乎一样，20 轮就能预测终点（同场景内 0.1–0.7%）</td><td><span class="pill p-info">待跨政策验证</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note">原因是结构不同：VRP 是静态问题，各段可以各自先收敛；MATSim 里所有人通过同一张路网和公交互相影响，系统整体一起移动。所以搬过来的是“把力气用在有回报的地方”和“从运行记录里学”，而不是“冻结稳定部分”。</p>
+</section>
+
+<section id="status">
+  <header>
+    <div class="eyebrow">各方向现状</div>
+    <h2>哪些放下了，哪些在推进</h2>
+  </header>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>方向</th><th>依据</th><th>状态</th></tr></thead>
+      <tbody>
+        <tr><td><b>自适应提议控制器</b>：按成功率决定换成哪种方式、各类试探的比例，并自适应收尾</td><td>命中率 14% → 约 50%；E2 说明瓶颈是发现</td><td><span class="pill p-good">下一步主线</span></td></tr>
+        <tr><td><b>热启动</b>：政策场景从 baseline 的终点出发</td><td>不同运行走的路几乎一样，公共部分只走一次</td><td><span class="pill p-good">待运行检验</span></td></tr>
+        <tr><td>M8 跳过必然白找的路线（<code>StableReRoute</code>）</td><td>30% 的重新找路 100% 重复；代码和 15 项检查已完成</td><td><span class="pill p-info">待 12 轮测试</span></td></tr>
+        <tr><td>M7 用参考运行预测终点</td><td>同场景内 0.1–0.7%；只给总体数字，没有完整仿真结果</td><td><span class="pill p-info">可作停止判据</span></td></tr>
+        <tr><td>E1 得分平均</td><td>到第 50 轮快约 5%</td><td><span class="pill p-warn">等最终结果</span></td></tr>
+        <tr><td>M2 提前关创新</td><td>第 70 轮才接近终点</td><td><span class="pill p-warn">保底，约 10%</span></td></tr>
+        <tr><td>M6′ 平滑选路用的通行时间</td><td>路段通行时间来回振荡</td><td><span class="pill p-idle">探索</span></td></tr>
+        <tr><td>E2 创新退火</td><td>冻结在差的状态</td><td><span class="pill p-bad">放下</span></td></tr>
+        <tr><td>M3 冻结稳定人群；M6 外推路况；个人层面挑人</td><td>A3、A3′、A5；RQ1</td><td><span class="pill p-bad">放下</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="next">
+  <header>
+    <div class="eyebrow">接下来</div>
+    <h2>计划和待定的事</h2>
+  </header>
+  <div class="two">
+    <div class="card">
+      <h3>计划</h3>
+      <ul>
+        <li>写自适应提议控制器的第一版：按成功率加权“换成哪种方式”，加上自适应收尾。先跑 12 轮检查，再跑 100 轮和原流程比较轮数与终点。</li>
+        <li>热启动实验：<code>actual2025</code> 冷启动 100 轮一次、从 baseline 终点热启动约 40 轮一次；冷启动那次也用来检验 M7 能否跨政策。</li>
+        <li>M8 影子模式 12 轮：检查和原流程逐位一致。</li>
+        <li>E1 跑完后（约 6 小时）写入最终结果；“换成哪种方式”的成功率分析在排队。</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>需要决定</h3>
+      <ul>
+        <li>判断标准：建议“误差 ≤ 政策效应的 10%”，同时报告与种子噪声的比较。</li>
+        <li>是否同意热启动实验的两次运行（共约 13 小时）。</li>
+        <li>控制器的 100 轮运行（约 9 小时），等 12 轮检查后再申请。</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div>数据来源：RQ0、RQ1（3 个种子各 100 轮）、E1/E2 运行中；分析脚本在 <code>experiments/l2seg/</code>，结果写在 <code>docs/aggregate-regularity-plan.md</code> 第 7 节和 <code>docs/execution-plan.md</code>。</div>
+  <div>更正：此前几份脚本说明把人口写成“15% 抽样”；人口约为 4% 抽样，0.15 是路段的通行能力系数。</div>
+</footer>
+</main>
+
+<script>
+const DATA = {"RQ1": {"it": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99], "car": [0.2547, 0.2496, 0.2517, 0.2547, 0.2578, 0.2614, 0.2644, 0.2673, 0.2706, 0.2733, 0.2763, 0.2789, 0.2818, 0.2847, 0.2877, 0.2901, 0.2926, 0.2952, 0.2982, 0.3012, 0.3028, 0.3056, 0.3073, 0.3105, 0.3124, 0.3147, 0.3162, 0.3193, 0.3217, 0.3231, 0.3252, 0.3266, 0.3297, 0.3311, 0.3331, 0.3346, 0.3369, 0.3395, 0.3404, 0.342, 0.3438, 0.3456, 0.3474, 0.3492, 0.3505, 0.3521, 0.3547, 0.3555, 0.3575, 0.3586, 0.3605, 0.3614, 0.3629, 0.364, 0.3653, 0.3672, 0.3684, 0.3692, 0.3702, 0.3722, 0.3738, 0.375, 0.3761, 0.3775, 0.3781, 0.3799, 0.3806, 0.3828, 0.3833, 0.3846, 0.3858, 0.3866, 0.3876, 0.3894, 0.3899, 0.3909, 0.3925, 0.3936, 0.3941, 0.3956, 0.4274, 0.4258, 0.4258, 0.4254, 0.4259, 0.4255, 0.4256, 0.4257, 0.4258, 0.4257, 0.426, 0.4259, 0.4261, 0.4262, 0.4259, 0.4257, 0.4261, 0.426, 0.4258, 0.4259], "score": [-18.848, -16.429, -14.371, -12.615, -11.099, -9.64, -8.647, -7.708, -6.873, -6.25, -5.636, -5.065, -4.488, -4.085, -3.59, -3.29, -2.995, -2.526, -2.254, -1.968, -1.766, -1.424, -1.241, -0.905, -0.761, -0.487, -0.136, -0.233, 0.209, 0.256, 0.372, 0.264, 0.827, 0.82, 1.133, 1.236, 1.348, 1.201, 1.533, 1.353, 1.729, 1.902, 1.87, 1.902, 2.075, 2.214, 2.334, 2.379, 2.529, 2.463, 2.677, 2.532, 2.694, 2.772, 2.683, 2.745, 2.967, 3.005, 3.198, 3.163, 3.279, 3.229, 3.396, 3.608, 3.557, 3.45, 3.495, 3.671, 3.628, 3.73, 3.839, 3.816, 3.934, 3.769, 3.961, 4.026, 4.078, 4.203, 4.171, 4.241, 6.448, 6.593, 6.636, 6.664, 6.692, 6.707, 6.728, 6.742, 6.758, 6.739, 6.752, 6.773, 6.767, 6.755, 6.759, 6.774, 6.795, 6.773, 6.778, 6.788]}, "E1": {"it": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51], "car": [0.2547, 0.2496, 0.2517, 0.2547, 0.2578, 0.2614, 0.2644, 0.2673, 0.2706, 0.2733, 0.2763, 0.279, 0.2816, 0.2851, 0.2875, 0.2901, 0.2927, 0.296, 0.2982, 0.3013, 0.3037, 0.3058, 0.3083, 0.3118, 0.3136, 0.3167, 0.3183, 0.3212, 0.3233, 0.3253, 0.3276, 0.3297, 0.3324, 0.3342, 0.3365, 0.3377, 0.34, 0.3421, 0.3438, 0.3456, 0.3469, 0.3489, 0.3506, 0.352, 0.3536, 0.3553, 0.3574, 0.3588, 0.3605, 0.3619, 0.3633, 0.3647], "score": [-18.848, -16.429, -14.371, -12.615, -11.099, -9.64, -8.647, -7.708, -6.873, -6.25, -5.659, -5.086, -4.57, -4.084, -3.614, -3.289, -2.905, -2.57, -2.299, -1.928, -1.771, -1.372, -1.108, -0.958, -0.62, -0.447, -0.331, -0.036, 0.012, 0.158, 0.407, 0.613, 0.631, 0.829, 0.874, 1.014, 1.13, 1.251, 1.375, 1.49, 1.542, 1.636, 1.813, 1.895, 1.903, 1.71, 2.101, 2.22, 2.204, 2.335, 2.36, 2.53]}, "E2": {"it": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90], "car": [0.2547, 0.2495, 0.252, 0.2556, 0.2588, 0.2626, 0.265, 0.2683, 0.2711, 0.2745, 0.2777, 0.28, 0.2833, 0.286, 0.2885, 0.2916, 0.2938, 0.2964, 0.2994, 0.3019, 0.3042, 0.3066, 0.3085, 0.3112, 0.3132, 0.3152, 0.3173, 0.3193, 0.3213, 0.3232, 0.3253, 0.3267, 0.3291, 0.3307, 0.333, 0.3337, 0.3357, 0.3371, 0.3389, 0.3402, 0.3418, 0.3433, 0.3446, 0.346, 0.3475, 0.3488, 0.3496, 0.3506, 0.3519, 0.3532, 0.3544, 0.3553, 0.3563, 0.3574, 0.3583, 0.3601, 0.3603, 0.3615, 0.3627, 0.3629, 0.3642, 0.3651, 0.3655, 0.3665, 0.3673, 0.3679, 0.3686, 0.3693, 0.37, 0.3709, 0.3715, 0.3722, 0.3723, 0.3727, 0.3737, 0.3741, 0.3747, 0.375, 0.3752, 0.3758, 0.3758, 0.3759, 0.3756, 0.3757, 0.3756, 0.3757, 0.3758, 0.3757, 0.3756, 0.3757, 0.3757], "score": [-18.848, -16.434, -14.403, -12.655, -11.132, -9.692, -8.724, -7.791, -7.027, -6.348, -5.637, -5.137, -4.642, -4.111, -3.682, -3.272, -2.852, -2.615, -2.18, -1.866, -1.575, -1.274, -1.038, -0.823, -0.597, -0.414, -0.123, 0.114, 0.333, 0.428, 0.654, 0.787, 1.026, 1.032, 1.295, 1.369, 1.518, 1.605, 1.778, 1.877, 1.935, 2.111, 2.238, 2.308, 2.364, 2.536, 2.624, 2.757, 2.808, 2.888, 2.992, 3.098, 3.173, 3.205, 3.287, 3.363, 3.442, 3.482, 3.552, 3.607, 3.682, 3.793, 3.815, 3.881, 3.913, 3.934, 4.015, 4.086, 4.103, 4.193, 4.214, 4.231, 4.291, 4.323, 4.351, 4.376, 4.423, 4.449, 4.469, 4.492, 4.479, 4.517, 4.496, 4.503, 4.508, 4.504, 4.493, 4.515, 4.53, 4.539, 4.536]}, "useful": {"mode": [0.3976, 0.3626, 0.3397, 0.3163, 0.3062, 0.2823, 0.2733, 0.2566, 0.2404, 0.2302, 0.2247, 0.2173, 0.2029, 0.1965, 0.191, 0.1806, 0.1795, 0.1719, 0.166, 0.1649, 0.1559, 0.155, 0.1481, 0.145, 0.1408, 0.1397, 0.1348, 0.1334, 0.1249, 0.1295, 0.1206, 0.1228, 0.1165, 0.1151, 0.1167, 0.1133, 0.1081, 0.1089, 0.104, 0.1039, 0.1039, 0.1, 0.0991, 0.1006, 0.0953, 0.0973, 0.0913, 0.0907, 0.0895, 0.0901, 0.0816, 0.0904, 0.0824, 0.0828, 0.0832, 0.0836, 0.0773, 0.0831, 0.0796, 0.0784, 0.0742, 0.0753, 0.0733, 0.0715, 0.0708, 0.0718, 0.0713, 0.0711, 0.0678, 0.0649, 0.0615, 0.0627, 0.0636, 0.0645, 0.0659, 0.0671, 0.0682, 0.0642, 0.068], "route": [0.4914, 0.4114, 0.372, 0.3324, 0.3019, 0.2556, 0.2392, 0.2168, 0.1965, 0.1836, 0.1715, 0.1582, 0.1514, 0.1458, 0.1391, 0.1303, 0.1246, 0.1235, 0.1184, 0.1202, 0.1115, 0.1109, 0.1053, 0.1088, 0.1024, 0.105, 0.0999, 0.107, 0.1036, 0.0991, 0.0994, 0.0992, 0.0971, 0.1014, 0.0974, 0.1003, 0.0982, 0.0953, 0.0944, 0.0969, 0.0959, 0.0952, 0.0958, 0.0963, 0.0922, 0.0948, 0.0955, 0.0934, 0.0942, 0.0942, 0.0916, 0.0905, 0.0919, 0.0908, 0.091, 0.0947, 0.0944, 0.0917, 0.0931, 0.0889, 0.0929, 0.0887, 0.0932, 0.0911, 0.0888, 0.09, 0.0886, 0.087, 0.0903, 0.0826, 0.0807, 0.0819, 0.0782, 0.08, 0.0812, 0.0844, 0.0864, 0.087, 0.0879], "time": [0.4681, 0.4073, 0.3695, 0.342, 0.3172, 0.2881, 0.2693, 0.2537, 0.2399, 0.2257, 0.218, 0.2092, 0.2, 0.1969, 0.191, 0.1836, 0.1815, 0.1773, 0.1729, 0.1754, 0.1747, 0.1678, 0.1697, 0.1726, 0.169, 0.1634, 0.1696, 0.1715, 0.1698, 0.1712, 0.1664, 0.1706, 0.1701, 0.1731, 0.1712, 0.1724, 0.1705, 0.1705, 0.1728, 0.1681, 0.1715, 0.1719, 0.1731, 0.1771, 0.1679, 0.1718, 0.1726, 0.1724, 0.1708, 0.1736, 0.175, 0.1757, 0.1741, 0.1721, 0.1706, 0.1755, 0.1759, 0.1769, 0.1752, 0.1772, 0.1746, 0.1791, 0.1747, 0.172, 0.1746, 0.1748, 0.1729, 0.1752, 0.1748, 0.1688, 0.1695, 0.1655, 0.1687, 0.1699, 0.172, 0.1724, 0.1784, 0.1769, 0.1838]}};
+const css = (n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const NS = 'http://www.w3.org/2000/svg';
+function el(tag, attrs, parent) {
+  const e = document.createElementNS(NS, tag);
+  for (const k in attrs) {
+    const v = String(attrs[k]);
+    if (v.startsWith('var(')) e.style.setProperty(k, v); else e.setAttribute(k, v);   // CSS variables go through style
+  }
+  if (parent) parent.appendChild(e); return e;
+}
+
+function lineChart(host, legendHost, cfg) {
+  const W = 760, H = 300, m = { l: 52, r: 96, t: 14, b: 38 };
+  const iw = W - m.l - m.r, ih = H - m.t - m.b;
+  const x = (v) => m.l + (v - cfg.xMin) / (cfg.xMax - cfg.xMin) * iw;
+  const y = (v) => m.t + ih - (v - cfg.yMin) / (cfg.yMax - cfg.yMin) * ih;
+  const svg = el('svg', { viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': cfg.aria });
+  host.appendChild(svg);
+  const grid = el('g', {}, svg);
+  cfg.yTicks.forEach((v) => {
+    el('line', { x1: m.l, x2: m.l + iw, y1: y(v), y2: y(v), stroke: 'var(--rule)', 'stroke-width': 1 }, grid);
+    const t = el('text', { x: m.l - 8, y: y(v) + 4, 'text-anchor': 'end' }, grid); t.textContent = cfg.yFmt(v);
+  });
+  cfg.xTicks.forEach((v) => {
+    const t = el('text', { x: x(v), y: m.t + ih + 18, 'text-anchor': 'middle' }, grid); t.textContent = v;
+  });
+  const xl = el('text', { x: m.l + iw / 2, y: H - 4, 'text-anchor': 'middle' }, grid); xl.textContent = cfg.xLabel;
+  (cfg.marks || []).forEach((mk) => {
+    el('line', { x1: x(mk.x), x2: x(mk.x), y1: m.t, y2: m.t + ih, stroke: 'var(--muted)', 'stroke-width': 1, 'stroke-dasharray': '3 4' }, grid);
+    const t = el('text', { x: x(mk.x) + 6, y: m.t + 12 }, grid); t.textContent = mk.label;
+  });
+  // lines
+  cfg.series.forEach((s) => {
+    const d = s.xs.map((xv, i) => `${i ? 'L' : 'M'}${x(xv).toFixed(1)},${y(s.ys[i]).toFixed(1)}`).join('');
+    el('path', { d, fill: 'none', stroke: `var(${s.color})`, 'stroke-width': 2, 'stroke-linejoin': 'round', 'stroke-linecap': 'round' }, svg);
+    const lx = s.xs[s.xs.length - 1], ly = s.ys[s.ys.length - 1];
+    el('circle', { cx: x(lx), cy: y(ly), r: 4, fill: `var(${s.color})`, stroke: 'var(--surface)', 'stroke-width': 2 }, svg);
+  });
+  // direct labels at line ends, nudged apart
+  const labels = cfg.series.map((s) => ({ s, x: x(s.xs[s.xs.length - 1]), y: y(s.ys[s.ys.length - 1]) })).sort((a, b) => a.y - b.y);
+  for (let i = 1; i < labels.length; i++) if (labels[i].y - labels[i - 1].y < 15) labels[i].y = labels[i - 1].y + 15;
+  labels.forEach((L) => { const t = el('text', { x: L.x + 9, y: L.y + 4, class: 'lbl' }, svg); t.textContent = L.s.short; });
+  // legend
+  cfg.series.forEach((s) => { const sp = document.createElement('span'); sp.innerHTML = `<i style="background:var(${s.color})"></i>${s.name}`; legendHost.appendChild(sp); });
+  // hover
+  const cross = el('line', { y1: m.t, y2: m.t + ih, stroke: 'var(--ink-2)', 'stroke-width': 1, opacity: 0 }, svg);
+  const dots = cfg.series.map((s) => el('circle', { r: 4, fill: `var(${s.color})`, stroke: 'var(--surface)', 'stroke-width': 2, opacity: 0 }, svg));
+  const hit = el('rect', { x: m.l, y: m.t, width: iw, height: ih, fill: 'transparent' }, svg);
+  const tip = document.createElement('div'); tip.className = 'tip'; tip.hidden = true; host.appendChild(tip);
+  function show(evt) {
+    const r = svg.getBoundingClientRect(); const px = (evt.clientX - r.left) * W / r.width;
+    const xv = Math.round(cfg.xMin + (px - m.l) / iw * (cfg.xMax - cfg.xMin));
+    if (xv < cfg.xMin || xv > cfg.xMax) return hide();
+    cross.setAttribute('x1', x(xv)); cross.setAttribute('x2', x(xv)); cross.setAttribute('opacity', 0.5);
+    let rows = '';
+    cfg.series.forEach((s, i) => {
+      const j = s.xs.indexOf(xv);
+      if (j < 0) { dots[i].setAttribute('opacity', 0); rows += `<div class="r"><span><i style="background:var(${s.color})"></i>${s.short}</span><b>—</b></div>`; return; }
+      dots[i].setAttribute('cx', x(xv)); dots[i].setAttribute('cy', y(s.ys[j])); dots[i].setAttribute('opacity', 1);
+      rows += `<div class="r"><span><i style="background:var(${s.color})"></i>${s.short}</span><b>${cfg.tipFmt(s.ys[j])}</b></div>`;
+    });
+    tip.innerHTML = `<div class="t">第 ${xv} 轮</div>${rows}`; tip.hidden = false;
+    const hr = host.getBoundingClientRect(); let left = evt.clientX - hr.left + 14;
+    if (left + tip.offsetWidth > hr.width) left = evt.clientX - hr.left - tip.offsetWidth - 14;
+    tip.style.left = Math.max(0, left) + 'px'; tip.style.top = Math.max(0, evt.clientY - hr.top - tip.offsetHeight / 2) + 'px';
+  }
+  function hide() { tip.hidden = true; cross.setAttribute('opacity', 0); dots.forEach((d) => d.setAttribute('opacity', 0)); }
+  hit.addEventListener('pointermove', show); hit.addEventListener('pointerdown', show); hit.addEventListener('pointerleave', hide);
+}
+
+function table(id, head, rows) {
+  const t = document.getElementById(id);
+  t.innerHTML = '<thead><tr>' + head.map((h, i) => `<th${i ? ' class="n"' : ''}>${h}</th>`).join('') + '</tr></thead><tbody>' +
+    rows.map((r) => '<tr>' + r.map((c, i) => `<td${i ? ' class="n"' : ''}>${c}</td>`).join('') + '</tr>').join('') + '</tbody>';
+}
+
+const pct = (v) => (v * 100).toFixed(1) + '%';
+lineChart(document.getElementById('chart-car'), document.getElementById('lg-car'), {
+  aria: '开车占比随轮次变化：原流程从 0.25 涨到 0.39，第 80 轮跳到 0.43；E2 停在 0.376；E1 到第 51 轮略快于原流程',
+  xMin: 0, xMax: 100, yMin: 0.24, yMax: 0.44, yTicks: [0.24, 0.28, 0.32, 0.36, 0.40, 0.44], xTicks: [0, 20, 40, 60, 80, 100],
+  yFmt: (v) => v.toFixed(2), tipFmt: (v) => v.toFixed(4), xLabel: '迭代轮次',
+  marks: [{ x: 80, label: '第 80 轮关创新' }],
+  series: [
+    { name: '原流程（RQ1 种子 4711）', short: '原流程', color: '--s1', xs: DATA.RQ1.it, ys: DATA.RQ1.car },
+    { name: 'E1 得分平均（运行中）', short: 'E1', color: '--s3', xs: DATA.E1.it, ys: DATA.E1.car },
+    { name: 'E2 创新退火（运行中）', short: 'E2', color: '--s2', xs: DATA.E2.it, ys: DATA.E2.car },
+  ],
+});
+lineChart(document.getElementById('chart-useful'), document.getElementById('lg-useful'), {
+  aria: '各类试探的有用比例：换方式和重新找路从 40–49% 降到 7–9%，改时间稳定在约 17%',
+  xMin: 1, xMax: 79, yMin: 0, yMax: 0.5, yTicks: [0, 0.1, 0.2, 0.3, 0.4, 0.5], xTicks: [1, 20, 40, 60, 79],
+  yFmt: (v) => Math.round(v * 100) + '%', tipFmt: pct, xLabel: '新方案产生的轮次',
+  series: [
+    { name: '换方式（SubtourModeChoice）', short: '换方式', color: '--s1', xs: DATA.useful.mode.map((_, i) => i + 1), ys: DATA.useful.mode },
+    { name: '重新找路（ReRoute）', short: '找路', color: '--s2', xs: DATA.useful.route.map((_, i) => i + 1), ys: DATA.useful.route },
+    { name: '改时间（TimeAllocationMutator）', short: '改时间', color: '--s3', xs: DATA.useful.time.map((_, i) => i + 1), ys: DATA.useful.time },
+  ],
+});
+const at = (s, k) => { const j = s.it.indexOf(k); return j < 0 ? '—' : s.car[j].toFixed(4); };
+table('tb-car', ['轮次', '原流程', 'E1', 'E2'], [0, 10, 20, 30, 40, 50, 60, 70, 79, 80, 90, 99].map((k) => [k, at(DATA.RQ1, k), at(DATA.E1, k), at(DATA.E2, k)]));
+table('tb-useful', ['轮次', '换方式', '重新找路', '改时间'], [1, 10, 20, 30, 40, 50, 60, 70, 79].map((t) => [t, pct(DATA.useful.mode[t - 1]), pct(DATA.useful.route[t - 1]), pct(DATA.useful.time[t - 1])]));
+</script>
