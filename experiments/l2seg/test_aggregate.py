@@ -111,6 +111,37 @@ class Groups(unittest.TestCase):
         self.assertAlmostEqual(res['settling']['mode_tau0.05']['settled_by']['30'], 0.5)
 
 
+class Priorities(unittest.TestCase):
+    def test_m3_files(self):
+        """Home cells A (settled at 20 in the reference runs) and B (60); the steered seed's own column is ignored."""
+        with tempfile.TemporaryDirectory() as d:
+            d = Path(d); sd = d/'snap'; sd.mkdir(); run = d/'run'
+            ids = ['a1', 'a2', 'b1', 'b2', 'o1']
+            np.savez(sd/'persons.npz', id=np.array(ids), subpopulation=np.array(['man', 'man', 'nonman', 'nonman', 'outside']),
+                     home_x=np.array([0.0, 0.0, 50000.0, 50000.0, 0.0]), home_y=np.zeros(5), prim_x=np.zeros(5), prim_y=np.zeros(5),
+                     departure=np.full(5, 8 * 3600.0), trips=np.full(5, 2))
+            gz(run/'simulation'/'research'/'cohorts.csv.gz', 'person_id,subpopulation,charging_cohort', [(p, 's', 'related') for p in ids])
+            a3 = {'runs': ['/x/baseline-s4711', '/x/baseline-s4712', '/x/baseline-s4713'],
+                  'params': {'cell_ft': 10000, 'od_cell_ft': 20000, 'min_size': 1},
+                  'groupings': {'home': {'table': [{'group': 'man|h|0_0', 'mode_tau0.05': [99.0, 20.0, 20.0]},
+                                                   {'group': 'nonman|h|5_0', 'mode_tau0.05': [99.0, 60.0, 40.0]}]}}}
+            (d/'a3.json').write_text(json.dumps(a3))
+            def run_it(out, *extra):
+                subprocess.run([PY, str(HERE/'m3_priorities.py'), str(d/'a3.json'), '--snaps', str(sd), '--run', str(run), '--out', str(d/out),
+                                '--grouping', 'home', '--last', '60', *extra], check=True, capture_output=True)
+                read = lambda t: dict(csv.reader(gzip.open(d/out/f'priority-{t}.csv.gz', 'rt')))
+                return read, json.loads((d/out/'summary.json').read_text())
+            read, summary = run_it('bin')
+            self.assertEqual(read(30), {'person_id': 'priority', 'a1': '0', 'a2': '0', 'b1': '1', 'b2': '1'})   # B median 50
+            self.assertEqual(read(10)['a1'], '1'); self.assertEqual(read(55)['b1'], '0')
+            self.assertEqual(summary['share_with_priority']['30'], {'man': 0.0, 'nonman': 1.0})
+            self.assertEqual(len(summary['reference_runs']), 2)
+            read, _ = run_it('rem', '--mode', 'remaining', '--agg', 'max')
+            self.assertEqual((read(30)['a1'], read(30)['b1']), ('0', '30'))                                          # B max 60
+            read, _ = run_it('plc', '--placebo', '1')
+            self.assertEqual(sorted({read(30)['a1'], read(30)['b1']}), ['0', '1'])                                    # permuted, still one of each
+
+
 class Links(unittest.TestCase):
     def test_end_to_end(self):
         """Persons x and y re-route at 11 from parents created at 5 (by ReRoute). x's links keep their travel time and
