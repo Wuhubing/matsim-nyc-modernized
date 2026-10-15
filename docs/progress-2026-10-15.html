@@ -321,12 +321,19 @@ footer { font-size: 0.82rem; color: var(--muted); display: grid; gap: 6px; borde
   <figure class="chart-fig">
     <figcaption>
       <h3>开车占比的轨迹：原流程和两种 MATSim 自带的搜索开关</h3>
-      <p>同一个种子，每轮的开车出行占比。原流程到第 79 轮还在涨，第 80 轮关创新后跳一下才停。对历次得分取平均的那次运行在第 52 轮内存不足中断。</p>
+      <p><b>纵轴：</b>开车占比，即这一轮所有人执行的方案里，主要方式是开车的出行占全部出行的比例（MATSim 的 modestats 输出，0.40 就是 40%）。<b>横轴：</b>迭代轮次。三条线是同一个种子、三种搜索设置。</p>
+      <p>原流程到第 79 轮还在涨，第 80 轮关创新后跳一下才停。对历次得分取平均的那次运行在第 52 轮内存不足中断。</p>
     </figcaption>
     <div class="legend" id="lg-car"></div>
     <div class="chart" id="chart-car"></div>
     <details><summary>查看数据（每 10 轮）</summary><div class="table-wrap" style="margin-top:8px"><table id="tb-car"></table></div></details>
   </figure>
+
+  <div class="card">
+    <h3>“漂移”指什么</h3>
+    <p>漂移是总体状态朝一个方向<b>持续移动</b>，不是噪声变大。图里原流程的线很平滑，每轮的上下抖动很小，三个种子之间也只差 0.1–0.5%；但这条线的水平一直在变：前 20 轮开车占比每轮涨约 0.24 个百分点，第 60–79 轮仍然每轮涨约 0.11 个百分点。</p>
+    <p>收敛的过程应该是先快后慢，最后停在一个水平附近小幅波动。原流程在创新期一直没有平下来，第 80 轮停止只是因为规定在这一轮关掉创新，关掉后又一下跳到 0.43。所以“跑 100 轮”给出的终点是人为截断的结果，并不是一个已经收敛的状态。</p>
+  </div>
 </section>
 
 <!-- ============ 3 ============ -->
@@ -403,7 +410,8 @@ footer { font-size: 0.82rem; color: var(--muted); display: grid; gap: 6px; borde
   <figure class="chart-fig">
     <figcaption>
       <h3>每类试探的有用比例</h3>
-      <p>第 t 轮产生的新方案中，10 轮内再被选中、且得分高于原来最好方案的比例。换方式和找路从 40–49% 降到 7–9%，改时间一直约 17%。三类试探却始终按固定的 1:1:1 分配。</p>
+      <p><b>纵轴：</b>有用的新方案占比。分母是第 t 轮这一类试探产生的全部新方案；分子是其中在之后 10 轮内又被选中、并且得分高于这个人原来最好方案的那些。<b>横轴：</b>新方案产生的轮次（第 1–79 轮，第 80 轮起不再产生新方案）。</p>
+      <p>换方式和找路从 40–49% 降到 7–9%，改时间一直约 17%。三类试探却始终按固定的 1:1:1 分配。</p>
     </figcaption>
     <div class="legend" id="lg-useful"></div>
     <div class="chart" id="chart-useful"></div>
@@ -552,7 +560,7 @@ function el(tag, attrs, parent) {
 }
 
 function lineChart(host, legendHost, cfg) {
-  const W = 760, H = 300, m = { l: 52, r: 110, t: 14, b: 38 };
+  const W = 760, H = 300, m = { l: 68, r: 110, t: 14, b: 38 };
   const iw = W - m.l - m.r, ih = H - m.t - m.b;
   const x = (v) => m.l + (v - cfg.xMin) / (cfg.xMax - cfg.xMin) * iw;
   const y = (v) => m.t + ih - (v - cfg.yMin) / (cfg.yMax - cfg.yMin) * ih;
@@ -565,6 +573,7 @@ function lineChart(host, legendHost, cfg) {
   });
   cfg.xTicks.forEach((v) => { const t = el('text', { x: x(v), y: m.t + ih + 18, 'text-anchor': 'middle' }, grid); t.textContent = v; });
   const xl = el('text', { x: m.l + iw / 2, y: H - 4, 'text-anchor': 'middle' }, grid); xl.textContent = cfg.xLabel;
+  const yl = el('text', { x: 12, y: m.t + ih / 2, 'text-anchor': 'middle', transform: `rotate(-90 12 ${m.t + ih / 2})` }, grid); yl.textContent = cfg.yLabel;
   (cfg.marks || []).forEach((mk) => {
     el('line', { x1: x(mk.x), x2: x(mk.x), y1: m.t, y2: m.t + ih, stroke: 'var(--muted)', 'stroke-width': 1, 'stroke-dasharray': '3 4' }, grid);
     const t = el('text', { x: x(mk.x) - 6, y: m.t + 12, 'text-anchor': 'end' }, grid); t.textContent = mk.label;
@@ -612,7 +621,7 @@ const pct = (v) => (v * 100).toFixed(1) + '%';
 lineChart(document.getElementById('chart-car'), document.getElementById('lg-car'), {
   aria: '开车占比随轮次变化：原流程从 0.25 涨到 0.39，第 80 轮跳到 0.43；逐步减少试探的运行停在 0.376；得分平均的运行到第 51 轮略快于原流程',
   xMin: 0, xMax: 100, yMin: 0.24, yMax: 0.44, yTicks: [0.24, 0.28, 0.32, 0.36, 0.40, 0.44], xTicks: [0, 20, 40, 60, 80, 100],
-  yFmt: (v) => v.toFixed(2), tipFmt: (v) => v.toFixed(4), xLabel: '迭代轮次',
+  yFmt: (v) => v.toFixed(2), tipFmt: (v) => v.toFixed(4), xLabel: '迭代轮次', yLabel: '开车出行占全部出行的比例',
   marks: [{ x: 80, label: '第 80 轮关创新' }],
   series: [
     { name: '原流程', short: '原流程', color: '--s1', xs: DATA.RQ1.it, ys: DATA.RQ1.car },
@@ -623,7 +632,7 @@ lineChart(document.getElementById('chart-car'), document.getElementById('lg-car'
 lineChart(document.getElementById('chart-useful'), document.getElementById('lg-useful'), {
   aria: '各类试探的有用比例：换方式和重新找路从 40–49% 降到 7–9%，改时间稳定在约 17%',
   xMin: 1, xMax: 79, yMin: 0, yMax: 0.5, yTicks: [0, 0.1, 0.2, 0.3, 0.4, 0.5], xTicks: [1, 20, 40, 60, 79],
-  yFmt: (v) => Math.round(v * 100) + '%', tipFmt: pct, xLabel: '新方案产生的轮次',
+  yFmt: (v) => Math.round(v * 100) + '%', tipFmt: pct, xLabel: '新方案产生的轮次', yLabel: '有用的新方案占比',
   series: [
     { name: '换方式', short: '换方式', color: '--s1', xs: DATA.useful.mode.map((_, i) => i + 1), ys: DATA.useful.mode },
     { name: '重新找路', short: '找路', color: '--s2', xs: DATA.useful.route.map((_, i) => i + 1), ys: DATA.useful.route },
