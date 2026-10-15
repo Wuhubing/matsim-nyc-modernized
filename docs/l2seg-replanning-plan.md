@@ -687,7 +687,8 @@ previous best, the share selected again and useful, and the noise scale (|score 
 plan). It will give the shares of A, B and C.
 
 **Result, seed 4713 (2026-10-14; run on the login node with approval, 380 s, 2.9 GB;
-`outputs/rq1/innovation-outcomes-s4713-login.*`; seed 4711 still queued as job 25862899).** Noise scale: |score change|
+`outputs/rq1/innovation-outcomes-s4713-login.*`; confirmed by job 25862899 on 2026-10-14: seed 4711 gives the same shares and
+medians to within 0.002 in every cell, and the Slurm rerun of seed 4713 is identical to the login-node run).** Noise scale: |score change|
 of agents keeping an older plan has median 0.06 / 0.13 / 0.18 and p90 2.3 / 2.6 / 3.0 in iterations 1–10 / 11–40 /
 41–79 (heavy-tailed: most agents' scores barely move). First evaluation = new plan's score minus the previous best:
 
