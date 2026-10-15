@@ -254,5 +254,31 @@ class Links(unittest.TestCase):
         self.assertEqual(p1['settled_by']['0.05']['10'], 1.0)
 
 
+class EquilibriumGap(unittest.TestCase):
+    def test_gap_and_switch_off_check(self):
+        """Selectors a, b, c hold a better plan at 79 (gaps 2, 0, 4) and get exactly that from 80 on; d innovates at 10."""
+        with tempfile.TemporaryDirectory() as d:
+            run = Path(d)/'run'; log = run/'simulation'/'replanning-log'
+            gz(log/'persons.csv.gz', 'person,person_id,subpopulation', [(0, 'a', 'man'), (1, 'b', 'nonman'), (2, 'c', 'man'), (3, 'd', 'man'), (4, 'o', 'outside')])
+            (log/'strategies.csv').write_text('strategy,innovative,description\n0,0,"ExpBetaPlanSelector"\n2,1,"RandomPlanSelector_ReRoute"\n')
+            h = 'person,strategy,plan_id,plan_created,parent_plan_id,executed_score,best_score,plans'
+            for k in range(100):
+                ex = (1, 2, 0) if k < 80 else (3, 2, 4)
+                rows = [(i, 0, 'p', 0, '', ex[i], (3, 2, 4)[i], 2) for i in range(3)]
+                rows.append((3, 2 if k == 10 else 0, 'q', k, 'p', -5 if k == 10 else 1, 1, 2))
+                rows.append((4, 0, 'r', 0, '', 0, 9, 2))                                  # outside: not a resident
+                gz(log/f'agents-{k}.csv.gz', h, rows)
+            out = Path(d)/'g.json'
+            subprocess.run([PY, str(HERE/'equilibrium_gap.py'), str(run), '--out', str(out)], check=True, capture_output=True)
+            r = json.loads(out.read_text())['run']
+        s10 = r['by_k']['10']
+        self.assertEqual((s10['selectors']['n'], s10['selectors']['mean'], s10['innovators']['mean']), (3, 2.0, 6.0))
+        self.assertAlmostEqual(s10['innovating_share'], 0.25)
+        self.assertEqual(r['by_k']['90']['selectors']['mean'], 0.0)
+        c = r['switch_off_check']['selectors']
+        self.assertEqual((c['n'], c['mean_pred'], c['mean_real']), (4, 1.5, 1.5))
+        self.assertAlmostEqual(c['slope'], 1.0); self.assertAlmostEqual(c['spearman'], 1.0, places=6)
+
+
 if __name__ == '__main__':
     unittest.main()
