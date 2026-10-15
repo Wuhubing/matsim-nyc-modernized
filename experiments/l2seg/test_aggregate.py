@@ -211,6 +211,15 @@ class ProposalSuccess(unittest.TestCase):
         self.assertEqual(ps.trip_main_modes(ET.fromstring(plan(PT, 1.0, True))), ['pt', 'pt'])
 
 
+class RouteGap(unittest.TestCase):
+    def test_estimate(self):
+        import route_gap as rg
+        rg.NET.clear(); rg.NET.update({'S': (100.0, 10.0), 'A': (100.0, 10.0), 'B': (100.0, 10.0), 'E': (50.0, 10.0)})
+        tt = lambda link, hour: {'A': 30.0}.get(link) if hour == 8 else None      # A has data at 8h, B falls back to 10 s
+        self.assertEqual(rg.estimate(['S', 'A', 'B', 'E'], 8 * 3600, tt), 30 + 10 + 5)   # start link skipped, end at free flow
+        self.assertEqual(rg.estimate(['S', 'A', 'B', 'E'], 9 * 3600, tt), 10 + 10 + 5)
+
+
 class Links(unittest.TestCase):
     def test_end_to_end(self):
         """Persons x and y re-route at 11 from parents created at 5 (by ReRoute). x's links keep their travel time and
