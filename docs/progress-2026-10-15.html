@@ -72,6 +72,10 @@ td.n, th.n { text-align: right; font-family: var(--font-mono); font-variant-nume
 .step { background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; padding: 14px 16px; display: grid; gap: 6px; align-content: start; min-width: 0; }
 .step .tag { font-family: var(--font-mono); font-size: 0.75rem; color: var(--accent); letter-spacing: 0.05em; }
 .step p { font-size: 0.92rem; color: var(--ink-2); }
+.diagram { padding: 14px; }
+.diagram-scroll { overflow-x: auto; }
+.diagram-scroll svg { display: block; width: 100%; min-width: 640px; height: auto; }
+.diagram figcaption { font-size: 0.88rem; color: var(--ink-2); }
 .bar { display: flex; height: 30px; border-radius: 5px; overflow: hidden; gap: 2px; background: var(--bg); }
 .bar > span { display: flex; align-items: center; padding: 0 10px; font-size: 0.8rem; font-weight: 500; white-space: nowrap; overflow: hidden; color: var(--ink); }
 .seg-a { background: var(--accent-soft); border: 1px solid var(--accent); }
@@ -146,22 +150,96 @@ footer { font-size: 0.82rem; color: var(--muted); display: grid; gap: 6px; borde
     <h2>每一轮迭代在做什么</h2>
   </header>
   <p>MATSim 把一天的出行当成反复演练：每个人手里最多存 5 套出行方案，每一轮先改方案，再让所有人同时上路，最后按实际体验给方案打分。重复 100 轮，交通状态逐渐稳定下来。</p>
-  <div class="loop">
-    <div class="step">
-      <div class="tag">① 重新规划 · 约 11% 用时</div>
-      <h3>挑方案，或试新方案</h3>
-      <p>man、nonman 两类人：70% 按得分从已有方案里抽一个（ExpBeta）；30% 试新方案，改出发时间、重新找路、换方式各 10%。outside 一类只挑不试。</p>
+  <figure class="diagram">
+    <div class="diagram-scroll">
+    <svg viewBox="0 0 960 432" role="img" aria-label="MATSim 一轮迭代的架构：输入的人口、路网和公交时刻表进入重新规划；重新规划里 70% 的人从已有方案中按得分抽一个，30% 的人随机生成新方案；仿真执行所有人选中的方案并产生事件流；事件流用于打分、统计路段通行时间和输出统计；得分和通行时间反馈到下一轮的重新规划。第 0 到 79 轮选和试都开，第 80 到 99 轮只选。" style="color:var(--ink)">
+      <defs>
+        <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker>
+        <marker id="arA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--accent)"/></marker>
+      </defs>
+      <g font-family="Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif" font-size="12" fill="currentColor">
+        <!-- inputs -->
+        <text x="16" y="22" style="fill:var(--muted)" font-size="11">输入</text>
+        <rect x="16" y="40" width="164" height="60" rx="6" style="fill:var(--surface);stroke:var(--rule)"/>
+        <text x="28" y="64" font-weight="700">人口 389,301 人</text>
+        <text x="28" y="84" style="fill:var(--ink-2)">每人 ≤5 套方案</text>
+        <rect x="16" y="120" width="164" height="60" rx="6" style="fill:var(--surface);stroke:var(--rule)"/>
+        <text x="28" y="144" font-weight="700">路网 465,386 路段</text>
+        <text x="28" y="164" style="fill:var(--ink-2)">容量按 6 个时段变化</text>
+        <rect x="16" y="200" width="164" height="60" rx="6" style="fill:var(--surface);stroke:var(--rule)"/>
+        <text x="28" y="224" font-weight="700">公交时刻表 262 线</text>
+        <text x="28" y="244" style="fill:var(--ink-2)">地铁、公交车、铁路</text>
+        <line x1="180" y1="70" x2="214" y2="92" stroke="currentColor" stroke-width="1.4" marker-end="url(#ar)"/>
+        <line x1="180" y1="150" x2="214" y2="150" stroke="currentColor" stroke-width="1.4" marker-end="url(#ar)"/>
+        <line x1="180" y1="230" x2="214" y2="208" stroke="currentColor" stroke-width="1.4" marker-end="url(#ar)"/>
+
+        <!-- 1 replanning -->
+        <rect x="216" y="30" width="264" height="240" rx="8" style="fill:var(--bg);stroke:var(--ink-2)"/>
+        <text x="232" y="54" font-weight="700" font-size="13">① 重新规划</text>
+        <text x="464" y="54" text-anchor="end" style="fill:var(--muted)" font-size="11">约 11% 用时</text>
+        <rect x="232" y="66" width="232" height="54" rx="6" style="fill:var(--surface);stroke:var(--rule)"/>
+        <text x="244" y="88" font-weight="700">选 · 70% 的人</text>
+        <text x="244" y="108" style="fill:var(--ink-2)">按得分从已有方案里抽一个</text>
+        <rect x="232" y="130" width="232" height="96" rx="6" style="fill:var(--accent-soft);stroke:var(--accent)" stroke-width="1.5"/>
+        <text x="244" y="152" font-weight="700" style="fill:var(--accent)">试 · 30% 的人（随机）</text>
+        <text x="244" y="172" style="fill:var(--ink-2)">随机挑一套方案，复制后改：</text>
+        <text x="244" y="192" style="fill:var(--ink-2)">改时间 · 重新找路 · 换方式</text>
+        <text x="244" y="212" style="fill:var(--ink-2)">各占 10%，下一轮去执行</text>
+        <text x="244" y="252" style="fill:var(--muted)" font-size="11">新方案进记忆，超过 5 套删最差的</text>
+
+        <!-- arrow to mobsim -->
+        <line x1="480" y1="100" x2="518" y2="100" stroke="currentColor" stroke-width="1.4" marker-end="url(#ar)"/>
+        <text x="499" y="92" text-anchor="middle" style="fill:var(--muted)" font-size="11">选中的方案</text>
+
+        <!-- 2 mobsim -->
+        <rect x="520" y="40" width="196" height="120" rx="8" style="fill:var(--bg);stroke:var(--ink-2)"/>
+        <text x="536" y="64" font-weight="700" font-size="13">② 仿真 QSim</text>
+        <text x="700" y="64" text-anchor="end" style="fill:var(--muted)" font-size="11">约 78%</text>
+        <text x="536" y="88" style="fill:var(--ink-2)">所有人同时执行方案</text>
+        <text x="536" y="108" style="fill:var(--ink-2)">车辆在路段上排队</text>
+        <text x="536" y="128" style="fill:var(--ink-2)">公交按时刻表载客</text>
+        <text x="536" y="148" style="fill:var(--muted)" font-size="11">事件处理是单线程瓶颈</text>
+
+        <!-- event bus -->
+        <line x1="716" y1="100" x2="736" y2="100" stroke="currentColor" stroke-width="1.4"/>
+        <line x1="736" y1="64" x2="736" y2="224" stroke="currentColor" stroke-width="1.4"/>
+        <text x="726" y="190" text-anchor="end" style="fill:var(--muted)" font-size="11">事件流</text>
+        <line x1="736" y1="64" x2="758" y2="64" stroke="currentColor" stroke-width="1.4" marker-end="url(#ar)"/>
+        <line x1="736" y1="144" x2="758" y2="144" stroke="currentColor" stroke-width="1.4" marker-end="url(#ar)"/>
+        <line x1="736" y1="224" x2="758" y2="224" stroke="currentColor" stroke-width="1.4" marker-end="url(#ar)"/>
+
+        <!-- 3 handlers -->
+        <rect x="760" y="36" width="184" height="56" rx="6" style="fill:var(--surface);stroke:var(--rule)"/>
+        <text x="772" y="58" font-weight="700">统计与输出</text>
+        <text x="772" y="78" style="fill:var(--ink-2)">方式占比、计数、得分表</text>
+        <rect x="760" y="116" width="184" height="56" rx="6" style="fill:var(--surface);stroke:var(--rule)"/>
+        <text x="772" y="138" font-weight="700">路段通行时间</text>
+        <text x="772" y="158" style="fill:var(--ink-2)">每条路、每个时段</text>
+        <rect x="760" y="196" width="184" height="56" rx="6" style="fill:var(--surface);stroke:var(--rule)"/>
+        <text x="772" y="218" font-weight="700">③ 打分</text>
+        <text x="772" y="238" style="fill:var(--ink-2)">活动、时间、等车、费用</text>
+
+        <!-- feedback: score (y=300), travel time (y=332) -->
+        <polyline points="852,252 852,300 400,300 400,274" fill="none" style="stroke:var(--accent)" stroke-width="1.6" marker-end="url(#arA)"/>
+        <text x="626" y="293" text-anchor="middle" style="fill:var(--accent)">得分 → 下一轮被抽中的概率</text>
+        <polyline points="944,144 954,144 954,332 260,332 260,274" fill="none" style="stroke:var(--accent)" stroke-width="1.6" marker-end="url(#arA)"/>
+        <text x="626" y="325" text-anchor="middle" style="fill:var(--accent)">通行时间 → 下一轮重新找路（用的是上一轮的路况）</text>
+
+        <!-- iteration control -->
+        <text x="216" y="370" style="fill:var(--muted)" font-size="11">迭代控制：重复 100 轮</text>
+        <rect x="216" y="380" width="580" height="34" rx="5" style="fill:var(--accent-soft);stroke:var(--accent)"/>
+        <text x="228" y="402">第 0–79 轮：选 + 试（创新期，状态一直在漂移）</text>
+        <rect x="800" y="380" width="144" height="34" rx="5" style="fill:var(--surface);stroke:var(--rule)"/>
+        <text x="812" y="402">80–99：只选</text>
+      </g>
+    </svg>
     </div>
-    <div class="step">
-      <div class="tag">② 仿真 mobsim · 约 78% 用时</div>
-      <h3>所有人同时上路</h3>
-      <p>开车、出租车、网约车在路网上排队行驶，公交按时刻表运行并有载客上限，其他方式按距离直接计算时间。</p>
-    </div>
-    <div class="step">
-      <div class="tag">③ 打分与统计 · 其余用时</div>
-      <h3>按实际体验打分</h3>
-      <p>活动时长、出行时间、等车、费用、迟到都计入得分。得分决定下一轮被抽中的概率。</p>
-    </div>
+    <figcaption>MATSim 一轮迭代的结构。人和人之间不直接交流，只通过两条反馈互相影响：仿真产生的<b>得分</b>决定下一轮选哪套方案，仿真产生的<b>路段通行时间</b>决定下一轮怎么找路。蓝色框是“试新方案”这一步：新方案是随机生成的，这正是本页找到的瓶颈所在。</figcaption>
+  </figure>
+  <div class="card">
+    <h3>“漂移阶段太长”是什么意思</h3>
+    <p>第 0–79 轮的创新期里，全城的总体状态一直朝同一个方向缓慢移动：开车占比从 0.25 起每轮涨约 0.2 个百分点，到第 79 轮还在涨（0.39），第 80 轮一关创新就跳到 0.43。好的迭代应该较快接近终点、之后只在附近小幅波动；这里跑了 80 轮还没到，结束靠的是规定轮数，而不是自然收敛。</p>
+    <p>慢的原因在蓝色框：每轮 30% 的人试新方案，但新方案是随机的。随机换方式只有约 14% 恰好换到这个人最终会选的方式；粗算每轮真正朝终点迈一步的人约 0.3%（实测约 0.5%），而第 40 轮还有 22% 的人没找到最终的方式，所以要走几十轮。加速就是缩短这一段：让每一步更可能走对，或者从离终点更近的地方出发，然后提前收尾。</p>
   </div>
   <div style="display:grid;gap:6px">
     <div class="bar" role="img" aria-label="每轮用时构成：仿真 78%，重新规划 11%，其他 11%">
