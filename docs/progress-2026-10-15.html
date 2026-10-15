@@ -124,6 +124,14 @@ details summary:focus-visible { outline: 2px solid var(--accent); outline-offset
 .card .tag { font-family: var(--font-mono); font-size: 0.78rem; color: var(--accent); }
 .card .from { font-size: 0.82rem; color: var(--muted); border-top: 1px dashed var(--rule); padding-top: 6px; }
 .pending { border-style: dashed; }
+/* bottleneck decomposition bars: one shared scale, 24 percentage points = full width */
+.decomp { display: grid; gap: 8px; }
+.drow { display: grid; grid-template-columns: 4.5em 1fr 6.5em; gap: 10px; align-items: center; font-size: 0.85rem; }
+.dk { color: var(--ink-2); }
+.dv { font-family: var(--font-mono); font-variant-numeric: tabular-nums; color: var(--ink-2); text-align: right; }
+.dbar { display: flex; height: 18px; border-radius: 4px; overflow: hidden; background: var(--bg); min-width: 0; }
+.dbar .seg-a { background: var(--accent); border: 0; }
+.dbar .seg-b { background: var(--warn); border: 0; }
 footer { font-size: 0.82rem; color: var(--muted); display: grid; gap: 6px; border-top: 1px solid var(--rule); padding-top: 20px; }
 @media (max-width: 520px) { body { font-size: 15px; } .part-num { font-size: 1.5rem; } }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
@@ -436,6 +444,85 @@ footer { font-size: 0.82rem; color: var(--muted); display: grid; gap: 6px; borde
     <div class="chart" id="chart-useful"></div>
     <details><summary>查看数据（每 10 轮）</summary><div class="table-wrap" style="margin-top:8px"><table id="tb-useful"></table></div></details>
   </figure>
+
+  <div class="sub" id="bottleneck">
+    <h3>瓶颈：已经找到的和还没找到的</h3>
+    <div class="table-wrap">
+      <table class="wide">
+        <thead><tr><th>问题</th><th>状态</th><th>证据或缺口</th><th>结论</th></tr></thead>
+        <tbody>
+          <tr><td class="first">每轮的计算慢在哪</td><td><span class="pill p-good">已找到</span></td><td>分项计时和 JFR 剖析：仿真 78%，卡在单线程的事件处理</td><td>工程优化已拿 −26%，没有倍数级空间，不是主要矛盾</td></tr>
+          <tr><td class="first">搜索浪费在哪</td><td><span class="pill p-good">已找到</span></td><td>三次 100 轮运行的重新规划日志：85% 的试探没有用</td><td>三类浪费：重复提议、明显更差的提议、在噪声之间选择</td></tr>
+          <tr><td class="first">搜索慢在哪：没发现，还是发现了没选中</td><td><span class="pill p-warn">大致看出</span></td><td>方案快照的分解（见下面的分析）</td><td>前期卡在发现，后期卡在选择噪声；但终点仍是原流程截断后的状态</td></tr>
+          <tr><td class="first">离均衡还有多远</td><td><span class="pill p-bad">未找到</span></td><td>还没有均衡差距的度量</td><td>不知道 100 轮是接近均衡还是离得还远</td></tr>
+          <tr><td class="first">慢是因为提议不好，还是因为目标在移动</td><td><span class="pill p-bad">未找到</span></td><td>大家换方案会改变路况，最优选择也跟着变；没有实验能区分这两种情况</td><td>需要上限实验：提议做到完美时能快多少</td></tr>
+          <tr><td class="first">加速后政策结论会不会变</td><td><span class="pill p-bad">未找到</span></td><td>只有基础场景一个场景</td><td>需要一对场景的运行（基础场景 + 一个收费方案）</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>分析：把“离终点的距离”拆成两部分</h3>
+      <p><b>方法：</b>每 10 轮的方案快照里，对每个人取两个状态：实际执行的方案，和记忆里得分最高的方案。分别统计全体的主要方式占比，和最终状态比较，用总变差距离（百分点）衡量。</p>
+      <ul>
+        <li><b>没发现：</b>记忆里最好方案的状态离终点的距离。好方案还没被提出来。</li>
+        <li><b>发现了没选中：</b>实际执行的状态比最好方案的状态多出来的距离。好方案已经在记忆里，但 ExpBeta 在不做平均的得分下没选它。</li>
+      </ul>
+      <p class="note">三个种子平均；种子之间的噪声只有 0.19 个百分点。</p>
+    </div>
+
+    <figure class="chart-fig">
+      <figcaption>
+        <h3>离终点的距离，按原因拆开</h3>
+        <p><b>横向长度：</b>方式占比和最终状态的总变差距离（百分点），四行用同一个比例尺，满格为 24 个百分点。</p>
+      </figcaption>
+      <div class="legend"><span><i style="background:var(--accent)"></i>没发现</span><span><i style="background:var(--warn)"></i>发现了没选中</span></div>
+      <div class="decomp" role="img" aria-label="离终点的距离按原因拆开：第 10 轮没发现 21.2、没选中 2.4；第 40 轮 5.8 和 4.4；第 60 轮 2.0 和 3.9；第 70 轮 0.8 和 3.6">
+        <div class="drow"><span class="dk">第 10 轮</span><div class="dbar"><span class="seg-a" style="flex:21.2"></span><span class="seg-b" style="flex:2.4"></span><span style="flex:0.4"></span></div><span class="dv">21.2 + 2.4</span></div>
+        <div class="drow"><span class="dk">第 40 轮</span><div class="dbar"><span class="seg-a" style="flex:5.8"></span><span class="seg-b" style="flex:4.4"></span><span style="flex:13.8"></span></div><span class="dv">5.8 + 4.4</span></div>
+        <div class="drow"><span class="dk">第 60 轮</span><div class="dbar"><span class="seg-a" style="flex:2.0"></span><span class="seg-b" style="flex:3.9"></span><span style="flex:18.1"></span></div><span class="dv">2.0 + 3.9</span></div>
+        <div class="drow"><span class="dk">第 70 轮</span><div class="dbar"><span class="seg-a" style="flex:0.78"></span><span class="seg-b" style="flex:3.6"></span><span style="flex:19.6"></span></div><span class="dv">0.8 + 3.6</span></div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>第 k 轮</th><th class="n">没发现</th><th class="n">实际执行离终点</th><th class="n">发现了没选中</th><th class="n">没选中的占比</th></tr></thead>
+          <tbody>
+            <tr><td>10</td><td class="n">21.2</td><td class="n">23.6</td><td class="n">2.4</td><td class="n">约 10%</td></tr>
+            <tr><td>40</td><td class="n">5.8</td><td class="n">10.2</td><td class="n">4.4</td><td class="n">约 43%</td></tr>
+            <tr><td>60</td><td class="n">2.0</td><td class="n">5.9</td><td class="n">3.9</td><td class="n">约 66%</td></tr>
+            <tr><td>70</td><td class="n">0.78</td><td class="n">4.4</td><td class="n">3.6</td><td class="n">约 82%</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </figure>
+
+    <div class="two">
+      <div class="card">
+        <h3>结果</h3>
+        <ul>
+          <li><b>瓶颈随轮次转移。</b>第 10 轮，九成的距离是“没发现”；到第 60–70 轮，三分之二以上是“发现了没选中”。</li>
+          <li><b>第 80 轮的跳变就是这部分被一次性兑现：</b>关掉创新、只按得分选以后，记忆里已有的开车方案马上被选中，开车占比从 0.39 跳到 0.43。</li>
+          <li>前期的“没发现”主要是开车方式：最好方案里的开车占比一直低于终点，第 40 轮低 5 个百分点。</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>结论</h3>
+        <ul>
+          <li>单一手段不够。<b>前期</b>要更好的提议（有信息的提议，或者用更便宜的粗模型完成发现）；<b>后期</b>要处理选择噪声（得分平均，正是 MATSim 书推荐的做法）。</li>
+          <li><b>保留：</b>这里的“终点”是原流程截断后的状态，不是均衡；总变差距离也不能严格相加。所以这是方向性的结论，要用均衡差距和实验来确认。</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>下一步要回答的三个问题</h3>
+      <ol>
+        <li><b>离均衡多远：</b>建好均衡差距（路线和方式两部分），画出原流程和两次对照运行的差距曲线。只用已有数据。</li>
+        <li><b>瓶颈是不是“发现”：</b>上限实验。被选中试探的人不再随机变异，而是按当前路况算出的最优方式和路线来提议。快很多，说明瓶颈是发现，有信息的提议值得做；快不多，说明瓶颈是目标在移动，应该转向步长控制。</li>
+        <li><b>后期是不是选择噪声：</b>加内存重跑得分平均的对照运行，看后期“发现了没选中”的部分能否被消掉。</li>
+      </ol>
+    </div>
+  </div>
 </section>
 
 <!-- ============ 4 ============ -->
@@ -542,19 +629,21 @@ footer { font-size: 0.82rem; color: var(--muted); display: grid; gap: 6px; borde
 
   <div class="two">
     <div class="card">
-      <h3>近期计划</h3>
-      <ul>
-        <li>完成均衡差距的估计器，验证它能预测实际提升，画出原流程和对照运行的差距曲线。</li>
-        <li>离线回答：如果按差距挑人、按估计效用提议，有多少提议会被接受。</li>
-        <li>差距出来后，分析接近最优的人占仿真的多少。</li>
-      </ul>
+      <h3>近期计划（约一周）</h3>
+      <ol>
+        <li>建好均衡差距（路线和方式），验证它能预测实际提升，画出原流程和对照运行的差距曲线。</li>
+        <li>上限实验：用最优反应代替随机变异，先 12 轮检查，再 100 轮。回答瓶颈是不是“发现”。</li>
+        <li>加内存重跑得分平均的对照运行。回答后期是不是选择噪声。</li>
+      </ol>
+      <p class="note">三项做完，瓶颈从“大致看出”变成“有实验证据”，再决定力气放在有信息的提议、自适应步长还是其他方向。</p>
     </div>
     <div class="card">
       <h3>需要决定</h3>
       <ul>
-        <li>是否同意一次政策场景（2025 年收费方案）的 100 轮冷启动运行，作为热启动的对照（约 9 小时）。</li>
-        <li>得分平均的对照运行是否加大内存重跑（约 9 小时）。</li>
-        <li>有信息的提议的 100 轮运行，等 12 轮检查后再申请。</li>
+        <li>上限实验要写代码（约 1–2 天），之后一次 100 轮（约 9 小时）。</li>
+        <li>得分平均的对照运行加大内存重跑（约 9 小时）。</li>
+        <li>一次政策场景（2025 年收费方案）的 100 轮冷启动运行，用来检验政策结论和热启动（约 9 小时）。</li>
+        <li>多保真度（前期用更小的抽样人口完成发现）是否从暂缓提升为候选。</li>
       </ul>
     </div>
   </div>
