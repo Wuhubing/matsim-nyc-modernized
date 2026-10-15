@@ -130,6 +130,20 @@ public final class RunNyc {
                 }
             });
         }
+        if (System.getProperty("nyc.stableReRoute.threshold") != null) {
+            // M8: ReRoute settings become StableReRoute (threshold < 0 = shadow mode, identical to ReRoute).
+            int replaced = 0;
+            for (var s : config.replanning().getStrategySettings())
+                if ("ReRoute".equals(s.getStrategyName())) { s.setStrategyName(StableReRoute.NAME); replaced++; }
+            if (replaced == 0) throw new IllegalArgumentException("nyc.stableReRoute.threshold: the config has no ReRoute strategy");
+            controler.addOverridingModule(new AbstractModule() {
+                @Override public void install() {
+                    bind(StableReRoute.Stats.class).asEagerSingleton();
+                    addControllerListenerBinding().to(StableReRoute.Stats.class);
+                    addPlanStrategyBinding(StableReRoute.NAME).toProvider(StableReRoute.Provider.class);
+                }
+            });
+        }
         String priority = System.getProperty("nyc.targeted.priority"), epsilon = System.getProperty("nyc.targeted.epsilon");
         boolean targeted = priority != null || epsilon != null;
         if (Boolean.getBoolean("nyc.replanningLog") || targeted) {

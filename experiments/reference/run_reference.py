@@ -190,7 +190,8 @@ def run(args):
         + ([f'-Dnyc.targeted.priority={Path(args.targeted_priority).resolve()}'] if args.targeted_priority else []) \
         + ([f'-Dnyc.targeted.epsilon={args.targeted_epsilon}'] if args.targeted_epsilon is not None else []) \
         + (['-Dnyc.researchMetrics=true', f'-Dnyc.cohortPolygon={polygon}'] if args.research else []) \
-        + (['-Dnyc.legacyTollRouting=true'] if args.legacy_toll_routing else [])
+        + (['-Dnyc.legacyTollRouting=true'] if args.legacy_toll_routing else []) \
+        + ([f'-Dnyc.stableReRoute.threshold={args.stable_reroute}'] if args.stable_reroute is not None else [])
     cmd = [java(), '-Duser.language=en', '-Duser.country=US', f'-Xmx{args.heap}', '-Dnyc.onlineMetrics=true',
            f'-Dnyc.metricLinks={metric_links}', *extra, '-Xlog:gc*:file=' + str(dest/'gc.log') + ':time,uptime,level,tags']
     if args.jfr:
@@ -208,7 +209,7 @@ def run(args):
     meta = {'schema_version': 3, 'seed': args.seed, 'scenario': args.scenario, 'iterations': args.iterations,
             'events': args.events, 'events_interval': events_interval, 'plans_interval': plans_every,
             'research': args.research, 'replanning_log': args.replanning_log, 'legacy_toll_routing': args.legacy_toll_routing,
-            'targeted_priority': args.targeted_priority, 'targeted_epsilon': args.targeted_epsilon,
+            'targeted_priority': args.targeted_priority, 'targeted_epsilon': args.targeted_epsilon, 'stable_reroute': args.stable_reroute,
             'innovation_until': args.innovation_until, 'innovation_fraction': 0.8 if args.innovation_until is None else 1.0,
             'plans': str(plans), 'expected_persons': json.loads((INPUTS/'cold.json').read_text())['persons'] if plans == INPUTS/'cold.xml.gz' and (INPUTS/'cold.json').exists() else None,
             'metric_links': str(metric_links), 'cohort_polygon': str(polygon) if args.research else None,
@@ -343,6 +344,7 @@ def main():
     r.add_argument('--replanning-log', action='store_true', help='write OUTPUT/simulation/replanning-log/ (W1)')
     r.add_argument('--targeted-priority', help='priority CSV file or directory for the targeted chooser (W3)')
     r.add_argument('--targeted-epsilon', type=float, help='random share of the innovation budget for the targeted chooser (W3)')
+    r.add_argument('--stable-reroute', type=float, help='M8: ReRoute skips plans whose network travel times changed <= this share since routing; < 0 = shadow mode (identical run, statistics only)')
     r.add_argument('--scenario', choices=['baseline', 'schema1', 'actual2025'], default='actual2025')
     r.add_argument('--plans', help='warm-start plans instead of outputs/reference-inputs/cold.xml.gz')
     r.add_argument('--factors', type=Path, default=FACTORS)

@@ -67,7 +67,7 @@ def travel_time(cnt, sec):
 
 def route_kinds(run):
     with open(Path(run)/'simulation'/'replanning-log'/'strategies.csv', newline='') as f:
-        return {int(r['strategy']) for r in csv.DictReader(f) if r['description'] == 'RandomPlanSelector_ReRoute'}
+        return {int(r['strategy']) for r in csv.DictReader(f) if r['description'].startswith('RandomPlanSelector_ReRoute')}
 
 
 def reroute_innovations(run, t1, codes):

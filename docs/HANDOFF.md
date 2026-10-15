@@ -34,6 +34,7 @@
 
 （以上分析作业都在 `mit_preemptable`，带 `--requeue`；日志在 `outputs/aggregate/slurm-*.out`。）
 
+- **JAR 还没重新编译：** M8（`StableReRoute`，10-15）只用 `javac` 编译到 scratchpad 做了合成检查，`target/` 里的 JAR 还是旧的。原因是 E1/E2 开始时会从 `target/` 复制 JAR。等 E1/E2 开始跑以后，再执行 `mvn -o -q package -DskipTests`；新代码只在设置了 `nyc.stableReRoute.threshold` 时才生效，不影响其他运行。
 - **E1/E2 完成后：**
   - 和 RQ1 种子 4711（`/orcd/scratch/orcd/006/weibingw/matsim-work/rq1/baseline-s4711-100it-rq1`）对比：10 轮均值何时进入 RQ0 容差（`outputs/rq0/tolerance-baseline.json`）；每轮换计划和回到旧计划的比例（W1 日志，`labels.py`）；L-U 命中率；最终状态（得分、方式构成、屏幕线）。
   - 写进 `l2seg-replanning-plan.md` 第 8.2 节。
