@@ -32,6 +32,9 @@
 | 25897062 | A3（`group_stability.py`），等快照完成 | `outputs/aggregate/a3-group-stability.json` | 同上，决定 M3 |
 | 25897063 | A4（`link_stability.py`），种子 4711 | `outputs/aggregate/a4-link-stability-s4711.json` | 同上，决定 M8 |
 
+| 25929332 | M8 改目标的分析（`reroute_duplicates.py`），种子 4711：按方案内容和来源看重复找路的比例 | `outputs/aggregate/m8-reroute-duplicates-s4711.json` | 结果写进 `aggregate-regularity-plan.md` 第 7 节的 A4 之后，决定 `StableReRoute` 怎么改 |
+
+（A2–A4 已于 10-15 完成，结果见计划第 7 节。）
 （以上分析作业都在 `mit_preemptable`，带 `--requeue`；日志在 `outputs/aggregate/slurm-*.out`。）
 
 - **JAR 还没重新编译：** M8（`StableReRoute`，10-15）只用 `javac` 编译到 scratchpad 做了合成检查，`target/` 里的 JAR 还是旧的。原因是 E1/E2 开始时会从 `target/` 复制 JAR。等 E1/E2 开始跑以后，再执行 `mvn -o -q package -DskipTests`；新代码只在设置了 `nyc.stableReRoute.threshold` 时才生效，不影响其他运行。
