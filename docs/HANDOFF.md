@@ -26,7 +26,7 @@
 |---|---|---|---|
 | 25891637 | E1：score MSA，baseline，种子 4711，100 轮，heap 24g | `/orcd/scratch/orcd/006/weibingw/matsim-work/alg/e1-scoremsa-s4711-100it` | 见下面 E1/E2 的说明 |
 | 25891638 | E2：创新退火 0.3 → 0.0001（第 79 轮到底） | `.../alg/e2-anneal-s4711-100it` | 同上；开跑后确认 `run.json` 里是 `-Xmx24g` |
-| 25894285 | A1：轨迹外推分析（`trajectory.py`） | `outputs/trajectory/trajectory-rq1.json`、`slurm-25894285.out` | 把结果写进 `aggregate-regularity-plan.md` 第 7 节，然后按第 5 节的关卡决定 A2/A3 |
+| ~~25894285~~ | A1：已取消，10-15 改在登录节点跑完（12 秒） | `outputs/trajectory/trajectory-rq1.json` | 已写进 `aggregate-regularity-plan.md` 第 7 节 |
 | 25897058–60 | 快照解析（`plan_snapshots.py`），三个种子各一个，4 核 8G | `outputs/aggregate/snapshots-s47xx/` | A2、A3 的输入 |
 | 25897061 | A2（`best_state.py`），等快照完成 | `outputs/aggregate/a2-best-state.json` | 结果写进 `aggregate-regularity-plan.md` 第 7 节，按第 5 节关卡决定是否申请 B1 |
 | 25897062 | A3（`group_stability.py`），等快照完成 | `outputs/aggregate/a3-group-stability.json` | 同上，决定 M3 |
