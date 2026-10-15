@@ -721,6 +721,19 @@ change the algorithm and therefore the end state, so they need a second criterio
 end state": an equilibrium-quality measure such as each agent's gap between the executed plan and a best response
 (router-estimated). One 100-iteration run each, seed 4711, would show whether they settle earlier and where.
 
+**Submitted 2026-10-14 (approved): algorithm variants E1 and E2**, MATSim-native options only (`run_reference.py
+--score-msa-start`, `--anneal-innovation`), protocol of Section 0 otherwise (baseline, seed 4711, 100 iterations,
+innovation to 79, replanning log on, ResearchMetrics off, heap 16 GB), outputs in
+`/orcd/scratch/orcd/006/weibingw/matsim-work/alg/`:
+- E1 (job 25871514): score MSA from fraction 0.1, i.e. from iteration 9 each plan's score is the mean of its
+  evaluations (`NewScoreAssignerImpl`, weight 1/n) instead of the latest one.
+- E2 (job 25871518): `ReplanningAnnealer`, `globalInnovationRate`, linear from 0.3 to 0.0001 at the innovation stop,
+  for `man` and `nonman` (relative weights of the three innovation strategies kept; 0 after the stop).
+Both configs parsed by MATSim before submission. Checks once running: E2's annealing output file must show the
+linear decline ending at iteration 79. Comparison against RQ1 seed 4711: iteration at which 10-iteration means enter
+the RQ0 tolerance, per-iteration plan changes and revisits, innovation success (L-U), and the end state (score, mode
+shares, screenline) relative to the protocol's end state.
+
 ## 9. Engineering work (on this branch, before any run)
 
 `main` does not contain the perf work, so W0 brings over only what this plan needs.
