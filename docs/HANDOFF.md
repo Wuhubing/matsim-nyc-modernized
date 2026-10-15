@@ -7,6 +7,7 @@
 | 顺序 | 文件 | 内容 |
 |---|---|---|
 | 1 | `docs/HANDOFF.md`（本文） | 现在的状态、在跑的作业、规则 |
+| 1.5 | `docs/execution-plan.md` | **落地方向的执行计划**（10-15）：主线 M7（跨运行学习轨迹，短跑加预测），副线 M8（`StableReRoute`） |
 | 2 | `docs/aggregate-regularity-plan.md` | **当前的工作计划**：利用总体层面的规律减少冗余（阶段 A/B） |
 | 3 | `docs/matsim-nyc-findings.md` 第 0 节 | 全过程概览和主要结论 |
 | 4 | `docs/project-log-detailed.md` | 每一步的详细记录（作业、提交、失败原因） |
