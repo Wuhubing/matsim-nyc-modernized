@@ -76,6 +76,11 @@ td.n, th.n { text-align: right; font-family: var(--font-mono); font-variant-nume
 .diagram-scroll { overflow-x: auto; }
 .diagram-scroll svg { display: block; width: 100%; min-width: 640px; height: auto; }
 .diagram figcaption { font-size: 0.88rem; color: var(--ink-2); }
+.matrix th[scope="row"] { color: var(--ink); font-size: 0.86rem; letter-spacing: 0; background: var(--surface); }
+.matrix td { vertical-align: top; }
+.matrix td .pill { margin: 2px 4px 2px 0; white-space: normal; }
+.approaches tr.grp td { background: var(--bg); font-weight: 700; font-size: 0.86rem; color: var(--accent); padding-top: 12px; }
+.approaches td:first-child { min-width: 14em; }
 .bar { display: flex; height: 30px; border-radius: 5px; overflow: hidden; gap: 2px; background: var(--bg); }
 .bar > span { display: flex; align-items: center; padding: 0 10px; font-size: 0.8rem; font-weight: 500; white-space: nowrap; overflow: hidden; color: var(--ink); }
 .seg-a { background: var(--accent-soft); border: 1px solid var(--accent); }
@@ -290,20 +295,72 @@ footer { font-size: 0.82rem; color: var(--muted); display: grid; gap: 6px; borde
   <p class="note">计算量：截至 10-15 上午，共 46 个 Slurm 作业、约 1,110 核时，其中 100 轮运行 6 次完整（RQ0、RQ1）、2 次因堆内存不足失败。10-15 又跑了 13 个分析作业（每个 1–48 分钟），E1、E2 两次 100 轮在运行中。公平份额降到约 0.06，排队变慢。</p>
 </section>
 
-<section id="timeline">
+<section id="approaches">
   <header>
     <div class="eyebrow">做了什么</div>
-    <h2>从提速到找瓶颈的过程</h2>
+    <h2>试过的方法，按性质和作用对象分类</h2>
   </header>
-  <ol class="timeline">
-    <li><span class="tl-date">09-26</span><div class="tl-body"><h3>起点</h3><p>发布可移植的 NYC 场景（基于 C2SMART 原始模型）。</p></div></li>
-    <li><span class="tl-date">10-04 → 06</span><div class="tl-body"><h3>工程提速与冗余研究</h3><p>在线指标代替每轮 1.1 GB 的事件文件、精确的收费查表：用时 −26%，结果逐位一致。只有 9–13% 的人完全重复，“只仿真变了的人”行不通；近似仿真 PSim 只快 1.6–2.2 倍，公交有偏差。</p></div></li>
-    <li><span class="tl-date">10-06 → 07</span><div class="tl-body"><h3>上集群与 L2Seg 工具</h3><p>Slurm 脚本、快照、重新规划日志、定向选择器、性能剖析。确认仿真占 78%，瓶颈是单线程的事件处理。</p></div></li>
-    <li><span class="tl-date">10-07</span><div class="tl-body"><h3>RQ0：3 次 100 轮基准</h3><p>三个种子的结果只差 0.1–0.5%，得到判断用的容差表；创新期一直在漂移。</p></div></li>
-    <li><span class="tl-date">10-12 → 14</span><div class="tl-body"><h3>RQ1：个人层面能不能挑出“该重新规划的人”</h3><p>每轮约 9.9 万次创新，只有 15% 有用；但很难提前挑出谁会成功（AUC 0.58–0.67）。L2Seg 式的挑人行不通。</p></div></li>
-    <li><span class="tl-date">10-14</span><div class="tl-body"><h3>浪费分析，提交 E1/E2</h3><p>换方式大多更差，重新找路很多是重复。用 MATSim 自带的得分平均（E1）和创新退火（E2）做对照。</p></div></li>
-    <li><span class="tl-date">10-15</span><div class="tl-body"><h3>转向总体层面的规律</h3><p>重读 L2Seg 论文，做了 A1–A5、A3′、P1、重复找路调查、定向提议和提议成功率，共 13 个分析作业。结果见下一节。</p></div></li>
-  </ol>
+  <p>总成本 = 运行次数 × 每次运行的轮数 × 每轮成本。每个方法都作用在其中一项；按性质又分为四类：<b>工程</b>（结果逐位不变）、<b>近似仿真</b>（更便宜但结果近似）、<b>算法方法</b>（改变搜索过程，需要检验终点是否一致）、<b>流程</b>（改变怎么组织运行）。</p>
+  <div class="table-wrap">
+    <table class="matrix">
+      <thead><tr><th>作用对象 \ 性质</th><th>工程</th><th>近似仿真</th><th>算法方法</th><th>流程</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">每轮成本</th>
+          <td><span class="pill p-good">在线指标等 −26%</span><span class="pill p-bad">多线程事件</span></td>
+          <td><span class="pill p-bad">PSim</span><span class="pill p-bad">只仿真变了的人</span><span class="pill p-idle">Hermes 未测</span></td>
+          <td><span class="pill p-info">M8 跳过白找的路</span></td>
+          <td>—</td></tr>
+        <tr><th scope="row">轮数</th>
+          <td>—</td><td>—</td>
+          <td><span class="pill p-bad">个人层面挑人</span><span class="pill p-bad">M3 冻结人群</span><span class="pill p-bad">M6 外推路况</span><span class="pill p-bad">E2 退火</span><span class="pill p-warn">E1 得分平均</span><span class="pill p-warn">M2 提前关创新</span><span class="pill p-good">定向提议 / 控制器</span></td>
+          <td><span class="pill p-good">热启动</span><span class="pill p-info">M7 短跑加预测</span></td></tr>
+        <tr><th scope="row">运行次数</th>
+          <td>—</td><td>—</td><td>—</td>
+          <td><span class="pill p-info">M4 每个政策 1 个种子</span><span class="pill p-info">M7 跨政策预测</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="legend"><span><span class="pill p-good">有效或下一步主线</span></span><span><span class="pill p-info">待检验</span></span><span><span class="pill p-warn">小幅或保底</span></span><span><span class="pill p-bad">放下</span></span><span><span class="pill p-idle">未做</span></span></div>
+
+  <div class="table-wrap">
+    <table class="approaches">
+      <thead><tr><th>方法</th><th>作用对象</th><th>怎么检验的</th><th>结果</th><th>状态</th></tr></thead>
+      <tbody>
+        <tr class="grp"><td colspan="5">工程：结果逐位不变</td></tr>
+        <tr><td>在线指标代替每轮 1.1 GB 事件文件；精确的收费查表；记录器优化</td><td>每轮成本</td><td>性能剖析（JFR）；12 轮运行逐位比较</td><td>用时 −26%，结果逐位一致</td><td><span class="pill p-good">已采用</span></td></tr>
+        <tr><td>多线程处理事件（4 / 8 线程）</td><td>每轮成本</td><td>12 轮运行</td><td>只快 5–13%，瓶颈在少数重的处理器本身</td><td><span class="pill p-bad">放下</span></td></tr>
+        <tr><td>剩余的精确优化（按时段缓存路段容量等）</td><td>每轮成本</td><td>估算</td><td>可能再省 15–30%，未验证</td><td><span class="pill p-idle">待定</span></td></tr>
+
+        <tr class="grp"><td colspan="5">近似仿真：更便宜，结果近似</td></tr>
+        <tr><td>只重新仿真方案变了的人</td><td>每轮成本</td><td>统计相邻两轮完全重复的人</td><td>只有 9–13% 的人完全重复</td><td><span class="pill p-bad">放下</span></td></tr>
+        <tr><td>PSim 近似仿真</td><td>每轮成本</td><td>混合运行，和 QSim 比较</td><td>只快 1.6–2.2 倍，公交有系统偏差</td><td><span class="pill p-bad">放下</span></td></tr>
+        <tr><td>Hermes 快速仿真器，先粗后细</td><td>每轮成本</td><td>—</td><td>MATSim 2026 自带，支持公交</td><td><span class="pill p-idle">未测</span></td></tr>
+
+        <tr class="grp"><td colspan="5">算法方法：个人层面（L2Seg 的直接类比）</td></tr>
+        <tr><td>预测谁会定下来、谁的创新有用，只让这些人重新规划（W3 定向选择器）</td><td>轮数</td><td>RQ1：3 次 100 轮，分类器</td><td>AUC 0.58–0.67；挑 30% 只能覆盖 39–46% 的有用创新</td><td><span class="pill p-bad">放下</span></td></tr>
+
+        <tr class="grp"><td colspan="5">算法方法：总体层面的规律</td></tr>
+        <tr><td>M3 冻结已稳定的人群（按 OD × 时段等分组）</td><td>轮数</td><td>A3、A3′：组的稳定时间和下一步变化</td><td>各组几乎同时稳定（中位数约第 60 轮），变化很普遍</td><td><span class="pill p-bad">放下</span></td></tr>
+        <tr><td>M6 外推路段通行时间</td><td>轮数</td><td>A5：变化方向是否一致</td><td>路段层面是噪声加来回振荡，外推更差</td><td><span class="pill p-bad">放下</span></td></tr>
+        <tr><td>M2 提前关创新</td><td>轮数</td><td>A2：第 k 轮最好方案的状态离终点多远</td><td>第 70 轮才差 0.8 个百分点，最多省约 10%</td><td><span class="pill p-warn">保底</span></td></tr>
+        <tr><td>M1 单次运行曲线外推</td><td>轮数</td><td>A1、P1</td><td>开车类指标第 30–40 轮误差 &lt; 1%；公交、等车做不到</td><td><span class="pill p-warn">只作补充</span></td></tr>
+
+        <tr class="grp"><td colspan="5">算法方法：让试探更有用</td></tr>
+        <tr><td>M8 跳过必然白找的重新找路（<code>StableReRoute</code>）</td><td>每轮成本、轮数</td><td>22 万次重新找路按方案内容和来源分类</td><td>30% 必然白找（100%，无例外）；代码和 15 项检查完成</td><td><span class="pill p-info">待 12 轮测试</span></td></tr>
+        <tr><td>定向提议：按趋势或成功率决定换成哪种方式</td><td>轮数</td><td>杠杆 2：提议命中最终方式的比例</td><td>随机 14%，按趋势 49–56%，约 4 倍</td><td><span class="pill p-good">下一步主线</span></td></tr>
+        <tr><td>自适应提议控制器：按成功率分配三类试探，并自适应收尾</td><td>轮数</td><td>各类试探每轮的有用率</td><td>换方式、找路后期 7–9%，改时间约 17%</td><td><span class="pill p-good">下一步主线</span></td></tr>
+
+        <tr class="grp"><td colspan="5">算法方法：MATSim 自带的开关</td></tr>
+        <tr><td>E1 得分平均（score MSA）</td><td>轮数</td><td>100 轮运行，和原流程比轨迹</td><td>到第 50 轮快约 5%；每轮变慢的原因待查</td><td><span class="pill p-warn">等结果</span></td></tr>
+        <tr><td>E2 创新退火</td><td>轮数</td><td>100 轮运行</td><td>冻结在差的状态：得分 4.5 对 6.8，开车 0.376 对 0.426</td><td><span class="pill p-bad">放下</span></td></tr>
+
+        <tr class="grp"><td colspan="5">流程：改变怎么组织运行</td></tr>
+        <tr><td>热启动：政策场景从 baseline 的终点出发</td><td>轮数</td><td>待运行：同一政策冷启动与热启动对比</td><td>依据：不同运行走的路几乎一样</td><td><span class="pill p-good">待运行检验</span></td></tr>
+        <tr><td>M7 短跑加预测：用参考运行的走势预测终点</td><td>轮数、运行次数</td><td>P1：留一种子</td><td>同场景内第 20 轮误差 0.1–0.7%；只给总体数字</td><td><span class="pill p-info">待跨政策验证</span></td></tr>
+        <tr><td>M4 每个政策只跑 1 个种子</td><td>运行次数</td><td>RQ0：种子之间的差别</td><td>只差 0.1–0.5%</td><td><span class="pill p-info">待确认</span></td></tr>
+      </tbody>
+    </table>
+  </div>
 </section>
 
 <section id="bottleneck">
