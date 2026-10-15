@@ -142,6 +142,30 @@ class Priorities(unittest.TestCase):
             self.assertEqual(sorted({read(30)['a1'], read(30)['b1']}), ['0', '1'])                                    # permuted, still one of each
 
 
+class RerouteDuplicates(unittest.TestCase):
+    def test_categories_and_rules(self):
+        """x: car plan from ReRoute (duplicate); w: walk-only plan from time mutation (changed)."""
+        with tempfile.TemporaryDirectory() as d:
+            run = Path(d)/'run'; sim = run/'simulation'; log = sim/'replanning-log'
+            gz(log/'persons.csv.gz', 'person,person_id,subpopulation', [(0, 'x', 'man'), (1, 'w', 'man')])
+            (log/'strategies.csv').write_text('strategy,innovative,description\n2,1,"RandomPlanSelector_ReRoute"\n')
+            gz(log/'agents-11.csv.gz', 'person,strategy,plan_id,plan_created,parent_plan_id,executed_score,best_score,plans',
+               [(0, 2, 'b', 11, 'a', 0, 0, 2), (1, 2, 'd', 11, 'c', 0, 0, 2)])
+            gz(log/'trips-11.csv.gz', 'person,trip,mode_changed,route_changed,est_tt_before,est_tt_after', [(0, 0, 0, 0, 1, 1), (1, 0, 0, 1, 1, 1)])
+            carb = act('Home', 0, 0, '08:00:00') + leg('car', '08:00:00', 'L1') + act('Work', 1, 1)
+            walkb = act('Home', 0, 0, '08:00:00') + leg('walk') + act('Work', 1, 1)
+            write_plans(sim/'ITERS'/'it.10'/'BUILT.10.plans.xml.zst',
+                        [person('x', 'man', [plan(carb, 1.0, True, 'a', 8, 'RandomPlanSelector_ReRoute')]),
+                         person('w', 'man', [plan(walkb, 1.0, True, 'c', 2, 'RandomPlanSelector_TimeAllocationMutatorModule')])])
+            out = Path(d)/'r.json'
+            subprocess.run([PY, str(HERE/'reroute_duplicates.py'), str(run), '--out', str(out), '--ts', '10'], check=True, capture_output=True)
+            p = json.loads(out.read_text())['pooled']
+        self.assertEqual(p['content_origin'], {'car|reroute': {'n': 1, 'duplicate_share': 1.0}, 'teleport|time': {'n': 1, 'duplicate_share': 0.0}})
+        self.assertEqual(p['content_origin_age'].keys(), {'car|reroute|0-4', 'teleport|time|5-19'})
+        self.assertEqual(p['rules']['teleport'], {'skippable_share': 0.5, 'precision': 0.0, 'duplicates_caught': 0.0})
+        self.assertEqual(p['rules']['any content, not time-mutated'], {'skippable_share': 0.5, 'precision': 1.0, 'duplicates_caught': 1.0})
+
+
 class Links(unittest.TestCase):
     def test_end_to_end(self):
         """Persons x and y re-route at 11 from parents created at 5 (by ReRoute). x's links keep their travel time and
