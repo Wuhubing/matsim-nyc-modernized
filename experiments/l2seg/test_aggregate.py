@@ -166,6 +166,35 @@ class RerouteDuplicates(unittest.TestCase):
         self.assertEqual(p['rules']['any content, not time-mutated'], {'skippable_share': 0.5, 'precision': 1.0, 'duplicates_caught': 1.0})
 
 
+class Dynamics(unittest.TestCase):
+    def test_concentrated_persistent_drift(self):
+        """Rows 0 and 1 drift (+1 and -1 per iteration), rows 2-9 stay; equal weights, unit noise."""
+        import group_dynamics
+        T = np.arange(80.0); Y = np.zeros((10, 80)); Y[0] = T; Y[1] = -T
+        r = group_dynamics.dynamics(Y, np.ones(10), np.ones(10), [30], W=5)[30]
+        self.assertEqual((r['top20_energy'], r['top20_recall']), (1.0, 1.0))
+        self.assertAlmostEqual(r['cos'], 1.0); self.assertAlmostEqual(r['signal_share'], 0.2)
+        self.assertAlmostEqual(r['m10']['ratio'], 0.0)                     # linear drift is extrapolated exactly
+        self.assertGreater(r['m10']['persistence'], 0)
+
+    def test_final_prediction(self):
+        """Three runs: x(t) = 2 + 3 exp(-t/10) + small seed offset up to 79, then jumps by +1."""
+        import final_prediction
+        runs = []
+        for off in (0.0, 0.01, -0.01):
+            s = {}
+            for t in range(100):
+                x = 2 + 3 * np.exp(-t / 10) + off + (1.0 if t >= 80 else 0.0)
+                s[t] = {n: x for n in ('score', 'share_car')}; s[t]['best_score'] = x + 0.5
+            runs.append(s)
+        P, final = final_prediction.predictions(runs, 'share_car', 40)
+        self.assertLess(np.max(np.abs(P['sat+jump'] - final)), 1e-3)          # saturating curve plus the learned jump
+        self.assertGreater(np.min(np.abs(P['sat'] - final)), 0.9)             # without the jump it misses by ~1
+        self.assertLess(np.max(np.abs(P['shift'] - final)), 0.03)
+        t = np.arange(1, 41.0); y = 2 + 0.05 * t + 3 * np.exp(-t / 5)
+        self.assertAlmostEqual(final_prediction.fit_lin_predict(t, y, range(70, 80)), 2 + 0.05 * 74.5, places=3)
+
+
 class Links(unittest.TestCase):
     def test_end_to_end(self):
         """Persons x and y re-route at 11 from parents created at 5 (by ReRoute). x's links keep their travel time and
