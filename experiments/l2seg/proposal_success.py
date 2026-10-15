@@ -43,7 +43,8 @@ def trip_main_modes(plan):
 
 
 def transitions(job):
-    """{person_id: (from, to, changed trips)} for mode innovations at k (wanted: person_id -> (new id, parent id))."""
+    """{person_id: (from, to, changed trips)} for mode innovations at k (wanted: person_id -> (new id, parent id));
+    the new id is not used: see below."""
     run, k, wanted = job; out = {}
     with stream(snapshot_path(run, k)) as f:
         it = ET.iterparse(f, events=('start', 'end')); _, root = next(it)
@@ -51,11 +52,14 @@ def transitions(job):
             if ev != 'end' or el.tag != 'person': continue
             w = wanted.get(el.get('id'))
             if w is not None:
-                plans = {}
+                # In the snapshot the copy made at k still carries its parent's planId (the new id is assigned
+                # later); tell them apart by iterationCreated.
+                new = par = None
                 for p in el.findall('plan'):
-                    pid = p.find("attributes/attribute[@name='planId']")
-                    if pid is not None and int(pid.text, 36) in w: plans[int(pid.text, 36)] = trip_main_modes(p)
-                new, par = plans.get(w[0]), plans.get(w[1])
+                    pid = p.find("attributes/attribute[@name='planId']"); cr = p.find("attributes/attribute[@name='iterationCreated']")
+                    if pid is None or int(pid.text, 36) != w[1]: continue
+                    if cr is not None and int(cr.text) == k: new = trip_main_modes(p)
+                    else: par = trip_main_modes(p)
                 if new is not None and par is not None and len(new) == len(par):
                     ch = [(a, b) for a, b in zip(par, new) if a != b]
                     if ch: out[el.get('id')] = (ch[0][0], ch[0][1], len(ch))
