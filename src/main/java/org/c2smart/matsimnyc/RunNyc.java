@@ -136,6 +136,7 @@ public final class RunNyc {
             for (var s : config.replanning().getStrategySettings())
                 if ("ReRoute".equals(s.getStrategyName())) { s.setStrategyName(StableReRoute.NAME); replaced++; }
             if (replaced == 0) throw new IllegalArgumentException("nyc.stableReRoute.threshold: the config has no ReRoute strategy");
+            config.planInheritance().setEnabled(true);   // pt plans are judged by their mutator (RQ1 ran with it on, identical to RQ0)
             controler.addOverridingModule(new AbstractModule() {
                 @Override public void install() {
                     bind(StableReRoute.Stats.class).asEagerSingleton();

@@ -45,7 +45,9 @@ public class VerifyStableReRoute {
   slow=2; check(Math.abs(s0.change(pc)-20/60.)<1e-12,"L2 twice as slow: change 20/60"); slow=1;
   Plan pt=pf.createPlan(); pt.addActivity(pf.createActivityFromLinkId("h",Id.createLinkId("L0")));
   Leg ptLeg=pf.createLeg("pt"); pt.addLeg(ptLeg); pt.addActivity(pf.createActivityFromLinkId("w",Id.createLinkId("L3")));
-  check(Double.isNaN(s0.change(pt)),"a pt leg cannot be judged (NaN)");
+  check(Double.isNaN(s0.change(pt)),"a pt leg of a plan without recorded mutator: re-route (NaN)");
+  pt.setPlanMutator("RandomPlanSelector_TimeAllocationMutatorModule"); check(Double.isNaN(s0.change(pt)),"a pt leg of a time-mutated plan: re-route (NaN)");
+  pt.setPlanMutator("RandomPlanSelector_SubtourModeChoice_ReRoute"); check(s0.change(pt)==0,"a pt leg of a plan routed for its current times: change 0 (skippable)");
   Plan walk=pf.createPlan(); walk.addActivity(pf.createActivityFromLinkId("h",Id.createLinkId("L0")));
   Leg wl=pf.createLeg("walk"); wl.setRoute(RouteUtils.createGenericRouteImpl(Id.createLinkId("L0"),Id.createLinkId("L3"))); walk.addLeg(wl);
   walk.addActivity(pf.createActivityFromLinkId("w",Id.createLinkId("L3")));

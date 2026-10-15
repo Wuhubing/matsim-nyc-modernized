@@ -38,8 +38,12 @@ import java.util.*;
  * times, computed exactly as NetworkRoutingInclAccessEgressModule and SpeedyALT do: from the leg's departure, add the
  * link travel time at the time each route link is entered (start and end link excluded), add the end link at
  * min(vehicle maximum, free speed), truncate to whole seconds. Unchanged travel times therefore give exactly 0.
- * Teleported legs (walk, bike, ride, access/egress) are deterministic and ignored. Plans with a pt leg cannot be
- * judged this way and are always re-routed (change = NaN).
+ * Teleported legs (walk, bike, ride, access/egress) are deterministic and ignored. A pt leg is judged by how its plan
+ * was made: the schedule is fixed, so a pt route made for the plan's current times comes back unchanged; only plans
+ * whose last mutator was the time mutation (which shifts times and keeps routes) are re-routed (change = NaN), as
+ * are pt plans without a recorded mutator (plan inheritance off). In RQ1 seed 4711 (reroute_duplicates.py, 220,942
+ * ReRoute innovations at 11..71) plans without car legs that were not time-mutated were 30% of ReRoute innovations
+ * and all of them came back identical; car plans did so in 5-11%. RunNyc turns plan inheritance on for this.
  *
  * threshold < 0 (shadow mode): never skips, so the run is identical to ReRoute (same plan pick and RNG draws, same
  * plan mutator "RandomPlanSelector_ReRoute"); it records how often the re-routed plan came back identical, by bin of
@@ -173,7 +177,10 @@ public final class StableReRoute implements PlanStrategy {
         double worst = 0;
         for (Leg leg : TripStructureUtils.getLegs(plan)) {
             Route r = leg.getRoute();
-            if (r instanceof TransitPassengerRoute || TransportMode.pt.equals(leg.getMode())) return Double.NaN;
+            if (r instanceof TransitPassengerRoute || TransportMode.pt.equals(leg.getMode())) {
+                if (timeMutated(plan)) return Double.NaN;
+                continue;
+            }
             if (!(r instanceof NetworkRoute nr)) continue;
             if (nr.getStartLinkId().equals(nr.getEndLinkId())) continue;   // stays on its link whatever the travel times
             TravelTime tt = travelTimes.get(leg.getMode());
@@ -184,6 +191,8 @@ public final class StableReRoute implements PlanStrategy {
         }
         return worst;
     }
+
+    static boolean timeMutated(Plan plan) { String m = plan.getPlanMutator(); return m == null || m.contains("TimeAllocation"); }
 
     static double estimate(NetworkRoute r, double departure, Person person, Vehicle v, TravelTime tt, Network network) {
         double t = departure;
