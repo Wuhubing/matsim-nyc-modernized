@@ -204,6 +204,13 @@ class Proposals(unittest.TestCase):
         self.assertEqual(list(dp.best_other(s, np.array([1, 0]))), [2, 1])   # own mode excluded
 
 
+class ProposalSuccess(unittest.TestCase):
+    def test_trip_main_modes(self):
+        import xml.etree.ElementTree as ET, proposal_success as ps
+        pl = ET.fromstring(plan(CAR, 1.0, True)); self.assertEqual(ps.trip_main_modes(pl), ['car', 'car'])
+        self.assertEqual(ps.trip_main_modes(ET.fromstring(plan(PT, 1.0, True))), ['pt', 'pt'])
+
+
 class Links(unittest.TestCase):
     def test_end_to_end(self):
         """Persons x and y re-route at 11 from parents created at 5 (by ReRoute). x's links keep their travel time and
