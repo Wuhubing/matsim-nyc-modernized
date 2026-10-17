@@ -145,6 +145,20 @@ public final class RunNyc {
                 }
             });
         }
+        if (EliteParent.mode() != null || EliteParent.tamReRoute()) {
+            // RQ3 modification 1: innovation strategies copy a plan chosen by score (elite parent), and/or the time
+            // mutator re-routes after mutating times. Off unless nyc.eliteParent or nyc.tamReRoute is set.
+            if (System.getProperty("nyc.stableReRoute.threshold") != null)
+                throw new IllegalArgumentException("nyc.eliteParent / nyc.tamReRoute cannot be combined with nyc.stableReRoute");
+            EliteParent.rename(config);
+            if (EliteParent.mode() != null) controler.addOverridingModule(new AbstractModule() {
+                @Override public void install() {
+                    addPlanStrategyBinding(EliteParent.REROUTE).toProvider(EliteParent.ReRouteProvider.class);
+                    addPlanStrategyBinding(EliteParent.TIME).toProvider(EliteParent.TimeProvider.class);
+                    addPlanStrategyBinding(EliteParent.MODE).toProvider(EliteParent.ModeProvider.class);
+                }
+            });
+        }
         String priority = System.getProperty("nyc.targeted.priority"), epsilon = System.getProperty("nyc.targeted.epsilon");
         boolean targeted = priority != null || epsilon != null;
         if (Boolean.getBoolean("nyc.replanningLog") || targeted) {
