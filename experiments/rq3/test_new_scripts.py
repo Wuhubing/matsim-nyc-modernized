@@ -83,7 +83,7 @@ def main():
         for s in ('1', '2'):
             r = st['runs'][s]
             assert r['T_star'] is not None and 5 <= r['T_star'] <= 10, r['T_star']   # 10-iteration mean: windows from 7 already mostly flat
-            t = r['C1_H10_L5_K3_after_switch_off']['stop']
+            t = r['C1_within_H10_L5_K3_after_switch_off']['stop']
             assert t is not None and t >= 20, t
         print('replay_stop ok')
         # O4 on the O1-O3 synthetic run: one re-route, predicted 40/61 (> 40% bin), realised -20/41

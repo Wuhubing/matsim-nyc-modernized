@@ -58,9 +58,14 @@ def main():
     ref = {s: X[(its >= lo) & (its <= hi)].mean(axis=0) for s, (its, X) in T.items()}
     R = np.array(list(ref.values())); ref_mean = R.mean(axis=0); sigma = R.std(axis=0, ddof=1)
     within = np.sqrt(np.mean([X[(its >= lo) & (its <= hi)].var(axis=0, ddof=1) for its, X in T.values()], axis=0))
-    A, Bd = 3 * within, 2 * sigma
+    A = 3 * within
+    # b for the drift check: the strict version uses 2 sigma (cross-run sd of window means, as in the tolerance table);
+    # the within-run version uses 3 x the sd of a difference of two H-iteration means under independent noise,
+    # 3 * within * sqrt(2 / H) (first replay showed that 2 sigma is far below within-run noise and never stops).
+    def b_for(H, kind):
+        return 2 * sigma if kind == 'strict' else 3 * within * np.sqrt(2.0 / H)
     out = {'indicators': IND, 'ref_mean': ref_mean.tolist(), 'sigma': sigma.tolist(), 'within_sd': within.tolist(),
-           'a': A.tolist(), 'b': Bd.tolist(), 'runs': {}}
+           'a': A.tolist(), 'runs': {}}
     def err(X, its, t, s):
         j = int(np.nonzero(its == t)[0][0]); m = X[max(0, j - 9):j + 1].mean(axis=0)
         return ((m - ref[s]) / sigma).tolist()
@@ -71,11 +76,12 @@ def main():
             if np.all(np.abs(X[j:j + 10].mean(axis=0) - ref_mean) <= 2 * sigma):
                 tstar = int(its[j]); break
         r['T_star'] = tstar
-        for H, L, K in ((10, 5, 3), (10, 5, 5), (20, 10, 5)):
-            for start, tag in ((0, 'from0'), (a.switch_off, 'after_switch_off')):
-                t = first_double_window(X, its, A, Bd, H, L, K, start)
-                r[f'C1_H{H}_L{L}_K{K}_{tag}'] = {'stop': t, 'error_sigma': err(X, its, t, s) if t is not None else None,
-                                                 'before_switch_off': (t is not None and t < a.switch_off)}
+        for kind in ('strict', 'within'):
+            for H, L, K in ((10, 5, 3), (10, 5, 5), (20, 10, 5)):
+                for start, tag in ((0, 'from0'), (a.switch_off, 'after_switch_off')):
+                    t = first_double_window(X, its, A, b_for(H, kind), H, L, K, start)
+                    r[f'C1_{kind}_H{H}_L{L}_K{K}_{tag}'] = {'stop': t, 'error_sigma': err(X, its, t, s) if t is not None else None,
+                                                            'before_switch_off': (t is not None and t < a.switch_off)}
         out['runs'][s] = r
     Path(a.out).write_text(json.dumps(out, indent=1) + '\n')
     print('sigma:', dict(zip(IND, np.round(sigma, 6))))
