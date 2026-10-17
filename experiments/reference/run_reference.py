@@ -49,7 +49,8 @@ def build_inputs(args):
 
 def write_config(dest, seed, iterations, events_interval, plans_every, threads, *, scenario='actual2025',
                  plans=None, innovation_until=None, factors=FACTORS, events_threads=None,
-                 score_msa_start=None, anneal=None, anneal_start=0.3, anneal_subpopulations=('man', 'nonman')):
+                 score_msa_start=None, anneal=None, anneal_start=0.3, anneal_subpopulations=('man', 'nonman'),
+                 reroute_weight=None):
     base = ROOT/f'scenarios/nyc-zip-aligned/config-{scenario}.xml'
     root = ET.parse(base).getroot()
     folder = base.parent
@@ -73,6 +74,16 @@ def write_config(dest, seed, iterations, events_interval, plans_every, threads, 
                 param = strategy.find("param[@name='disableAfterIteration']")
                 if param is None: param = ET.SubElement(strategy, 'param', name='disableAfterIteration')
                 param.set('value', str(innovation_until))
+    if reroute_weight is not None:
+        # RQ3 modification 2: fewer agents re-route at once. Only the ReRoute weights change; the other weights are kept,
+        # so MATSim's normalisation by the total weight of each subpopulation lowers ReRoute's share and slightly raises
+        # the others' (e.g. 0.05: SelectExpBeta 0.737, each other innovation 0.105, ReRoute 0.053).
+        changed = 0
+        for strategy in root.findall("./module[@name='strategy']/parameterset"):
+            name = strategy.find("param[@name='strategyName']")
+            if name is not None and name.get('value') == 'ReRoute':
+                strategy.find("param[@name='weight']").set('value', str(reroute_weight)); changed += 1
+        if changed == 0: raise SystemExit('--reroute-weight: the config has no ReRoute strategy')
     for module, name, value in [('plans', 'inputPlansFile', Path(plans).resolve() if plans else INPUTS/'cold.xml.gz'), ('controller', 'outputDirectory', dest/'simulation'),
                                 ('controller', 'firstIteration', 0), ('controller', 'lastIteration', iterations - 1),
                                 ('controller', 'writeEventsInterval', events_interval), ('controller', 'writePlansInterval', plans_every),
@@ -180,7 +191,8 @@ def run(args):
     plans_every = args.plans_every or max(1, args.iterations - 1)
     cfg = write_config(dest, args.seed, args.iterations, events_interval, plans_every, args.threads, scenario=args.scenario,
                        plans=plans, innovation_until=args.innovation_until, factors=args.factors, events_threads=args.events_threads,
-                       score_msa_start=args.score_msa_start, anneal=args.anneal_innovation, anneal_start=args.anneal_start)
+                       score_msa_start=args.score_msa_start, anneal=args.anneal_innovation, anneal_start=args.anneal_start,
+                       reroute_weight=args.reroute_weight)
     check = subprocess.run([java(), '-cp', str(jar), 'org.c2smart.matsimnyc.ReferenceConfigCheck', str(cfg), str(args.iterations),
                             str(-1 if args.innovation_until is None else args.innovation_until), str(events_interval), str(plans_every)],
                            capture_output=True, text=True)
@@ -212,7 +224,7 @@ def run(args):
     meta = {'schema_version': 3, 'seed': args.seed, 'scenario': args.scenario, 'iterations': args.iterations,
             'events': args.events, 'events_interval': events_interval, 'plans_interval': plans_every,
             'research': args.research, 'replanning_log': args.replanning_log, 'legacy_toll_routing': args.legacy_toll_routing,
-            'targeted_priority': args.targeted_priority, 'targeted_epsilon': args.targeted_epsilon, 'stable_reroute': args.stable_reroute, 'elite_parent': args.elite_parent, 'elite_beta': args.elite_beta, 'tam_reroute': args.tam_reroute,
+            'targeted_priority': args.targeted_priority, 'targeted_epsilon': args.targeted_epsilon, 'stable_reroute': args.stable_reroute, 'elite_parent': args.elite_parent, 'elite_beta': args.elite_beta, 'tam_reroute': args.tam_reroute, 'reroute_weight': args.reroute_weight,
             'innovation_until': args.innovation_until, 'innovation_fraction': 0.8 if args.innovation_until is None else 1.0,
             'plans': str(plans), 'expected_persons': json.loads((INPUTS/'cold.json').read_text())['persons'] if plans == INPUTS/'cold.xml.gz' and (INPUTS/'cold.json').exists() else None,
             'metric_links': str(metric_links), 'cohort_polygon': str(polygon) if args.research else None,
@@ -351,6 +363,7 @@ def main():
     r.add_argument('--elite-parent', choices=['expbeta', 'best'], help='RQ3 modification 1: innovation strategies copy a plan chosen by score (changes results)')
     r.add_argument('--elite-beta', type=float, help='beta of the expbeta parent selector (default scoring.brainExpBeta)')
     r.add_argument('--tam-reroute', action='store_true', help='time mutator re-routes after mutating times (changes results)')
+    r.add_argument('--reroute-weight', type=float, help='RQ3 modification 2: weight of the ReRoute strategy for every subpopulation that has it (config default 0.1; changes results unless 0.1)')
     r.add_argument('--scenario', choices=['baseline', 'schema1', 'schema2', 'actual2025'], default='actual2025')
     r.add_argument('--plans', help='warm-start plans instead of outputs/reference-inputs/cold.xml.gz')
     r.add_argument('--factors', type=Path, default=FACTORS)
