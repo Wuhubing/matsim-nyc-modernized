@@ -345,7 +345,7 @@ def main():
     r.add_argument('--targeted-priority', help='priority CSV file or directory for the targeted chooser (W3)')
     r.add_argument('--targeted-epsilon', type=float, help='random share of the innovation budget for the targeted chooser (W3)')
     r.add_argument('--stable-reroute', type=float, help='M8: ReRoute skips plans whose network travel times changed <= this share since routing; < 0 = shadow mode (identical run, statistics only)')
-    r.add_argument('--scenario', choices=['baseline', 'schema1', 'actual2025'], default='actual2025')
+    r.add_argument('--scenario', choices=['baseline', 'schema1', 'schema2', 'actual2025'], default='actual2025')
     r.add_argument('--plans', help='warm-start plans instead of outputs/reference-inputs/cold.xml.gz')
     r.add_argument('--factors', type=Path, default=FACTORS)
     r.add_argument('--events-interval', type=int, help='write events every N iterations and in the last one (0 = never); research default 10')
