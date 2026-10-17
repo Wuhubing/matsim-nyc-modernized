@@ -156,6 +156,9 @@ public final class RunNyc {
                     addPlanStrategyBinding(EliteParent.REROUTE).toProvider(EliteParent.ReRouteProvider.class);
                     addPlanStrategyBinding(EliteParent.TIME).toProvider(EliteParent.TimeProvider.class);
                     addPlanStrategyBinding(EliteParent.MODE).toProvider(EliteParent.ModeProvider.class);
+                    // MATSim binds this only when the strategy name SubtourModeChoice is used (DefaultPlanStrategiesModule).
+                    bind(org.matsim.core.population.algorithms.PermissibleModesCalculator.class)
+                            .to(org.matsim.core.population.algorithms.PermissibleModesCalculatorImpl.class);
                 }
             });
         }
