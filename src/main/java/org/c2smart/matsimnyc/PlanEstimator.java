@@ -158,6 +158,9 @@ final class PlanEstimator {
             if (legacyCosts) scoreCharges -= LegacyCosts.fixedCost(leg.getMode()) * LegacyCosts.MONEY_UTILITY;
             if (now > endTime) stuck = true;
         }
+        for (PlanElement pe : pes)
+            if (pe instanceof Leg l && l.getRoute() == null)
+                return new Result(Double.NaN, stuck, Math.max(failures, 1), now, error != null ? error : "unrouted " + l.getMode() + " leg");
         ScoringFunction sf = scoring.createNewScoringFunction(person);
         for (PlanElement pe : pes) {
             if (pe instanceof Activity a) { if (!TripStructureUtils.isStageActivityType(a.getType())) sf.handleActivity(a); }

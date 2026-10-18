@@ -62,7 +62,7 @@ public final class GapEstimator {
         Path out = Path.of(args[2]).toAbsolutePath().normalize();
         double sample = 0.05; long seed = 1; int threads = 8;
         Set<String> components = Set.of("route", "mode");
-        Path plans = null, linkHours = null;
+        Path plans = null, linkHours = null, agents = null;
         for (int i = 3; i < args.length; i++) {
             String[] kv = args[i].split("=", 2);
             switch (kv[0]) {
@@ -72,6 +72,7 @@ public final class GapEstimator {
                 case "components" -> components = Set.of(kv[1].split(","));
                 case "plans" -> plans = Path.of(kv[1]);
                 case "linkHours" -> linkHours = Path.of(kv[1]);
+                case "agents" -> agents = Path.of(kv[1]);
                 default -> throw new IllegalArgumentException("unknown option " + kv[0]);
             }
         }
@@ -81,6 +82,7 @@ public final class GapEstimator {
             if (!Files.isRegularFile(plans)) plans = sim.resolve("BUILT.output_plans.xml.zst");
         }
         if (linkHours == null) linkHours = sim.resolve("research/link-hours-" + k + ".csv.gz");
+        if (agents == null && Files.isRegularFile(sim.resolve("replanning-log/agents-" + k + ".csv.gz"))) agents = sim.resolve("replanning-log/agents-" + k + ".csv.gz");
         for (Path p : List.of(run.resolve("config.xml"), plans, linkHours))
             if (!Files.isRegularFile(p)) throw new IllegalArgumentException("missing " + p);
         long t0 = System.currentTimeMillis();
@@ -150,10 +152,27 @@ public final class GapEstimator {
         persons.sort((a, b) -> a.getId().toString().compareTo(b.getId().toString()));
         System.out.printf("sampled %,d residents (sample %.4f, seed %d); components %s; %d threads%n", persons.size(), sample, seed, components, threads);
 
+        // --- parents of plans created in iteration K (replanning log), for V2: estimated vs realised gain of real switches
+        java.util.Map<String, String> parents = new java.util.HashMap<>();
+        if (agents != null) {
+            try (var in = new java.io.BufferedReader(new java.io.InputStreamReader(new java.util.zip.GZIPInputStream(Files.newInputStream(agents)), StandardCharsets.UTF_8))) {
+                String header = in.readLine();
+                if (header == null || !header.startsWith("person,strategy,plan_id,plan_created,parent_plan_id")) throw new IOException("unexpected header in " + agents);
+                for (String line; (line = in.readLine()) != null; ) {
+                    String[] f = line.split(",", -1);
+                    if (f[3].equals(Integer.toString(k)) && !f[4].isEmpty()) parents.put(f[0], f[4]);
+                }
+            }
+            System.out.printf("replanning log: %,d plans created in iteration %d with a parent%n", parents.size(), k);
+        }
+        final int iteration = k;
+
         // --- estimate
         String[] rows = new String[persons.size()];
         AtomicInteger done = new AtomicInteger();
-        ThreadLocal<TripRouter> routers = ThreadLocal.withInitial(routerProvider::get);
+        // TripRouters are built one at a time: building one fills shared per-mode network caches, which is not thread-safe
+        var routers = new java.util.concurrent.ArrayBlockingQueue<TripRouter>(threads);
+        for (int i = 0; i < threads; i++) routers.add(routerProvider.get());
         final Set<String> comps = components;
         ExecutorService pool = Executors.newFixedThreadPool(threads);
         List<Future<?>> futures = new ArrayList<>();
@@ -161,24 +180,35 @@ public final class GapEstimator {
         for (int start = 0; start < persons.size(); start += chunk) {
             final int s = start, e = Math.min(persons.size(), start + chunk);
             futures.add(pool.submit(() -> {
-                TripRouter router = routers.get();
+                TripRouter router = routers.take();
+                try {
                 for (int i = s; i < e; i++) {
-                    rows[i] = row(persons.get(i), estimator, router, comps, modes, chainBased, permissible);
+                    try {
+                        rows[i] = row(persons.get(i), estimator, router, comps, modes, chainBased, permissible, parents, iteration);
+                    } catch (RuntimeException ex) {
+                        rows[i] = String.format(Locale.ROOT, "\"%s\",%s,@K@,,,,,,,,,,,-1,\"%s\",,,,,%n", persons.get(i).getId(),
+                                PopulationUtils.getSubpopulation(persons.get(i)), clean(ex.toString()));
+                    }
                     int n = done.incrementAndGet();
                     if (n % 2000 == 0) System.out.printf("  %,d / %,d persons, %.0f s%n", n, persons.size(), (System.currentTimeMillis() - t0) / 1000.0);
                 }
+                } finally { routers.add(router); }
+                return null;
             }));
         }
-        for (var f : futures) f.get();
-        pool.shutdown();
+        try { for (var f : futures) f.get(); } finally { pool.shutdownNow(); }
         try (var w = new BufferedWriter(new OutputStreamWriter(new GZIPOutputStream(Files.newOutputStream(out)), StandardCharsets.UTF_8))) {
             w.write("person_id,subpopulation,iteration,trips,current_modes,stored_score,est_current,stuck_current,"
-                    + "est_route,route_trips,est_mode,mode_choice,mode_candidates,failures\n");
+                    + "est_route,route_trips,est_mode,mode_choice,mode_candidates,failures,error,plan_id,plan_created,mutator,parent_id,est_parent\n");
             for (String r : rows) w.write(r.replace("@K@", Integer.toString(k)));
         }
         try (var walk = Files.walk(tmp)) { walk.sorted(java.util.Comparator.reverseOrder()).forEach(p -> p.toFile().delete()); }
         System.out.printf("wrote %s (%,d rows) in %.0f s%n", out, rows.length, (System.currentTimeMillis() - t0) / 1000.0);
     }
+
+    static String attr(Plan p, String name) { Object v = p.getAttributes().getAttribute(name); return v == null ? "" : v.toString(); }
+
+    static String clean(String s) { return s.replace("\"", "'").replace("\n", " ").replace(",", ";"); }
 
     /** Deterministic Bernoulli sample by person id. */
     static boolean keep(String id, long seed, double sample) {
@@ -188,14 +218,15 @@ public final class GapEstimator {
     }
 
     private static String row(Person person, PlanEstimator est, TripRouter router, Set<String> comps, List<String> modes,
-                              Set<String> chainBased, PermissibleModesCalculatorImpl permissible) {
+                              Set<String> chainBased, PermissibleModesCalculatorImpl permissible, java.util.Map<String, String> parents, int k) {
         Plan selected = person.getSelectedPlan();
         var trips = TripStructureUtils.getTrips(selected);
         List<String> current = new ArrayList<>();
         for (var t : trips) current.add(PlanEstimator.routingMode(t.getLegsOnly().getFirst()));
         int failures = 0;
+        String error = null;
         var cur = est.estimate(person, PlanEstimator.copy(selected), Set.of(), router);
-        failures += cur.failures();
+        failures += cur.failures(); if (cur.error() != null) error = cur.error();
         double route = Double.NaN; int routeTrips = 0;
         if (comps.contains("route")) {
             var network = est.networkTrips(selected);
@@ -203,7 +234,7 @@ public final class GapEstimator {
             if (routeTrips == 0) route = cur.score();
             else {
                 var r = est.estimate(person, PlanEstimator.copy(selected), new HashSet<>(network), router);
-                route = r.score(); failures += r.failures();
+                route = r.score(); failures += r.failures(); if (r.error() != null) error = r.error();
             }
         }
         double mode = Double.NaN; String choice = ""; int candidates = 0;
@@ -224,16 +255,26 @@ public final class GapEstimator {
                     for (int i : idx) PlanEstimator.setTripMode(c, i, m);
                     var r = est.estimate(person, c, new HashSet<>(idx), router);
                     candidates++;
-                    if (r.failures() > 0) { failures += r.failures(); continue; }
+                    if (r.failures() > 0 || Double.isNaN(r.score())) { failures += Math.max(1, r.failures()); if (r.error() != null) error = r.error(); continue; }
                     if (r.score() > mode) { mode = r.score(); choice = m + ":" + idx.toString().replace(", ", "+").replace("[", "").replace("]", ""); }
                 }
             }
         }
         Double stored = selected.getScore();
-        return String.format(Locale.ROOT, "\"%s\",%s,@K@,%d,%s,%s,%.6f,%b,%s,%d,%s,%s,%d,%d%n",
+        String planId = attr(selected, "planId"), created = attr(selected, "iterationCreated"), mutator = attr(selected, "planMutator");
+        String parentId = created.equals(Integer.toString(k)) ? parents.getOrDefault(person.getId().toString(), "") : "";
+        double parentScore = Double.NaN;
+        if (!parentId.isEmpty())
+            for (Plan p : person.getPlans())
+                if (p != selected && parentId.equals(attr(p, "planId"))) {
+                    var r = est.estimate(person, PlanEstimator.copy(p), Set.of(), router);
+                    parentScore = r.score(); break;
+                }
+        return String.format(Locale.ROOT, "\"%s\",%s,@K@,%d,%s,%s,%.6f,%b,%s,%d,%s,%s,%d,%d,\"%s\",%s,%s,%s,%s,%s%n",
                 person.getId(), PopulationUtils.getSubpopulation(person), trips.size(), String.join("|", current),
                 stored == null ? "" : String.format(Locale.ROOT, "%.6f", stored), cur.score(), cur.stuck(),
                 Double.isNaN(route) ? "" : String.format(Locale.ROOT, "%.6f", route), routeTrips,
-                Double.isNaN(mode) ? "" : String.format(Locale.ROOT, "%.6f", mode), choice, candidates, failures);
+                Double.isNaN(mode) ? "" : String.format(Locale.ROOT, "%.6f", mode), choice, candidates, failures, error == null ? "" : clean(error),
+                planId, created, mutator, parentId, Double.isNaN(parentScore) ? "" : String.format(Locale.ROOT, "%.6f", parentScore));
     }
 }
