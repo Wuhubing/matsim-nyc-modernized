@@ -59,17 +59,33 @@ final class PlanEstimator {
         return new org.matsim.core.controler.corelisteners.ControlerDefaultCoreListenersModule();
     }
 
-    /** Runs MATSim's PrepareForSim (vehicles and their ids in person attributes, as at the start of a run) if any
-     * person lacks vehicle ids; network routing needs them. Plans that already have routes are not changed. */
+    /** Vehicles as at the start of a run. With vehiclesSource = modeVehicleTypesFromVehiclesData, MATSim's PrepareForSim
+     * creates one vehicle per person and network mode (type id = mode) and records the ids in the person attribute
+     * "vehicles"; plans snapshots keep the attribute but the vehicles themselves are not written. Routing and road
+     * pricing need them: create the missing ones from the ids; if a person has no ids at all, run PrepareForSim. */
     static void ensureVehicles(com.google.inject.Injector injector, Scenario scenario) {
-        boolean missing = false;
+        var vehicles = scenario.getVehicles();
+        boolean noIds = false; int created = 0;
         for (Person p : scenario.getPopulation().getPersons().values()) {
-            try {
-                var ids = VehicleUtils.getVehicleIds(p);
-                if (ids == null || ids.isEmpty()) { missing = true; break; }
-            } catch (RuntimeException e) { missing = true; break; }
+            java.util.Map<String, Id<Vehicle>> ids;
+            try { ids = VehicleUtils.getVehicleIds(p); } catch (RuntimeException e) { ids = null; }
+            if (ids == null || ids.isEmpty()) { noIds = true; continue; }
+            for (var e : ids.entrySet()) {
+                if (vehicles.getVehicles().containsKey(e.getValue())) continue;
+                var type = vehicles.getVehicleTypes().get(Id.create(e.getKey(), org.matsim.vehicles.VehicleType.class));
+                if (type == null) throw new IllegalStateException("no vehicle type '" + e.getKey() + "' for vehicle " + e.getValue());
+                vehicles.addVehicle(VehicleUtils.createVehicle(e.getValue(), type)); created++;
+            }
         }
-        if (missing) injector.getInstance(org.matsim.core.controler.PrepareForSim.class).run();
+        if (noIds) injector.getInstance(org.matsim.core.controler.PrepareForSim.class).run();
+        System.out.printf("vehicles: created %,d from person attributes%s%n", created, noIds ? "; PrepareForSim run for persons without ids" : "");
+    }
+
+    static String describe(Throwable e) {
+        var s = new StringBuilder(e.toString());
+        var st = e.getStackTrace();
+        for (int i = 0; i < Math.min(3, st.length); i++) s.append(" @ ").append(st[i].getClassName().replaceAll(".*\\.", "")).append('.').append(st[i].getMethodName()).append(':').append(st[i].getLineNumber());
+        return s.toString();
     }
 
     /** A deep copy of the plan's elements (interaction activities become ordinary activities, so their times can be set). */
@@ -133,7 +149,7 @@ final class PlanEstimator {
                     try {
                         routed = router.calcRoute(mode, FacilitiesUtils.toFacility(a, scenario.getActivityFacilities()),
                                 FacilitiesUtils.toFacility(destination, scenario.getActivityFacilities()), now, person, new AttributesImpl());
-                    } catch (RuntimeException e) { routed = null; error = e.toString(); }
+                    } catch (RuntimeException e) { routed = null; error = describe(e); }
                     if (routed == null || routed.isEmpty()) failures++;
                     else TripRouter.insertTrip(pes, a, routed, destination);
                 }

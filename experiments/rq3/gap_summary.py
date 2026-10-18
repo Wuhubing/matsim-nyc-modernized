@@ -89,8 +89,9 @@ def main():
     log = sim/'replanning-log'
     v2 = {}
     if (log/f'agents-{a.k - 1}.csv.gz').exists():
-        prev = {r['person']: (r['plan_id'], num(r['executed_score'])) for r in read_csv(log/f'agents-{a.k - 1}.csv.gz')}
-        now = {r['person']: num(r['executed_score']) for r in read_csv(log/f'agents-{a.k}.csv.gz')}
+        idof = {r['person']: r['person_id'] for r in read_csv(log/'persons.csv.gz')}   # agents-K use the row index
+        prev = {idof[r['person']]: (r['plan_id'], num(r['executed_score'])) for r in read_csv(log/f'agents-{a.k - 1}.csv.gz')}
+        now = {idof[r['person']]: num(r['executed_score']) for r in read_csv(log/f'agents-{a.k}.csv.gz')}
         for kind in ('ReRoute', 'SubtourModeChoice', 'TimeAllocationMutator'):
             est_gain, real_gain = [], []
             for r in ok:

@@ -155,12 +155,20 @@ public final class GapEstimator {
         // --- parents of plans created in iteration K (replanning log), for V2: estimated vs realised gain of real switches
         java.util.Map<String, String> parents = new java.util.HashMap<>();
         if (agents != null) {
+            // agents-K.csv.gz identifies persons by the row index of replanning-log/persons.csv.gz
+            java.util.Map<String, String> idOf = new java.util.HashMap<>();
+            try (var in = new java.io.BufferedReader(new java.io.InputStreamReader(new java.util.zip.GZIPInputStream(
+                    Files.newInputStream(agents.getParent().resolve("persons.csv.gz"))), StandardCharsets.UTF_8))) {
+                String header = in.readLine();
+                if (header == null || !header.startsWith("person,person_id")) throw new IOException("unexpected header in persons.csv.gz");
+                for (String line; (line = in.readLine()) != null; ) { String[] f = line.split(",", -1); idOf.put(f[0], f[1].replace("\"", "")); }
+            }
             try (var in = new java.io.BufferedReader(new java.io.InputStreamReader(new java.util.zip.GZIPInputStream(Files.newInputStream(agents)), StandardCharsets.UTF_8))) {
                 String header = in.readLine();
                 if (header == null || !header.startsWith("person,strategy,plan_id,plan_created,parent_plan_id")) throw new IOException("unexpected header in " + agents);
                 for (String line; (line = in.readLine()) != null; ) {
                     String[] f = line.split(",", -1);
-                    if (f[3].equals(Integer.toString(k)) && !f[4].isEmpty()) parents.put(f[0], f[4]);
+                    if (f[3].equals(Integer.toString(k)) && !f[4].isEmpty()) parents.put(idOf.get(f[0]), f[4]);
                 }
             }
             System.out.printf("replanning log: %,d plans created in iteration %d with a parent%n", parents.size(), k);
@@ -187,7 +195,7 @@ public final class GapEstimator {
                         rows[i] = row(persons.get(i), estimator, router, comps, modes, chainBased, permissible, parents, iteration);
                     } catch (RuntimeException ex) {
                         rows[i] = String.format(Locale.ROOT, "\"%s\",%s,@K@,,,,,,,,,,,-1,\"%s\",,,,,%n", persons.get(i).getId(),
-                                PopulationUtils.getSubpopulation(persons.get(i)), clean(ex.toString()));
+                                PopulationUtils.getSubpopulation(persons.get(i)), clean(PlanEstimator.describe(ex)));
                     }
                     int n = done.incrementAndGet();
                     if (n % 2000 == 0) System.out.printf("  %,d / %,d persons, %.0f s%n", n, persons.size(), (System.currentTimeMillis() - t0) / 1000.0);
