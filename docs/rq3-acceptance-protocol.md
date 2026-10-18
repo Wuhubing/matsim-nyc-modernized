@@ -52,6 +52,8 @@
 
 ### 第二关：基线终点一样
 
+> **10-18 修订（用户确认，`research-charter-v2.md` §3.4）：本关降为只报告。** E1、W1、X1 显示原流程终点依赖流程细节、没有收敛，优化更充分的方法终点自然不同；改用 gap G 判断均衡质量（新方法的 G 不得比原流程差）。第一关改为"G 和稳的 Δ 在停止后 20 轮内不再越过容差"；第三关只对 `legs_car_charging:related`、`share_car`、`share_pt` 和 D 判断通过，`revenue`、`usd_*`、`loser_share_*` 只报告。
+
 在基线场景上，对 `share_*`、`usd_all`、`unfinished`、`cordon_entries`、`wait_person_hours`：
 
 > |加速版 3 种子均值 − 原流程 3 种子均值| ≤ max(2·σ_ref, m_k)
