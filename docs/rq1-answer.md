@@ -32,9 +32,9 @@ This has five consequences for borrowing methods:
 
 ## 2. Fields at a glance
 
-One row per field: the representative papers, what they do, and which of our candidate methods (charter v2.2 §4) it supports. All 61 papers in [literature/](literature/README.md), plus L2Seg, are listed by field in the appendix.
+One row per field: the representative papers, what they do, and a related idea for MATSim. These ideas are not yet screened and are not a work plan; the method direction is open (charter §4). All 61 papers in [literature/](literature/README.md), plus L2Seg, are listed by field in the appendix.
 
-| # | Field | Representative papers | What they do | Our candidate it supports |
+| # | Field | Representative papers | What they do | Related idea for MATSim (not screened) |
 |---|---|---|---|---|
 | 1 | MATSim and agent-based transport | [Fourie et al. 2013](https://doi.org/10.3141/2343-09) (PSim); [Zhuge et al. 2021](https://doi.org/10.1007/s11116-019-10048-0); [Moukir et al. 2024](https://www.scitepress.org/Papers/2024/124526/124526.pdf) (multiMATSim); [Horni et al. 2016](https://doi.org/10.5334/baw) | Cheap pseudo-simulation between real ones; only agents below their best plan replan; parallel instances with different strategy weights exchange plans | Re-search only affected agents; elite parent; shorten / stop on Δ. PSim itself is ruled out (the cheap model scores) |
 | 2 | Traffic assignment (DTA) | [Sheffi 1985](https://web.mit.edu/sheffi/www/urbanTransportation.html); [Sbayti et al. 2007](https://doi.org/10.3141/2029-03); [Ameli et al. 2020](https://doi.org/10.1111/mice.12524); [Auld et al. 2019](https://www.osti.gov/servlets/purl/1528926) | 1/n step sizes; move travellers with the largest experienced-minus-shortest time; mix historical and current travel times; initial solution matters | Travel-time smoothing; replan by measured time difference; innovation annealing |
@@ -128,7 +128,7 @@ It may not change the final evaluation:
 
 ## Appendix. All papers by field
 
-Every paper read for RQ1 ([literature/](literature/README.md), numbered as there), grouped by field. "Approach to try" names our candidate method (charter v2.2 §4) or says why the paper is background only.
+Every paper read for RQ1 ([literature/](literature/README.md), numbered as there), grouped by field. "Approach to try" names a related idea for MATSim (not screened, not a plan) or says why the paper is background only.
 
 ### A1. MATSim and agent-based transport
 
