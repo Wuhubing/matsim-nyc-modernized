@@ -1,0 +1,184 @@
+
+######## seed 4711: 389301 persons; iteration-0 choice identical to W0: X1 1.0000, W1-schema1 1.0000, W1-schema2 1.0000
+
+== schema1: group sizes  all=389301  related=127482  unrelated=261819  charged=27750  not charged=361551  related & charged=22051  related & not charged=105431  unrelated & charged=5699  unrelated & not charged=256120
+   switched from iteration 0 (W1 / W0 / excess) at k = 10, 40, 79, 99
+   all                        0.525/0.524/+0.001  0.661/0.659/+0.003  0.741/0.739/+0.002  0.718/0.714/+0.004
+   related                    0.420/0.417/+0.003  0.533/0.528/+0.004  0.599/0.594/+0.004  0.574/0.565/+0.009
+   unrelated                  0.576/0.577/-0.000  0.724/0.722/+0.002  0.811/0.809/+0.001  0.788/0.787/+0.002
+   charged                    0.438/0.400/+0.038  0.513/0.471/+0.042  0.550/0.513/+0.038  0.533/0.486/+0.047
+   not charged                0.532/0.534/-0.002  0.673/0.673/-0.000  0.756/0.756/-0.000  0.732/0.732/+0.001
+   related & charged          0.464/0.426/+0.038  0.544/0.502/+0.042  0.586/0.548/+0.037  0.565/0.517/+0.048
+   related & not charged      0.411/0.415/-0.004  0.530/0.534/-0.004  0.601/0.604/-0.003  0.576/0.575/+0.001
+   unrelated & charged        0.336/0.300/+0.036  0.389/0.350/+0.039  0.415/0.376/+0.039  0.410/0.366/+0.044
+   unrelated & not charged    0.582/0.583/-0.001  0.732/0.730/+0.001  0.820/0.819/+0.001  0.797/0.796/+0.001
+   car-leg difference, window 90-99: group | warm diff (share of total) | cold diff (share) | share of persons
+   all                           -8847.6 (1.00)     -9397.2 (1.00)  1.000
+   related                       -8266.1 (0.93)     -8694.2 (0.93)  0.327
+   unrelated                      -581.5 (0.07)      -703.0 (0.07)  0.673
+   charged                       -5597.1 (0.63)    -24897.0 (2.65)  0.071
+   not charged                   -3250.5 (0.37)    +15499.8 (-1.65)  0.929
+   related & charged             -4688.4 (0.53)    -21814.9 (2.32)  0.057
+   related & not charged         -3577.7 (0.40)    +13120.7 (-1.40)  0.271
+   unrelated & charged            -908.7 (0.10)     -3082.1 (0.33)  0.015
+   unrelated & not charged        +327.2 (-0.04)     +2379.1 (-0.25)  0.658
+
+== schema2: group sizes  all=389301  related=127482  unrelated=261819  charged=27750  not charged=361551  related & charged=22051  related & not charged=105431  unrelated & charged=5699  unrelated & not charged=256120
+   switched from iteration 0 (W1 / W0 / excess) at k = 10, 40, 79, 99
+   all                        0.525/0.524/+0.001  0.662/0.659/+0.003  0.743/0.739/+0.004  0.718/0.714/+0.004
+   related                    0.423/0.417/+0.005  0.535/0.528/+0.007  0.602/0.594/+0.008  0.575/0.565/+0.010
+   unrelated                  0.576/0.577/-0.001  0.724/0.722/+0.002  0.811/0.809/+0.002  0.788/0.787/+0.002
+   charged                    0.455/0.400/+0.054  0.529/0.471/+0.058  0.565/0.513/+0.052  0.550/0.486/+0.063
+   not charged                0.531/0.534/-0.003  0.672/0.673/-0.001  0.756/0.756/-0.000  0.731/0.732/-0.000
+   related & charged          0.482/0.426/+0.055  0.563/0.502/+0.060  0.601/0.548/+0.053  0.584/0.517/+0.067
+   related & not charged      0.410/0.415/-0.005  0.529/0.534/-0.004  0.602/0.604/-0.002  0.573/0.575/-0.002
+   unrelated & charged        0.350/0.300/+0.050  0.398/0.350/+0.048  0.427/0.376/+0.051  0.417/0.366/+0.051
+   unrelated & not charged    0.581/0.583/-0.002  0.731/0.730/+0.001  0.819/0.819/+0.001  0.796/0.796/+0.000
+   car-leg difference, window 90-99: group | warm diff (share of total) | cold diff (share) | share of persons
+   all                          -11414.1 (1.00)    -12260.2 (1.00)  1.000
+   related                      -10785.9 (0.94)    -10741.9 (0.88)  0.327
+   unrelated                      -628.2 (0.06)     -1518.3 (0.12)  0.673
+   charged                       -7559.4 (0.66)    -25734.3 (2.10)  0.071
+   not charged                   -3854.7 (0.34)    +13474.1 (-1.10)  0.929
+   related & charged             -6489.1 (0.57)    -22622.3 (1.85)  0.057
+   related & not charged         -4296.8 (0.38)    +11880.4 (-0.97)  0.271
+   unrelated & charged           -1070.3 (0.09)     -3112.0 (0.25)  0.015
+   unrelated & not charged        +442.1 (-0.04)     +1593.7 (-0.13)  0.658
+
+######## seed 4712: 389301 persons; iteration-0 choice identical to W0: X1 1.0000, W1-schema1 1.0000, W1-schema2 1.0000
+
+== schema1: group sizes  all=389301  related=127482  unrelated=261819  charged=27875  not charged=361426  related & charged=22232  related & not charged=105250  unrelated & charged=5643  unrelated & not charged=256176
+   switched from iteration 0 (W1 / W0 / excess) at k = 10, 40, 79, 99
+   all                        0.523/0.521/+0.002  0.661/0.658/+0.003  0.741/0.739/+0.003  0.717/0.714/+0.003
+   related                    0.420/0.416/+0.004  0.534/0.527/+0.007  0.598/0.592/+0.006  0.573/0.565/+0.008
+   unrelated                  0.574/0.573/+0.001  0.723/0.722/+0.001  0.811/0.810/+0.001  0.787/0.787/+0.000
+   charged                    0.434/0.395/+0.039  0.509/0.469/+0.040  0.550/0.513/+0.037  0.533/0.486/+0.047
+   not charged                0.530/0.531/-0.001  0.673/0.672/+0.000  0.756/0.756/-0.000  0.731/0.732/-0.001
+   related & charged          0.461/0.422/+0.039  0.541/0.499/+0.042  0.585/0.548/+0.037  0.565/0.517/+0.048
+   related & not charged      0.411/0.414/-0.004  0.532/0.532/-0.000  0.601/0.602/-0.000  0.575/0.575/-0.000
+   unrelated & charged        0.329/0.288/+0.040  0.383/0.351/+0.032  0.414/0.377/+0.037  0.405/0.363/+0.043
+   unrelated & not charged    0.579/0.579/+0.000  0.731/0.730/+0.001  0.820/0.820/+0.000  0.796/0.796/-0.001
+   car-leg difference, window 90-99: group | warm diff (share of total) | cold diff (share) | share of persons
+   all                          -11176.9 (1.00)    -10206.7 (1.00)  1.000
+   related                       -8854.2 (0.79)     -9068.2 (0.89)  0.327
+   unrelated                     -2322.7 (0.21)     -1138.5 (0.11)  0.673
+   charged                       -6134.0 (0.55)    -25248.6 (2.47)  0.072
+   not charged                   -5042.9 (0.45)    +15041.9 (-1.47)  0.928
+   related & charged             -5321.2 (0.48)    -22389.1 (2.19)  0.057
+   related & not charged         -3533.0 (0.32)    +13320.9 (-1.31)  0.270
+   unrelated & charged            -812.8 (0.07)     -2859.5 (0.28)  0.014
+   unrelated & not charged       -1509.9 (0.14)     +1721.0 (-0.17)  0.658
+
+== schema2: group sizes  all=389301  related=127482  unrelated=261819  charged=27875  not charged=361426  related & charged=22232  related & not charged=105250  unrelated & charged=5643  unrelated & not charged=256176
+   switched from iteration 0 (W1 / W0 / excess) at k = 10, 40, 79, 99
+   all                        0.524/0.521/+0.002  0.661/0.658/+0.003  0.742/0.739/+0.003  0.718/0.714/+0.004
+   related                    0.421/0.416/+0.005  0.533/0.527/+0.007  0.600/0.592/+0.008  0.575/0.565/+0.010
+   unrelated                  0.574/0.573/+0.001  0.722/0.722/+0.001  0.811/0.810/+0.001  0.788/0.787/+0.001
+   charged                    0.446/0.395/+0.051  0.520/0.469/+0.051  0.560/0.513/+0.047  0.545/0.486/+0.059
+   not charged                0.530/0.531/-0.001  0.671/0.672/-0.001  0.756/0.756/-0.000  0.731/0.732/-0.001
+   related & charged          0.473/0.422/+0.051  0.554/0.499/+0.056  0.597/0.548/+0.049  0.579/0.517/+0.062
+   related & not charged      0.410/0.414/-0.004  0.529/0.532/-0.003  0.601/0.602/-0.001  0.574/0.575/-0.001
+   unrelated & charged        0.339/0.288/+0.051  0.386/0.351/+0.035  0.417/0.377/+0.040  0.410/0.363/+0.047
+   unrelated & not charged    0.579/0.579/-0.000  0.730/0.730/-0.000  0.820/0.820/-0.000  0.796/0.796/-0.000
+   car-leg difference, window 90-99: group | warm diff (share of total) | cold diff (share) | share of persons
+   all                          -12161.9 (1.00)    -12987.9 (1.00)  1.000
+   related                      -10634.2 (0.87)    -11451.3 (0.88)  0.327
+   unrelated                     -1527.7 (0.13)     -1536.6 (0.12)  0.673
+   charged                       -7332.1 (0.60)    -26440.6 (2.04)  0.072
+   not charged                   -4829.8 (0.40)    +13452.7 (-1.04)  0.928
+   related & charged             -6358.2 (0.52)    -23323.2 (1.80)  0.057
+   related & not charged         -4276.0 (0.35)    +11871.9 (-0.91)  0.270
+   unrelated & charged            -973.9 (0.08)     -3117.4 (0.24)  0.014
+   unrelated & not charged        -553.8 (0.05)     +1580.8 (-0.12)  0.658
+
+######## seed 4713: 389301 persons; iteration-0 choice identical to W0: X1 1.0000, W1-schema1 1.0000, W1-schema2 1.0000
+
+== schema1: group sizes  all=389301  related=127482  unrelated=261819  charged=27902  not charged=361399  related & charged=22233  related & not charged=105249  unrelated & charged=5669  unrelated & not charged=256150
+   switched from iteration 0 (W1 / W0 / excess) at k = 10, 40, 79, 99
+   all                        0.524/0.524/+0.000  0.661/0.659/+0.002  0.742/0.739/+0.003  0.719/0.715/+0.003
+   related                    0.421/0.415/+0.006  0.533/0.529/+0.004  0.600/0.594/+0.006  0.575/0.567/+0.007
+   unrelated                  0.574/0.577/-0.003  0.724/0.723/+0.001  0.811/0.810/+0.001  0.789/0.787/+0.001
+   charged                    0.441/0.399/+0.042  0.512/0.479/+0.033  0.553/0.518/+0.035  0.538/0.491/+0.047
+   not charged                0.530/0.533/-0.003  0.673/0.673/-0.001  0.756/0.756/+0.000  0.733/0.733/+0.000
+   related & charged          0.468/0.427/+0.041  0.543/0.510/+0.033  0.589/0.553/+0.036  0.571/0.523/+0.048
+   related & not charged      0.411/0.413/-0.002  0.531/0.533/-0.002  0.602/0.603/-0.001  0.575/0.577/-0.001
+   unrelated & charged        0.335/0.290/+0.045  0.389/0.357/+0.032  0.410/0.379/+0.030  0.407/0.362/+0.045
+   unrelated & not charged    0.579/0.583/-0.004  0.731/0.731/-0.000  0.820/0.819/+0.001  0.797/0.797/+0.000
+   car-leg difference, window 90-99: group | warm diff (share of total) | cold diff (share) | share of persons
+   all                          -10484.1 (1.00)     -8455.9 (1.00)  1.000
+   related                       -9379.3 (0.89)     -8338.6 (0.99)  0.327
+   unrelated                     -1104.8 (0.11)      -117.3 (0.01)  0.673
+   charged                       -5728.6 (0.55)    -25224.3 (2.98)  0.072
+   not charged                   -4755.5 (0.45)    +16768.4 (-1.98)  0.928
+   related & charged             -4972.0 (0.47)    -22130.4 (2.62)  0.057
+   related & not charged         -4407.3 (0.42)    +13791.8 (-1.63)  0.270
+   unrelated & charged            -756.6 (0.07)     -3093.9 (0.37)  0.015
+   unrelated & not charged        -348.2 (0.03)     +2976.6 (-0.35)  0.658
+
+== schema2: group sizes  all=389301  related=127482  unrelated=261819  charged=27902  not charged=361399  related & charged=22233  related & not charged=105249  unrelated & charged=5669  unrelated & not charged=256150
+   switched from iteration 0 (W1 / W0 / excess) at k = 10, 40, 79, 99
+   all                        0.526/0.524/+0.002  0.662/0.659/+0.003  0.743/0.739/+0.004  0.719/0.715/+0.004
+   related                    0.422/0.415/+0.006  0.535/0.529/+0.006  0.604/0.594/+0.010  0.577/0.567/+0.010
+   unrelated                  0.577/0.577/+0.000  0.724/0.723/+0.001  0.811/0.810/+0.001  0.788/0.787/+0.000
+   charged                    0.453/0.399/+0.054  0.523/0.479/+0.045  0.565/0.518/+0.047  0.549/0.491/+0.059
+   not charged                0.532/0.533/-0.002  0.673/0.673/-0.001  0.757/0.756/+0.001  0.732/0.733/-0.001
+   related & charged          0.482/0.427/+0.055  0.556/0.510/+0.047  0.601/0.553/+0.048  0.584/0.523/+0.061
+   related & not charged      0.409/0.413/-0.004  0.530/0.533/-0.002  0.604/0.603/+0.001  0.576/0.577/-0.001
+   unrelated & charged        0.340/0.290/+0.050  0.395/0.357/+0.037  0.422/0.379/+0.043  0.414/0.362/+0.051
+   unrelated & not charged    0.582/0.583/-0.001  0.731/0.731/+0.000  0.819/0.819/+0.000  0.796/0.797/-0.001
+   car-leg difference, window 90-99: group | warm diff (share of total) | cold diff (share) | share of persons
+   all                          -13311.7 (1.00)    -11861.7 (1.00)  1.000
+   related                      -11567.5 (0.87)    -10911.0 (0.92)  0.327
+   unrelated                     -1744.2 (0.13)      -950.7 (0.08)  0.673
+   charged                       -7471.4 (0.56)    -26195.0 (2.21)  0.072
+   not charged                   -5840.3 (0.44)    +14333.3 (-1.21)  0.928
+   related & charged             -6509.6 (0.49)    -23001.7 (1.94)  0.057
+   related & not charged         -5057.9 (0.38)    +12090.7 (-1.02)  0.270
+   unrelated & charged            -961.8 (0.07)     -3193.3 (0.27)  0.015
+   unrelated & not charged        -782.4 (0.06)     +2242.6 (-0.19)  0.658
+
+######## mean over seeds ['4711', '4712', '4713']
+
+== schema1: share of the car-leg difference (window 90-99), warm and cold, vs share of persons
+   all                        warm   1.00  cold   1.00  persons 1.000
+   related                    warm   0.87  cold   0.93  persons 0.327
+   unrelated                  warm   0.13  cold   0.07  persons 0.673
+   charged                    warm   0.58  cold   2.70  persons 0.071
+   not charged                warm   0.42  cold  -1.70  persons 0.929
+   related & charged          warm   0.49  cold   2.38  persons 0.057
+   related & not charged      warm   0.38  cold  -1.44  persons 0.271
+   unrelated & charged        warm   0.08  cold   0.32  persons 0.015
+   unrelated & not charged    warm   0.04  cold  -0.26  persons 0.658
+   excess switch share (W1 - W0), seed mean, k = 1, 5, 10, 20, 40, 79, 99
+   all                        +0.0041 +0.0020 +0.0009 +0.0014 +0.0026 +0.0026 +0.0035
+   related                    +0.0102 +0.0050 +0.0041 +0.0040 +0.0052 +0.0053 +0.0082
+   unrelated                  +0.0011 +0.0005 -0.0006 +0.0002 +0.0014 +0.0012 +0.0012
+   charged                    +0.0574 +0.0428 +0.0394 +0.0379 +0.0381 +0.0364 +0.0471
+   not charged                +0.0000 -0.0012 -0.0020 -0.0014 -0.0001 -0.0001 +0.0001
+   related & charged          +0.0587 +0.0452 +0.0391 +0.0389 +0.0391 +0.0367 +0.0480
+   related & not charged      +0.0000 -0.0035 -0.0032 -0.0033 -0.0019 -0.0013 -0.0002
+   unrelated & charged        +0.0526 +0.0335 +0.0406 +0.0343 +0.0344 +0.0354 +0.0437
+   unrelated & not charged    +0.0000 -0.0002 -0.0015 -0.0006 +0.0007 +0.0004 +0.0002
+
+== schema2: share of the car-leg difference (window 90-99), warm and cold, vs share of persons
+   all                        warm   1.00  cold   1.00  persons 1.000
+   related                    warm   0.90  cold   0.89  persons 0.327
+   unrelated                  warm   0.10  cold   0.11  persons 0.673
+   charged                    warm   0.61  cold   2.11  persons 0.071
+   not charged                warm   0.39  cold  -1.11  persons 0.929
+   related & charged          warm   0.53  cold   1.86  persons 0.057
+   related & not charged      warm   0.37  cold  -0.97  persons 0.271
+   unrelated & charged        warm   0.08  cold   0.25  persons 0.015
+   unrelated & not charged    warm   0.02  cold  -0.15  persons 0.658
+   excess switch share (W1 - W0), seed mean, k = 1, 5, 10, 20, 40, 79, 99
+   all                        +0.0053 +0.0021 +0.0019 +0.0017 +0.0029 +0.0036 +0.0039
+   related                    +0.0132 +0.0079 +0.0057 +0.0061 +0.0066 +0.0085 +0.0100
+   unrelated                  +0.0014 -0.0007 -0.0000 -0.0004 +0.0011 +0.0013 +0.0008
+   charged                    +0.0734 +0.0589 +0.0530 +0.0516 +0.0514 +0.0489 +0.0605
+   not charged                +0.0000 -0.0022 -0.0021 -0.0021 -0.0008 +0.0001 -0.0005
+   related & charged          +0.0758 +0.0619 +0.0538 +0.0528 +0.0542 +0.0500 +0.0633
+   related & not charged      +0.0000 -0.0034 -0.0045 -0.0038 -0.0034 -0.0003 -0.0012
+   unrelated & charged        +0.0644 +0.0471 +0.0500 +0.0467 +0.0404 +0.0448 +0.0496
+   unrelated & not charged    +0.0000 -0.0017 -0.0011 -0.0014 +0.0002 +0.0003 -0.0002
+
+wrote /Users/ww/matsim-data/plan-change/plan-change.json

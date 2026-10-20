@@ -17,7 +17,7 @@ HEAD = ['person_id', 'subpopulation', 'charging_cohort', 'score', 'score_delta',
 A, B = 'a' * 64, 'b' * 64
 
 
-def write_run(d, n_it, policy):
+def write_run(d, n_it, policy, reverse=False):
     r = d/'simulation'/'research'; r.mkdir(parents=True)
     for it in range(n_it):
         rows = []
@@ -34,6 +34,8 @@ def write_run(d, n_it, policy):
                        choice_sha256=ch, completed_car_legs=str(car), toll_revenue=str(toll),
                        private_car_entry_crossings=str(car if p < 3 else 0))
             rows.append([row[h] for h in HEAD])
+        if reverse:
+            rows = rows[::-1]
         with gzip.open(r/f'persons-{it}.csv.gz', 'wt', newline='') as f:
             w = csv.writer(f); w.writerow(HEAD); w.writerows(rows)
 
@@ -43,7 +45,7 @@ def main():
         root = Path(t); s = '4711'
         write_run(root/'policy'/f'warm-baseline-s{s}-100it', 100, False)
         write_run(root/'policy'/f'x1-baseline-s{s}-from99-50it', 50, False)
-        write_run(root/'rq1'/f'baseline-s{s}-100it-rq1', 100, False)
+        write_run(root/'rq1'/f'baseline-s{s}-100it-rq1', 100, False, reverse=True)   # different person order
         for p in ('schema1', 'schema2'):
             write_run(root/'policy'/f'warm-{p}-s{s}-100it', 100, True)
             write_run(root/'policy'/f'{p}-s{s}-100it', 100, True)

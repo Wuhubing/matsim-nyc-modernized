@@ -86,6 +86,19 @@ def frac(x):
     return float(x.mean()) if len(x) else None
 
 
+def align(r, ref_ids):
+    """Reorder every per-person array of a run summary to the person order ref_ids (same set of persons)."""
+    pos = {p: i for i, p in enumerate(r['ids'])}
+    assert len(pos) == len(ref_ids) and all(p in pos for p in ref_ids), f'persons differ in {r["run"]}'
+    idx = np.array([pos[p] for p in ref_ids])
+    out = dict(r, ids=list(ref_ids))
+    for k in ('cohort', 'choice0', 'toll0', 'car_window', 'cross_window'):
+        out[k] = r[k][idx]
+    for k in ('switched', 'car_at'):
+        out[k] = {it: v[idx] for it, v in r[k].items()}
+    return out
+
+
 def groups(cohort, charged):
     g = {'all': np.ones(len(cohort), bool),
          'related': cohort == 0, 'unrelated': cohort == 1,
@@ -124,7 +137,8 @@ def main():
             res = dict(zip(names, pool.map(summarise_run, [runs[n] for n in names])))
         ref_ids = res['W0']['ids']
         for n in names:
-            assert res[n]['ids'] == ref_ids, f'person order differs in {n}'
+            if res[n]['ids'] != ref_ids:      # runs from different starts list persons in different orders
+                res[n] = align(res[n], ref_ids)
         o = {'n_persons': len(ref_ids)}
         o['start_identical'] = {n: float(np.mean(res[n]['choice0'] == res['W0']['choice0']))
                                 for n in ('X1',) + tuple(f'W1-{p}' for p in POLICIES)}
