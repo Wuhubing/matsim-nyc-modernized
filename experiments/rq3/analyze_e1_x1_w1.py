@@ -5,7 +5,8 @@ X1 stationarity, and W1 versus cold references. Reads run directories only; writ
   analyze_e1_x1_w1.py --root /orcd/scratch/.../matsim-work --ref deltas-reference.json --out e1.json [--arm elite]
 
 --arm picks the run directories of the arm under test: <arm>-<scenario>-s<seed>-100it (elite = E1, elite-tamrr = E3,
-warm = W0/W1). The output keys keep the name 'e1' for every arm.
+warm = W0/W1). The output keys keep the name 'e1' for every arm; printed labels and first_within keys use the arm's
+name (E1, E3, W1).
 """
 import argparse, csv, gzip, json, sys
 from pathlib import Path
@@ -48,9 +49,13 @@ def win(rows, k, t, w=10):
     return float(np.mean([r[k] for r in rows[t:t + w]]))
 
 
+ARM_LABEL = {'elite': 'E1', 'elite-tamrr': 'E3', 'warm': 'W1'}
+
+
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument('--root', required=True); ap.add_argument('--ref', required=True)
     ap.add_argument('--out', required=True); ap.add_argument('--arm', default='elite'); a = ap.parse_args()
+    L = ARM_LABEL.get(a.arm, a.arm)  # printed name of the arm under test
     R = Path(a.root); P = R/'policy'
     ref = json.loads(Path(a.ref).read_text())
     rq1 = {s: R/'rq1'/f'baseline-s{s}-100it-rq1' for s in SEEDS}
@@ -69,7 +74,7 @@ def main():
         SP = {s: cd.summarise_run(d, W) for s, d in E[p].items() if s in SB}
         dE[p] = {k: {s: SP[s][0][k] - SB[s][0][k] for s in SP} for k in SP[next(iter(SP))][0]}
         res = {}
-        print(f'\n== E1 gate 3, {p} (seeds {sorted(SP)}): indicator | E1 Delta mean | ref Delta mean (all 3 seeds) | '
+        print(f'\n== {L} gate 3, {p} (seeds {sorted(SP)}): indicator | {L} Delta mean | ref Delta mean (all 3 seeds) | '
               f'ref same seeds | |diff| / eps | same sign')
         for k in PRIMARY + ('cordon_entries', 'usd_all'):
             e = list(dE[p][k].values()); r_all = ref['policies'][p]['indicators'][k]['delta']
@@ -83,7 +88,7 @@ def main():
                   f'   {np.sign(m_e) == np.sign(m_r)}')
         out['e1']['policies'][p] = res
     seeds_d = [s for s in dE['schema1']['share_car'] if s in dE['schema2']['share_car']]
-    print(f'\n== E1 D = schema1 - schema2 (seeds {seeds_d}): E1 | ref (3 seeds) | |diff|/eps')
+    print(f'\n== {L} D = schema1 - schema2 (seeds {seeds_d}): {L} | ref (3 seeds) | |diff|/eps')
     out['e1']['D'] = {}
     for k, eps in EPS_D.items():
         v = [dE['schema1'][k][s] - dE['schema2'][k][s] for s in seeds_d]
@@ -92,7 +97,7 @@ def main():
         print(f'  {k:28} {np.mean(v):+12.5g} {r:+12.5g}   {abs(np.mean(v) - r) / eps:5.2f}')
 
     # ---- gate 2: baseline end state
-    print('\n== E1 gate 2, baseline end state: E1 mean | RQ1 mean | RQ1 sd | |diff| / max(2sd, m)')
+    print(f'\n== {L} gate 2, baseline end state: {L} mean | RQ1 mean | RQ1 sd | |diff| / max(2sd, m)')
     out['e1']['gate2'] = {}
     for k in GATE2:
         e = [SB[s][0][k] for s in SB]; r = [ref['baseline'][s][k] for s in SEEDS]
@@ -117,7 +122,7 @@ def main():
     for p in ('schema1', 'schema2'):
         target = {k: float(np.mean(list(ref['policies'][p]['indicators'][k]['delta'].values()))) for k in TRAJ}
         for label, bkey, pkey, seeds in (('cold', 'rq1', p, SEEDS),
-                                         ('E1', 'e1-baseline', 'e1-' + p, [s for s in E[p] if s in E['baseline']])):
+                                         (L, 'e1-baseline', 'e1-' + p, [s for s in E[p] if s in E['baseline']])):
             first = {}
             for k in TRAJ + ('all',):
                 ks = TRAJ if k == 'all' else (k,)
