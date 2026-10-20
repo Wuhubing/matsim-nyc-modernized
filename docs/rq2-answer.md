@@ -5,7 +5,7 @@
 - how much the car share falls;
 - how much the transit share rises;
 
-each under $9.18 and under $14, plus how much stronger $14 is than $9.18 on each. Every check has an interval set in advance from three seeds of the original procedure. Revenue, welfare by group and the share of people made worse off are reported but not required, because they are not stable in the original runs. Each scenario's absolute values only need to stay within loose sanity bounds of the original (e.g., car and transit shares within 2 pp), because the original's end state is a convention, not a converged state.
+each under $9.18 and under $14, plus how much stronger $14 is than $9.18 on each. Every check has an interval set in advance from three seeds of the original procedure. Revenue, welfare by group and the share of people made worse off are reported but not required, because they are not stable in the original runs. Each scenario's absolute values only need to stay within loose sanity bounds of the original (e.g., car and transit shares within 2 pp), because the original's end state is a convention, not a converged state. Earlier MATSim acceleration papers checked levels such as the mean score, mode shares or counts, mostly on one seed and often at the iteration where the original's mean score is first reached, without a threshold set in advance (Section 3); our checks are on policy effects, after innovation stops, with three seeds and pre-set intervals.
 
 ## 1. What MATSim policy studies conclude
 
@@ -29,7 +29,33 @@ each under $9.18 and under $14, plus how much stronger $14 is than $9.18 on each
 | Iteration budgets are conventions | 100, 500, 400 + 100, judged by eye; Kaddoura 2016: budget changes how methods compare |
 | Calibration is separate | Calibrated models still miss counts by tens of percent; conclusions are comparisons within the model |
 
-## 3. What we will follow on MATSim-NYC
+## 3. How MATSim acceleration papers check that results are unchanged
+
+The policy studies above say which conclusions matter. The papers that accelerate MATSim are the other half: what they compare to show that a faster run gives the same result. Reading notes in [literature/](literature/README.md).
+
+| Paper | How it accelerates | Reference | When compared | What is compared (numbers from the paper) | Seeds | Not checked |
+|---|---|---|---|---|---|---|
+| [Fourie et al. 2013](https://doi.org/10.3141/2343-09) (PSim), Zurich, 67k agents | Cheap pseudo-simulation between real ones | Original, 101 iterations; mean executed score 175.4 at iteration 101 | **First iteration whose mean executed score reaches 175.4** | Real-simulation iterations to get there (101 → 13–20); RMSD of departure-time distribution (32.6 seed-to-seed vs 50.9–56.4); RMSD of daily link volumes (5.7 vs 24.5–30.0); share of agents within 5 min total travel time (77.1% vs 74.6–76.1%); car share (80.7% vs 76.2–80.0%) | 1, plus one original rerun with another seed as noise reference | No stationary state (authors: none had settled at that iteration); no pass rule for the 4–5× larger link differences |
+| [Moukir et al. 2024](https://www.scitepress.org/Papers/2024/124526/124526.pdf) (multiMATSim), Los Angeles 0.1% and 1% | 4–8 parallel instances exchanging plans every 50 iterations | Original mean executed score curve; "converged score" 105 read off it | **Wall time when the mean executed score first reaches 105** | Mean executed score only: 6 h → 1.5 h (0.1%), 29 h → 6 h (1%); time for all 300 iterations not reduced (1%: 36 h → 50 h) | 1 | Mode shares, link volumes, departure times; part of the curve plots best stored scores, not executed ones |
+| [Zhuge et al. 2021](https://doi.org/10.1007/s11116-019-10048-0), small car-only scenario | Only agents below their best stored plan replan; variable time step | Original, each calibrated with Cadyts | **Each run's own stopping iteration** (mean score change < 0.001 for 4 iterations) | Iterations (154 → 69) and time (1,187 s → 549 s); count error at 12 stations, 2-hour morning peak (MAPE 42.1% vs 42.5%) | 1 | Mode shares, score or departure distributions, other links; the stop rule is partly produced by the method (fewer replanners, flatter scores) |
+| [Graur et al. 2021](https://www.dpss.inesc-id.pt/~rbruno/papers/dgraur-abmtrans21.pdf) (Hermes), Switzerland 10% | Faster mobsim | Original (QSim) | End of the run (301 iterations) | Mode shares (car 44.69% vs 45.15%); motorway volume differences; per-agent travel-time skew, mostly within 10% | 1 | Statistical test; authors call results "comparable, but not similar" and recalibrate |
+| [Ben-Dor et al. 2021](https://doi.org/10.1016/j.simpat.2020.102233), Sioux Falls | Smaller population sample | **Mean and spread of 10 full-scale runs** | Each run's stationary state | Relative bias of each statistic, judged against the full-scale coefficient of variation; travel duration by period (t-tests); link volume-to-capacity bias; outlier runs by Tukey fence (3 of 100 in a different equilibrium) | **10 per sample size** | — (the most careful design; safe only at ≥ 20–25% sample) |
+| [Natterer et al. 2025](https://doi.org/10.1016/j.trc.2025.105360), Paris 1% | Graph-neural-network surrogate replacing whole runs | One MATSim run per policy scenario; baseline averaged over 50 seeds | End state | **Policy-induced change** of daily link volumes on 416 unseen scenarios: R² 0.91 overall, 0.98 on policy roads, 0.77 off-policy; 98% of its error equals MATSim's own seed variance | 50 for the baseline, 1 per policy | Mode shift, hourly profiles |
+| [Saprykin et al. 2019](https://doi.org/10.1016/j.simpat.2019.03.002) (GEMSim), [Laudan et al. 2025](https://doi.org/10.3390/info16020116) (distributed mobsim) | Faster mobsims | Counts (GEMSim); none (Laudan) | — | Swiss counts and iteration-to-iteration change (GEMSim); only that event output has the same format (Laudan) | — | **No item-by-item comparison with original MATSim on the same scenario** |
+
+**What they have in common**
+
+| Observation | Evidence |
+|---|---|
+| The reference is the original procedure, never a converged answer | All rows; the original itself stops after a fixed budget judged by eye |
+| "Caught up" often means "reached the original's mean score" | PSim (175.4), multiMATSim (105). The same mean score can hide a different state: PSim reached it with car share 4.5 pp lower. The comparison happens during the search, and the mean includes untested trial plans |
+| Levels are compared, rarely policy effects | Scores, mode shares, link volumes, counts; only Natterer compares the change a policy causes |
+| One seed is the norm | Only Ben-Dor (10 runs) and Natterer (50-seed baseline) measure randomness; PSim adds one rerun |
+| No pass criterion is set in advance | Differences are described ("very similar", "relatively small"), not tested against a threshold |
+
+**Our design differs on each point:** we compare the nine policy effects, over the last 10 iterations after innovation stops (not at a score threshold), with three seeds, against intervals fixed before any accelerated run, and we require them to still hold 20 iterations later. Like all of these papers, our reference is still the original procedure; none of them, and not yet we, checks against a converged answer.
+
+## 4. What we will follow on MATSim-NYC
 
 **Rule.** We preserve the change a policy causes, not absolute levels:
 - for each seed, run the baseline and the policy with that same seed;
@@ -44,7 +70,7 @@ For example, with seed 4711 the charging-related population makes 72,488 car tri
 
 **Interval.** Original mean ± max(2 × seed SD, practical margin), where the margin for shares is 0.05 pp. Set before any accelerated run is analysed.
 
-### 3.1 Criteria (must hold, with the same direction)
+### 4.1 Criteria (must hold, with the same direction)
 
 | He et al. 2021 conclusion | Measured as | Original (3 seeds) | Required interval |
 |---|---|---|---|
@@ -60,7 +86,7 @@ For example, with seed 4711 the charging-related population makes 72,488 car tri
 
 Direction matches He et al. 2021 in all cases. Size differs: our 8,717 × 25 ≈ 218K trips vs their 127K; size is not required.
 
-### 3.2 Reported only
+### 4.2 Reported only
 
 | He et al. 2021 conclusion | Original | Why not a criterion |
 |---|---|---|
@@ -69,7 +95,7 @@ Direction matches He et al. 2021 in all cases. Size differs: our 8,717 × 25 ≈
 | 37–40% worse off | ≈ 50% in every run | Per-person differences are random |
 | $14 lowers citywide welfare | Direction varies across seeds | Not stable in the original |
 
-### 3.3 Each scenario: a loose sanity check, not a reproduction
+### 4.3 Each scenario: a loose sanity check, not a reproduction
 
 The absolute state of each scenario depends on how fully the procedure optimises, while the policy-induced changes above do not. The original stops at 100 iterations by convention, not at a converged state. Requiring each scenario to fall inside the original's narrow seed range would therefore reject any method that searches differently, even when every conclusion is unchanged.
 
@@ -91,6 +117,6 @@ Whether each scenario also falls inside the original's natural seed range (e.g.,
 
 It passes if:
 1. all nine fall inside their intervals with the same direction;
-2. every scenario passes the sanity check in 3.3;
+2. every scenario passes the sanity check in 4.3;
 3. both still hold 20 iterations after the stop;
 4. they hold on a scenario not used for tuning.

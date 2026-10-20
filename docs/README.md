@@ -22,7 +22,7 @@
 | [matsim-explained.md](matsim-explained.md) | MATSim 是什么、每轮做什么、为什么慢（白话） |
 | [matsim-source-reading.md](matsim-source-reading.md) | MATSim 2026.0 源码逐行核实（参考） |
 | [rq1-answer.md](rq1-answer.md) | RQ1：其他领域怎么加速仿真；按领域的总表；全部文献附录 |
-| [rq2-answer.md](rq2-answer.md) | RQ2：哪些结论必须不变 |
+| [rq2-answer.md](rq2-answer.md) | RQ2：哪些结论必须不变；前人的 MATSim 加速论文怎么检验结果没变 |
 | [rq3-answer.md](rq3-answer.md) | RQ3：MATSim 的"收敛"指什么 |
 | [acceptance-protocol.md](acceptance-protocol.md) | 验收标准的具体数值和推导 |
 | [progress-log.md](progress-log.md) | 按时间的进展记录（实验、结果、决定） |
