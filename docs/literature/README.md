@@ -15,7 +15,7 @@ L2Seg（Ouyang et al. 2025）没有单独笔记，见 [../rq1-answer.md](../rq1-
 - [46](46_Fourie2013_PSim.md) Fourie, Illenberger, Nagel 2013 — Increased convergence rates in multiagent transport simulations with pseudosimulation（PSim）
 - [48](48_Moukir2024_multiMATSim.md) Moukir, Tsuji, Emad, Sato & Baudelocq 2024 — Advancements in Traffic Simulations with multiMATSim's Distributed Framework
 - [62](62_Hoerl2018_discrete_mode_choice.md) Hörl, Balac & Axhausen 2018、2019；Hörl 2021 — MATSim 的离散方式选择扩展（Discrete Mode Choice）
-- [63](63_Rakow2023_informed_mode_choice.md) Rakow & Nagel 2023 — 按估算效用提议换方式并退火（informed mode choice；论文全文待读）
+- [63](63_Rakow2023_informed_mode_choice.md) Rakow & Nagel 2023 — 按估算效用提议换方式并退火（informed mode choice）
 - [58](58_Chhatre2022_parallel_BO_BEAM.md) Chhatre, Feygin, Sheppard & Waraich 2022 — Parallel Bayesian Optimization of Agent-based Transportation Simulation
 
 ## 交通分配与逐日动态
