@@ -78,4 +78,4 @@
   2. 检查估算器和 NYC 自己的打分（`NycScoring.java`）是否一致，包括公交拥挤；
   3. 成本：每个换方式的人要给所有方式组合找路。2018 年说靠并行，每轮时间差不多；我们的重新规划约占试新方案期每轮的 12%，需要实测；
   4. 依赖：项目现在没有引入这个扩展，需要在 `pom.xml` 加 `org.matsim.contrib:discrete_mode_choice`（MATSim 2026.0）。
-- **相关、还没读的：** matsim-libs 的 [`contribs/informed-mode-choice`](https://github.com/matsim-org/matsim-libs/tree/main/contribs/informed-mode-choice)（Rakow & Nagel 2023，*An annealing based approach to informed mode choice in agent-based transport simulations*，Procedia Computer Science 220:667–673，DOI [10.1016/j.procs.2023.03.086](https://doi.org/10.1016/j.procs.2023.03.086)）：同样是按估算效用提议方式，另外加了退火和剪掉没有希望的选项。全文还没拿到。
+- **相关：** 见 [63](63_Rakow2023_informed_mode_choice.md)。matsim-libs 的 [`contribs/informed-mode-choice`](https://github.com/matsim-org/matsim-libs/tree/main/contribs/informed-mode-choice)（Rakow & Nagel 2023，*An annealing based approach to informed mode choice in agent-based transport simulations*，Procedia Computer Science 220:667–673，DOI [10.1016/j.procs.2023.03.086](https://doi.org/10.1016/j.procs.2023.03.086)）：同样是按估算效用提议方式，另外加了退火和剪掉没有希望的选项。全文还没拿到。
