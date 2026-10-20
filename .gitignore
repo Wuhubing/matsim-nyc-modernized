@@ -9,3 +9,4 @@ __pycache__/
 .env.*
 .DS_Store
 scenarios/nyc-zip-aligned/capacity-factors.csv
+slurm-*.out

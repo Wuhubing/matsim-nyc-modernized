@@ -1,5 +1,7 @@
 # MATSim NYC: modernized exploratory congestion-pricing scenarios
 
+> **研究工作区（分支 `research/main`）：** 这个分支在模型之上做"更快地得到同样的政策效应"的研究。从 [CLAUDE.md](CLAUDE.md) 和 [docs/README.md](docs/README.md) 开始读；总纲在 [docs/charter.md](docs/charter.md)。下面是模型本身的说明，和 `main` 相同。
+
 A Java 25 / MATSim 2026.0 modernization of C2SMART's released NYC model, with a baseline, reconstructed Schema 1 cordon, and a modeled launch-2025 congestion-pricing policy. This is an independent research workspace, not an official MTA model or a validated forecast of 2025 outcomes.
 
 ## Included

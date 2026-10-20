@@ -32,7 +32,7 @@ This has five consequences for borrowing methods:
 
 ## 2. Fields at a glance
 
-One row per field: the representative papers, what they do, and which of our candidate methods (charter v2.2 §4) it supports. All 61 papers of `bib/QR1/`, plus L2Seg, are listed by field in the appendix.
+One row per field: the representative papers, what they do, and which of our candidate methods (charter v2.2 §4) it supports. All 61 papers in [literature/](literature/README.md), plus L2Seg, are listed by field in the appendix.
 
 | # | Field | Representative papers | What they do | Our candidate it supports |
 |---|---|---|---|---|
@@ -52,7 +52,7 @@ One row per field: the representative papers, what they do, and which of our can
 
 ## 3. How they accelerate, by stage of the search
 
-The same literature grouped by the part of the search it acts on, for analysis. Numbers are from the papers; notes in `bib/QR1/`.
+The same literature grouped by the part of the search it acts on, for analysis. Numbers are from the papers; reading notes in [literature/](literature/README.md).
 
 | Where it acts | Field · paper | What they do | Result | Fit for MATSim |
 |---|---|---|---|---|
@@ -128,7 +128,7 @@ It may not change the final evaluation:
 
 ## Appendix. All papers by field
 
-Every paper read for RQ1 (`bib/QR1/`, numbered as there), grouped by field. "Approach to try" names our candidate method (charter v2.2 §4) or says why the paper is background only.
+Every paper read for RQ1 ([literature/](literature/README.md), numbered as there), grouped by field. "Approach to try" names our candidate method (charter v2.2 §4) or says why the paper is background only.
 
 ### A1. MATSim and agent-based transport
 
