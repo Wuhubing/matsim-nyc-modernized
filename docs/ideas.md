@@ -43,6 +43,7 @@
   - 发现 1：受影响的人集中，能从起点圈出来；
   - 发现 2：瓶颈是这些人自己改得慢；
   - 随机换方式有 71% 明显更差，换过去好不好能提前预测（换方式 AUC 0.86，[archive/h1-proposal-predictor.md](archive/h1-proposal-predictor.md)）。
+- **已有的实现（10-20）：** MATSim 的离散方式选择扩展（Hörl 等 2018、2019）有一种"重要性采样器"用法：按估算效用的 logit 概率提议换方式，执行、打分、选择仍由 MATSim 做，符合"最后评估固定"。但它自带的估算器不含道路收费，前人也没有发表它能省多少轮。见 [literature/62_Hoerl2018_discrete_mode_choice.md](literature/62_Hoerl2018_discrete_mode_choice.md)。
 - **还不知道的：**
   - 这些人改得慢，到底是因为试得太少，还是因为试得太盲目；
   - 让一部分人更频繁地试，会不会加重"大家一起换路造成过冲"（总纲第 2 节事实三）；
