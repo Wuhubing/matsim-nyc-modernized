@@ -9,6 +9,27 @@
 
 All the fields warn about the same thing: **a faster search can end somewhere else.** Most of their acceleration papers check this with one run and a curve that has stopped moving. For MATSim, which can have several equilibria, that check is not enough. The RQ2 policy effects over three seeds are the check.
 
+## Summary table
+
+Grouped by where the saving comes from. Gains are as reported in the papers; reading notes in [literature/](literature/README.md).
+
+| Where it saves | Field | Method (how it works) | Key papers | Reported gain | Lesson for MATSim |
+|---|---|---|---|---|---|
+| **Fewer iterations: better start** | Climate spin-up | Treat one model year as a fixed-point map; extrapolate from past iterates (Anderson); start from a de-noised or learned steady state | [Khatiwala 2024](https://doi.org/10.1126/sciadv.adn2839); [Mahfuz & Slawig 2025](https://arxiv.org/abs/2506.10475) | 5–12× (Anderson); 50–95% fewer iterations (learned start) | Warm start helps, but the end can move when equilibria are not unique |
+| | Activity-based platforms | Start each scenario from the previous converged travel times | [Nair et al. 2026](https://arxiv.org/abs/2608.24817) (POLARIS) | "Fewer iterations" (no number) | Same as above; compare against a baseline that started the same way |
+| **Fewer iterations: smarter proposals** | MATSim mode choice | Estimate the utility of every feasible mode chain and propose by logit; the simulation still scores and selects | [Hörl et al. 2018](https://doi.org/10.1016/j.procs.2018.04.087), [2019](https://doi.org/10.3929/ethz-b-000303667); [Rakow & Nagel 2023](https://doi.org/10.1016/j.procs.2023.03.086) | 4–5× fewer iterations to a similar score (Rakow & Nagel) | Closest fit: targets random mode switching; default estimators ignore road tolls |
+| | Evolutionary computation | A cheap surrogate screens candidates; some always get the true evaluation | [Jin 2005](https://doi.org/10.1007/s00500-003-0328-5); [Hansen & Ostermeier 2001](http://www.cmap.polytechnique.fr/~nikolaus.hansen/cmaartic.pdf) | Fewer expensive evaluations; 3–10× (CMA-ES) | A cheap model may propose, never decide |
+| | Multi-fidelity | Low fidelity filters, high fidelity stays in the loop | [Peherstorfer et al. 2018](https://arxiv.org/abs/1806.10761) | Saving grows with the rejection rate | Same rule; PSim and Planomat broke it and shifted results |
+| **Fewer iterations: search where needed** | Combinatorial optimisation | Learn which parts of a solution are unstable; re-optimise only those | [Ouyang et al. 2025](https://arxiv.org/abs/2507.01037) (L2Seg) | 2–7× | The NYC policy effect sits in 33% of agents; random selection is the worst case |
+| | Traffic assignment | Move travellers with the largest experienced-minus-shortest time; 1/n step sizes | [Sbayti et al. 2007](https://doi.org/10.3141/2029-03); [Auld et al. 2019](https://www.osti.gov/servlets/purl/1528926) | 7 → 2 iterations to the same gap | Use measured gaps only; moving everyone at once oscillates |
+| **Fewer iterations: damped reactions** | Learning in games; traffic assignment | React to averaged past states, not the latest one | [Hofbauer & Sandholm 2002](https://homepage.univie.ac.at/Josef.Hofbauer/sfp.htm); [Sheffi 1985](https://web.mit.edu/sheffi/www/urbanTransportation.html) | Convergence in congestion games | Smoothing travel times can damp collective rerouting |
+| **Fewer iterations: adaptive exploration** | MCMC; evolutionary algorithms | Tune exploration online and let adaptation vanish | [Andrieu & Thoms 2008](https://people.eecs.berkeley.edu/~jordan/sail/readings/andrieu-thoms.pdf); [Eiben et al. 1999](https://cs.adelaide.edu.au/~zbyszek/Papers/self9.pdf) | Faster mixing, target preserved | Anneal exploration, but stop adapting before the final evaluation |
+| **Fewer iterations: stop on time** | MCMC; MATSim | Stop by a measured criterion over several chains | [Vehtari et al. 2021](https://arxiv.org/abs/1903.08008); [Hörl et al. 2021](https://doi.org/10.1016/j.trc.2021.102974) | Catches false convergence | Flat curves are not a stopping rule |
+| **Cheaper iterations** | GPU or distributed simulation | Rewrite the mobsim for GPUs, event-driven execution or message passing | [Saprykin 2022](https://doi.org/10.3929/ethz-b-000601899); [Graur et al. 2021](https://www.dpss.inesc-id.pt/~rbruno/papers/dgraur-abmtrans21.pdf); [Laudan et al. 2025](https://doi.org/10.3390/info16020116) | Mobsim 2.5–119×; whole loop ≤ 22.7× | Capped by Amdahl's law; results only "comparable" to MATSim |
+| **Fewer runs** | Surrogates of whole runs | Learn the input-to-output map from many runs | [Natterer et al. 2025](https://doi.org/10.1016/j.trc.2025.105360); [Lamperti et al. 2018](https://www.lem.sssup.it/WPLem/2017-11.html) | ≈ 5,000× per prediction (after ~10k training runs) | Replaces the final evaluation; indirect effects poorly predicted |
+
+**In one sentence:** steady-state simulations are sped up mainly by wasting fewer trials (a better start, better proposals, searching only where needed), not by making each trial faster; a cheap model may propose but must not decide, and almost no paper checks that the accelerated end state is unchanged.
+
 ## 1. What we are accelerating
 
 **The problem (RQ2, RQ3).**
