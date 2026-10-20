@@ -26,6 +26,7 @@
 | [rq3-answer.md](rq3-answer.md) | RQ3：MATSim 的"收敛"指什么 |
 | [acceptance-protocol.md](acceptance-protocol.md) | 验收标准的具体数值和推导 |
 | [progress-log.md](progress-log.md) | 按时间的进展记录（实验、结果、决定） |
+| [ideas.md](ideas.md) | 发现与可能的方法：想法记录，未经筛选，不是计划 |
 | [experiments.md](experiments.md) | 实验登记表：所有运行、提交号、数据位置、结论；代号对照表 |
 | [literature/](literature/README.md) | 61 篇读书笔记（按领域索引） |
 | [diagnostics/g-estimator.md](diagnostics/g-estimator.md) | G 估算器（均衡差距）设计；只作诊断 |

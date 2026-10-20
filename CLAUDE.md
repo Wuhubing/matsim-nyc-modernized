@@ -11,7 +11,7 @@
 1. [docs/README.md](docs/README.md)：目录、当前状态、代码地图。
 2. [docs/charter.md](docs/charter.md)：总纲。第 1–5 节改动要用户同意。
 3. [docs/progress-log.md](docs/progress-log.md) 的最后几节：最近的结果和待定的事。
-4. 需要时再读：[docs/matsim-explained.md](docs/matsim-explained.md)（MATSim 怎么运作）、[docs/rq1-answer.md](docs/rq1-answer.md)–[rq3](docs/rq3-answer.md)、[docs/acceptance-protocol.md](docs/acceptance-protocol.md)（验收标准的具体数值）、[docs/experiments.md](docs/experiments.md)（所有运行和数据位置）。
+4. 需要时再读：[docs/matsim-explained.md](docs/matsim-explained.md)（MATSim 怎么运作）、[docs/rq1-answer.md](docs/rq1-answer.md)–[rq3](docs/rq3-answer.md)、[docs/acceptance-protocol.md](docs/acceptance-protocol.md)（验收标准的具体数值）、[docs/experiments.md](docs/experiments.md)（所有运行和数据位置）、[docs/ideas.md](docs/ideas.md)（发现与可能的方法，未经筛选）。
 
 ## 不要接着做的事
 
