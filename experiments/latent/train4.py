@@ -4,6 +4,7 @@
   train4.py pretrain SAMPLES.npz --city city.npz --transit T1.npz T2.npz --static static.npz --links links.pkl
             --out DIR [--versions struct_own,...] [--runs 3]
   train4.py adapt SAMPLES.npz ... --out DIR [--runs 3]
+  train4.py diagnose SAMPLES.npz ... --out DIR      (after pretrain and adapt)
 
 Task as in train.py (new plan executed better than its parent; time and route near ties |label| <= 1 dropped),
 with its trip-level pairing, innovation type and auxiliary regression. Inputs that do not depend on a run:
@@ -17,7 +18,9 @@ Optional run state ('state': road congestion of k-1 and transit waits of k-10 as
 embedding per cell in plan and activity tokens). Versions (VERSIONS): struct_own (structure + own day, the one the
 adapter builds on), v3 (state + memory + cell identity: train.py's third version), all (structure + own day +
 state + memory), no_city (E = learned per-hour vector: no cell information anywhere), no_agent (structure; z from
-subpopulation and trips only), cell_table (E = learned per-cell table instead of structure, + own day).
+subpopulation and trips only), cell_table (E = learned per-cell table instead of structure, + own day); the
+'_notrip' variants also drop the router's planned travel time, route length and legs from the trips, which
+otherwise already carry what the network structure does for a trip.
 
 Toll adapter (zero when the toll is zero, so the baseline is unchanged): per trip tolled links crossed, dollars and
 money utility x dollars -> linear without bias -> added to the plan token; per cell and hour log1p(tolled links x
@@ -29,7 +32,15 @@ adapter), adapter_10 (adapter, 10% of the training samples), finetune (everythin
 scratch_10 (a new network with the adapter, everything trained on schema1 only / on the same 10%). Tests: schema2
 seed 4712 (new price and seed), schema1 seed 4712 (new seed), baseline seed 4712.
 People with crc32 % 10 == 1 are never trained on (either stage); every report also gives the AUC on them
-('unseen_*'), so memorising a person's day does not count."""
+('unseen_*'), so memorising a person's day does not count.
+
+'diagnose' checks the pipeline: the AUC function against a brute-force pairwise count; what the trained
+struct_own runs rely on (test AUC on baseline seed 4712 when, at test time only, the city vectors are shuffled
+across cells or averaged over cells, the own-day tokens or the parent scores or the innovation types are shuffled
+across samples, or the router's trip times are zeroed); the adapter and toll_only refitted and evaluated on the
+schema2 samples whose new or parent plan crosses a toll link (the other ~95% cannot show a toll effect); a ridge
+probe, cross-validated over cells, of whether the learned city vectors predict the baseline's observed congestion
+per cell and hour better than the raw road and transit features."""
 import argparse, json, pickle, time
 from pathlib import Path
 import numpy as np
@@ -40,6 +51,7 @@ from train import auc
 KINDS = ['mode', 'time', 'route']
 VERSIONS = {'struct_own': {'struct', 'own'}, 'v3': {'state', 'memory', 'cellid'}, 'all': {'struct', 'own', 'state', 'memory'},
             'no_city': {'no_city', 'own'}, 'no_agent': {'struct', 'no_agent'}, 'cell_table': {'cell_table', 'own'}}
+VERSIONS.update({f'{k}_notrip': v | {'notrip'} for k, v in list(VERSIONS.items())})
 PEAK = [0.0, 9.18, 14.0]
 D = 64
 
@@ -120,6 +132,7 @@ class Net(nn.Module):
         t = tok.clamp(min=0).long(); ot = otok.clamp(min=0).long()
         o, d, hr = t[..., 2], t[..., 3], t[..., 1]
         f = f.clone(); of = of.clone(); f[..., 0] = f[..., 0] / 24; of[..., 0] = of[..., 0] / 24
+        if 'notrip' in self.o: f[..., 1:] = 0; of[..., 1:] = 0
         other = torch.cat([self.mode(ot[..., 0]), of, f - of, (t[..., 0] != ot[..., 0]).float().unsqueeze(-1)], -1)
         cid = 'cellid' in self.o
         co, cd = (self.cell(o), self.cell(d)) if cid else (torch.zeros(*o.shape, 16, device=o.device),) * 2
@@ -165,8 +178,88 @@ class Net(nn.Module):
         return out + torch.stack([self.toll_logit[0] * du + self.toll_logit[1], torch.zeros_like(du)], -1)
 
 
+def diagnose(a, out, dev, S, C, make, arrays, y, sel, seen, val, seed, scen, predict, report, fit):
+    res = {}
+    # 1. AUC against a brute-force pairwise count (ties count one half)
+    rng = np.random.default_rng(0); sc = np.round(rng.normal(size=1500), 1); yy = rng.random(1500) < 0.4
+    pos, neg = sc[yy], sc[~yy]
+    brute = ((pos[:, None] > neg[None]).sum() + 0.5 * (pos[:, None] == neg[None]).sum()) / (len(pos) * len(neg))
+    res['auc_check'] = {'auc': auc(sc, yy), 'brute_force': float(brute)}
+    print('auc check', res['auc_check'], flush=True)
+
+    def load(run):
+        model = make(VERSIONS['struct_own']); model.load_state_dict(torch.load(out / f'struct_own-{run}.pt', map_location=dev)); return model
+
+    # 2. what the trained struct_own runs rely on (test-time perturbations, baseline seed 4712)
+    te = sel((scen == 0) & (seed == 4712)); perm = rng.permutation(len(te))
+    cell_perm = lambda n: torch.cat([torch.randperm(n - 1, generator=torch.Generator().manual_seed(0)), torch.tensor([n - 1])])
+    zero_router = lambda v: np.concatenate([v[..., :1], 0 * v[..., 1:]], -1)
+    tests = {
+        'none': ({}, None),
+        'city shuffled across cells': ({}, lambda E, st: (E[:, cell_perm(E.shape[1]).to(E.device)], st)),
+        'city averaged over cells': ({}, lambda E, st: (torch.cat([E[:, :-1].mean(1, keepdim=True).expand(-1, E.shape[1] - 1, -1, -1), E[:, -1:]], 1), st)),
+        'own day shuffled': ({'ag_tok': lambda v: v[perm], 'ag_x': lambda v: v[perm]}, None),
+        'router trip times zeroed': ({'new_x': zero_router, 'par_x': zero_router}, None),
+        'parent score shuffled': ({'par_score': lambda v: v[perm]}, None),
+        'innovation type shuffled': ({'kind': lambda v: v[perm]}, None),
+    }
+    res['reliance'] = {}
+    for name, (chg, cchg) in tests.items():
+        vals = []
+        for run in range(a.runs):
+            model = load(run); saved = {}
+            for k, f in chg.items(): saved[k] = arrays[k]; arrays[k] = arrays[k].copy(); arrays[k][te] = f(arrays[k][te])
+            if cchg is not None:
+                orig = model.city; model.city = lambda orig=orig: cchg(*orig())
+            vals.append(report(predict(model, te), te)); arrays.update(saved)
+        res['reliance'][name] = {k: float(np.mean([v[k] for v in vals])) for k in ('all', 'mode', 'time', 'route', 'unseen_all')}
+        print('reliance', name, {k: round(v, 4) for k, v in res['reliance'][name].items()}, flush=True)
+
+    # 3. adapter vs toll_only vs none on toll-affected schema2 samples
+    crossing = (S['new_toll'][:, :, 0].sum(1) + S['par_toll'][:, :, 0].sum(1)) > 0
+    tr_all, va = sel((scen == 1) & (seed == 4711) & ~val & seen), sel((scen == 1) & (seed == 4711) & val)
+    aff = sel((scen == 2) & (seed == 4712) & crossing)
+    res['toll_affected'] = {'n': int(len(aff)), 'better_share': float(y[aff].mean())}
+    for variant in ('none', 'toll_only', 'adapter', 'finetune'):
+        vals = []
+        for run in range(a.runs):
+            torch.manual_seed(run); model = load(run)
+            if variant == 'toll_only':
+                for p in model.parameters(): p.requires_grad = False
+                model.toll_logit.requires_grad = True; fit(model, tr_all, va, [model.toll_logit], 1e-2, f'diag {variant} {run}')
+            elif variant == 'adapter':
+                for p in model.parameters(): p.requires_grad = False
+                for p in model.adapter_parameters(): p.requires_grad = True
+                fit(model, tr_all, va, model.adapter_parameters(), 1e-3, f'diag {variant} {run}')
+            elif variant == 'finetune':
+                fit(model, tr_all, va, [p for n, p in model.named_parameters() if n != 'toll_logit'], 3e-4, f'diag {variant} {run}')
+            vals.append(report(predict(model, aff), aff))
+        res['toll_affected'][variant] = {k: float(np.nanmean([v[k] for v in vals])) for k in ('all', 'mode', 'mode_related', 'time', 'route')}
+        print('toll-affected schema2', variant, {k: round(v, 4) for k, v in res['toll_affected'][variant].items()}, flush=True)
+
+    # 4. ridge probe: do the learned city vectors predict observed baseline congestion per cell and hour?
+    X = C['X']; cong = X[..., 1].mean(0); obs = X[..., 2].mean(0) > 0.5           # baseline states only, [C, 30]
+    Z = np.load(a.static); n = cong.shape[0]
+    hour = np.broadcast_to(np.eye(30), (n, 30, 30))
+    raw = np.concatenate([np.repeat(Z['road'][:n, None], 30, 1), Z['transit'][:n], hour], -1)
+    model = load(0); model.eval()
+    with torch.no_grad(): E = model.city()[0][0, :n].cpu().numpy()
+    t = np.log(np.clip(cong, 0.5, 5))
+    def probe(F):
+        F = F.reshape(n, 30, -1); folds = np.arange(n) % 5; pred = np.zeros((n, 30))
+        for f in range(5):
+            trn = (folds != f)[:, None] & obs; tst = (folds == f)[:, None] & obs
+            A = np.concatenate([F[trn], np.ones((trn.sum(), 1))], 1); w = np.linalg.solve(A.T @ A + 1e-2 * np.eye(A.shape[1]), A.T @ t[trn])
+            pred[tst] = np.concatenate([F[tst], np.ones((tst.sum(), 1))], 1) @ w
+        r = t[obs] - pred[obs]; return float(1 - (r ** 2).sum() / ((t[obs] - t[obs].mean()) ** 2).sum())
+    res['probe_r2'] = {'hour only': probe(hour), 'raw road + transit + hour': probe(raw), 'learned city vectors E': probe(E),
+                       'E + raw': probe(np.concatenate([E, raw], -1))}
+    print('probe R2 (log congestion, 5-fold over cells)', res['probe_r2'], flush=True)
+    with open(out / 'diagnose.json', 'w') as f: json.dump(res, f, indent=1)
+
+
 def main():
-    ap = argparse.ArgumentParser(); ap.add_argument('stage', choices=['pretrain', 'adapt']); ap.add_argument('samples')
+    ap = argparse.ArgumentParser(); ap.add_argument('stage', choices=['pretrain', 'adapt', 'diagnose']); ap.add_argument('samples')
     for k in ('--city', '--static', '--links', '--out'): ap.add_argument(k, required=True)
     ap.add_argument('--transit', nargs='+', required=True)
     ap.add_argument('--versions', default='struct_own,v3,all,no_city,no_agent,cell_table')
@@ -276,7 +369,7 @@ def main():
             results[version]['ensemble'] = report(np.mean(preds, 0), te)
             print(f'{version} ensemble', json.dumps(results[version]['ensemble']), flush=True)
             with open(out / 'pretrain.json', 'w') as f: json.dump(results, f, indent=1)
-    else:
+    elif a.stage == 'adapt':
         tr_all, va = sel((scen == 1) & (seed == 4711) & ~val & seen), sel((scen == 1) & (seed == 4711) & val)
         rng = np.random.default_rng(0); tr10 = np.sort(rng.choice(tr_all, len(tr_all) // 10, replace=False))
         tests = {'schema2_s4712': sel((scen == 2) & (seed == 4712)), 'schema1_s4712': sel((scen == 1) & (seed == 4712)),
@@ -309,6 +402,8 @@ def main():
             results[variant]['ensemble'] = {t: report(np.mean(preds[t], 0), idx) for t, idx in tests.items()}
             print(f'{variant} ensemble', json.dumps(results[variant]['ensemble']), flush=True)
             with open(out / 'adapt.json', 'w') as f: json.dump(results, f, indent=1)
+    else:
+        diagnose(a, out, dev, S, C, make, arrays, y, sel, seen, val, seed, scen, predict, report, fit)
     print('done', flush=True)
 
 
