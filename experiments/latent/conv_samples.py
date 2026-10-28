@@ -29,18 +29,14 @@ def act_id(t): return ACTS.index(t) if t in ACTS else len(ACTS)
 def selected(ag): return next((p for p in ag['plans'] if p['selected']), ag['plans'][0])
 
 
-def main():
-    ap = argparse.ArgumentParser()
-    for k in ('--final', '--city', '--cohorts', '--out'): ap.add_argument(k, required=True)
-    a = ap.parse_args()
-    city = np.load(a.city)
+def grid(city):
     x0, y0, size, nx, ny = city['grid']; ny = int(ny)
     index = {int(c): i for i, c in enumerate(city['cells'])}; C = len(index)
-    cell = lambda x, y: index.get(int((x - x0) // size) * ny + int((y - y0) // size), C)
-    with gzip.open(a.cohorts, 'rt') as f:
-        related = {r['person_id']: r['charging_cohort'] == 'related' for r in csv.DictReader(f)}
-    load = lambda name: pickle.load(open(f'{a.final}/{name}.pkl', 'rb'))
-    cold = load('cold'); pids = sorted(cold)
+    return (lambda x, y: index.get(int((x - x0) // size) * ny + int((y - y0) // size), C)), C
+
+
+def inputs(cold, pids, cell, C, related):
+    """Model inputs of the given persons from their initial plans (cold: extract_plans.py dict)."""
     n = len(pids)
     tok = np.full((n, T, 5), -1, np.int16); x = np.zeros((n, T, 3), np.float32); init = np.full((n, T), -1, np.int8)
     sub = np.zeros(n, np.int8); ntrips = np.zeros(n, np.int8); rel = np.zeros(n, bool); grp = np.zeros(n, np.int8)
@@ -55,7 +51,21 @@ def main():
             init[i, j] = MODES.index(t[0]); dep0[i, j] = t[1]
         s = cold[p]['subpop']; sub[i] = SUBPOPS.index(s) if s in SUBPOPS else 0
         ntrips[i] = len(trips); rel[i] = related.get(p, False); grp[i] = zlib.crc32(p.encode()) % 10
-    out = {'tok': tok, 'x': x, 'init': init, 'sub': sub, 'ntrips': ntrips, 'related': rel, 'grp': grp, 'n_cells': np.array(C + 1)}
+    return {'tok': tok, 'x': x, 'init': init, 'sub': sub, 'ntrips': ntrips, 'related': rel, 'grp': grp, 'n_cells': np.array(C + 1)}, dep0
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    for k in ('--final', '--city', '--cohorts', '--out'): ap.add_argument(k, required=True)
+    a = ap.parse_args()
+    cell, C = grid(np.load(a.city))
+    with gzip.open(a.cohorts, 'rt') as f:
+        related = {r['person_id']: r['charging_cohort'] == 'related' for r in csv.DictReader(f)}
+    load = lambda name: pickle.load(open(f'{a.final}/{name}.pkl', 'rb'))
+    cold = load('cold'); pids = sorted(cold)
+    n = len(pids)
+    out, dep0 = inputs(cold, pids, cell, C, related)
+    tok, ntrips = out['tok'], out['ntrips']
 
     def labels(snap):
         mode = np.full((n, T), -1, np.int8); shift = np.full((n, T), -1, np.int8); bad = 0
