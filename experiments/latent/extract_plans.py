@@ -21,6 +21,8 @@ MAIN = ['car', 'taxi', 'FHV', 'pt', 'ride', 'bike', 'cb']
 
 
 def stream(path):
+    if path.endswith('.gz'):
+        import gzip; return gzip.open(path, 'rb')
     import zstandard
     return io.BufferedReader(zstandard.ZstdDecompressor().stream_reader(open(path, 'rb')))
 
