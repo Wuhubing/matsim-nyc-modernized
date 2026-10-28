@@ -9,9 +9,11 @@ parent in the snapshot of k (both from before the parent could be re-scored in k
 of iteration k-1 (what the router used). Arrays, padded with -1 / 0:
 - plan tokens for the new and the parent plan: mode, departure hour, origin cell, destination cell,
   origin and destination activity type (int, [n, T, 6]); departure in hours (float, [n, T]);
-- agent tokens from the parent plan's activities: type, cell, end hour (int, [n, A, 3]);
-- agent summary: subpopulation one-hot, trips, plans in memory, best/mean stored score, main-mode shares of
-  the stored plans (float);
+- agent memory, only what the plan tokens do not carry: one token per stored plan other than the new one
+  (float, [n, M, 17]): main-mode shares of its trips, score minus parent score, age in iterations / 10, is the
+  parent, which strategy made it (initial, mode, time, route), mean absolute departure shift from the parent in
+  hours and whether it has the parent's number of trips (shift 0 otherwise);
+- agent summary: subpopulation one-hot, trips, plans in memory, best and mean stored score minus parent score;
 - parent score, label, innovation type (0 mode, 1 time, 2 route), city state index, related cohort flag,
   validation flag (crc32(person) % 10 == 0), seed."""
 import argparse, csv, gzip, math, pickle, zlib
@@ -20,7 +22,8 @@ import numpy as np
 MODES = ['car', 'taxi', 'FHV', 'pt', 'ride', 'bike', 'cb', 'walk']
 ACTS = ['Home', 'Work', 'Secondary', 'School', 'University']
 SUBPOPS = ['man', 'nonman', 'outside']
-T, A = 10, 11
+T, M = 10, 5
+MUTATORS = ['initialPlan', 'SubtourModeChoice', 'TimeAllocation', 'ReRoute']
 
 
 def kind(desc):
@@ -31,6 +34,29 @@ def kind(desc):
 
 
 def act_id(t): return ACTS.index(t) if t in ACTS else len(ACTS)
+
+
+def mutator_id(m):
+    return next((i for i, x in enumerate(MUTATORS) if m and x in m), 0)   # SubtourModeChoice_ReRoute is a mode change
+
+
+def memory(stored, par, k):
+    mem = np.zeros((M, 9 + 4 + 4), np.float32)
+    pdep = np.array([tr[1] for tr in par['trips']], float)
+    for i, pl in enumerate(sorted(stored, key=lambda pl: -pl['score'])[:M]):
+        mix = np.zeros(len(MODES), np.float32)
+        for tr in pl['trips']: mix[MODES.index(tr[0])] += 1
+        mem[i, :8] = mix / max(mix.sum(), 1)
+        mem[i, 8] = pl['score'] - par['score']
+        mem[i, 9] = (k - pl['created']) / 10
+        mem[i, 10] = pl is par
+        mem[i, 11 + mutator_id(pl['mutator'])] = 1
+        same = len(pl['trips']) == len(pdep)
+        if same and len(pdep):
+            d = np.abs(np.array([tr[1] for tr in pl['trips']], float) - pdep) / 3600
+            mem[i, 15] = float(np.nanmean(d)) if np.isfinite(d).any() else 0
+        mem[i, 16] = same
+    return mem
 
 
 def main():
@@ -59,7 +85,7 @@ def main():
             dep[j] = 0 if math.isnan(d) else d / 3600
         return tok, dep
 
-    out = {k: [] for k in ('new', 'new_dep', 'par', 'par_dep', 'act', 'summ', 'par_score', 'label', 'kind',
+    out = {k: [] for k in ('new', 'new_dep', 'par', 'par_dep', 'mem', 'summ', 'par_score', 'label', 'kind',
                             'state', 'related', 'val', 'seed')}
     for seed, run in (r.split('=', 1) for r in a.runs):
         log = f'{run}/replanning-log'
@@ -83,20 +109,12 @@ def main():
                     par = next((pl for pl in ag['plans'] if pl['id'] == r['parent_plan_id'] and pl['created'] != k), None)
                     if new is None or par is None or math.isnan(par['score']): continue
                     stored = [pl for pl in ag['plans'] if pl is not new and not math.isnan(pl['score'])]
-                    mix = np.zeros(len(MODES), np.float32)
-                    for pl in stored:
-                        for tr in pl['trips']: mix[MODES.index(tr[0])] += 1
-                    mix /= max(mix.sum(), 1)
-                    act = np.full((A, 3), -1, np.int16)
-                    trs = par['trips'][:A - 1]
-                    for j, tr in enumerate(trs):
-                        act[j] = (act_id(tr[6]), cell(tr[2], tr[3]), 0 if math.isnan(tr[1]) else min(int(tr[1] // 3600), 29))
-                    if trs: act[len(trs)] = (act_id(trs[-1][7]), cell(trs[-1][4], trs[-1][5]), 30)
                     sub = np.eye(len(SUBPOPS), dtype=np.float32)[SUBPOPS.index(ag['subpop'])] if ag['subpop'] in SUBPOPS else np.zeros(3, np.float32)
                     scores = [pl['score'] for pl in stored]
-                    summ = np.concatenate([sub, [len(par['trips']), len(stored), max(scores), float(np.mean(scores))], mix]).astype(np.float32)
+                    summ = np.concatenate([sub, [len(par['trips']), len(stored), max(scores) - par['score'],
+                                                 float(np.mean(scores)) - par['score']]]).astype(np.float32)
                     nt, nd = plan_tokens(new); pt, pd = plan_tokens(par)
-                    for key, v in (('new', nt), ('new_dep', nd), ('par', pt), ('par_dep', pd), ('act', act), ('summ', summ),
+                    for key, v in (('new', nt), ('new_dep', nd), ('par', pt), ('par_dep', pd), ('mem', memory(stored, par, k)), ('summ', summ),
                                    ('par_score', par['score']), ('label', float(r['executed_score']) - par['score']),
                                    ('kind', kd), ('state', st), ('related', related.get(p, False)),
                                    ('val', zlib.crc32(p.encode()) % 10 == 0), ('seed', int(seed))):

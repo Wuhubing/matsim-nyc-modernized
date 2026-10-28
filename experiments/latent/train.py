@@ -1,19 +1,22 @@
 #!/usr/bin/env python3
 """City latent + agent latent network and its ablations (docs/latent-choice-plan.md, step 5).
 
-  train.py SAMPLES.npz CITY.npz --out RESULTS.json [--versions full,no_city,no_agent] [--runs 2]
+  train.py SAMPLES.npz CITY.npz --transit T1.npz T2.npz --out RESULTS.json [--versions full,no_city,no_agent]
+           [--runs 2] [--clear 1.0]
 
 Task: P(executed score of the innovated plan > stored score of its parent), from information available before
 iteration k. Train on seed 4711 (val = crc32(person) % 10 == 0), test on seed 4712 (same sampled agents).
-- city encoder: per state, cell and hour (log entries, congestion, observed) -> linear -> two rounds of mean
+- city encoder: per state, cell and hour road (log entries, congestion, observed; iteration k-1) and transit
+  (log pt legs, mean wait, missed share, observed; iteration k-10, transit_tensor.py) -> linear -> two rounds of mean
   message passing over the cell 8-neighbourhood -> E[state, cell, hour]; 'no_city' replaces E by a learned table
   that does not depend on the state;
 - plan encoder: per trip mode, departure hour, origin/destination cell and activity, E at origin and destination
   -> 2-layer Transformer -> mean -> h; shared by the new and the parent plan;
-- agent encoder: activities of the parent plan (type, cell, end hour) -> 2-layer Transformer -> mean, with the
+- agent encoder: only what the plans do not carry, one token per stored plan (mode shares, score relative to the
+  parent, age, strategy that made it, departure shift; build_samples.py) -> 2-layer Transformer -> mean, with the
   memory summary -> z; 'no_agent' keeps only subpopulation and number of trips;
 - head: MLP on [z, h_new, h_par, z*h_new, z*h_par, h_new - h_par, parent score].
-Reference: -parent score. Metric: AUC overall and per innovation type (mode, time, route) and cohort."""
+--clear drops time and route samples with |label| <= clear (near ties) from all splits. Reference: -parent score. Metric: AUC overall and per innovation type (mode, time, route) and cohort."""
 import argparse, json, time
 import numpy as np
 import torch
@@ -42,20 +45,20 @@ class Net(nn.Module):
         self.version = version
         self.cell = nn.Embedding(n_cells + 1, 16)          # +1: padding index n_cells
         self.hour = nn.Embedding(32, 16); self.mode = nn.Embedding(9, 16); self.act = nn.Embedding(7, 8)
-        self.city_in = nn.Linear(3 + 16, 32); self.city_mp = nn.ModuleList([nn.Linear(64, 32) for _ in range(2)])
+        self.city_in = nn.Linear(7 + 16, 32); self.city_mp = nn.ModuleList([nn.Linear(64, 32) for _ in range(2)])
         self.city_const = nn.Parameter(torch.zeros(n_cells, 30, 32))
         A = torch.zeros(n_cells - 1, n_cells - 1)
         if len(adj): A[adj[:, 0], adj[:, 1]] = 1
         self.register_buffer('A', A / A.sum(1, keepdim=True).clamp(min=1))
         layer = lambda: nn.TransformerEncoder(nn.TransformerEncoderLayer(D, 4, 128, 0.1, batch_first=True), 2)
         self.plan_in = nn.Linear(16 * 4 + 8 * 2 + 1 + 64, D); self.plan_enc = layer()
-        self.act_in = nn.Linear(8 + 16 + 16, D); self.act_enc = layer()
+        self.mem_in = nn.Linear(17, D); self.mem_enc = layer()
         self.agent_out = nn.Sequential(nn.Linear(D + summ_dim, D), nn.ReLU(), nn.Linear(D, D))
         self.agent_small = nn.Sequential(nn.Linear(4, D), nn.ReLU(), nn.Linear(D, D))
         self.head = nn.Sequential(nn.Linear(6 * D + 1, 128), nn.ReLU(), nn.Dropout(0.1), nn.Linear(128, 1))
 
     def city(self, X):
-        """X [S, C-1, 30, 3] -> E [S, C, 30, 32] with a zero row for the 'other' cell."""
+        """X [S, C-1, 30, 7] -> E [S, C, 30, 32] with a zero row for the 'other' cell."""
         if self.version == 'no_city':
             E = self.city_const.unsqueeze(0).expand(X.shape[0], -1, -1, -1)
             return torch.cat([E[:, :-1], torch.zeros_like(E[:, :1])], 1)
@@ -78,26 +81,25 @@ class Net(nn.Module):
         m = (~pad).float().unsqueeze(-1)
         return (x * m).sum(1) / m.sum(1).clamp(min=1)
 
-    def agent(self, act, summ):
+    def agent(self, mem, summ):
         if self.version == 'no_agent':
             return self.agent_small(summ[:, :4])
-        pad = act[..., 0] < 0
+        pad = mem.abs().sum(-1) == 0
         pad[:, 0] = False
-        t = act.clamp(min=0).long()
-        x = self.act_enc(self.act_in(torch.cat([self.act(t[..., 0]), self.cell(t[..., 1]), self.hour(t[..., 2])], -1)),
-                         src_key_padding_mask=pad)
+        x = self.mem_enc(self.mem_in(mem), src_key_padding_mask=pad)
         m = (~pad).float().unsqueeze(-1)
         return self.agent_out(torch.cat([(x * m).sum(1) / m.sum(1).clamp(min=1), summ], -1))
 
     def forward(self, X, b):
         E = self.city(X)
         hn = self.plan(b['new'], b['new_dep'], E, b['state']); hp = self.plan(b['par'], b['par_dep'], E, b['state'])
-        z = self.agent(b['act'], b['summ'])
+        z = self.agent(b['mem'], b['summ'])
         return self.head(torch.cat([z, hn, hp, z * hn, z * hp, hn - hp, b['par_score'].unsqueeze(-1)], -1)).squeeze(-1)
 
 
 def main():
-    ap = argparse.ArgumentParser(); ap.add_argument('samples'); ap.add_argument('city'); ap.add_argument('--out', required=True)
+    ap = argparse.ArgumentParser(); ap.add_argument('samples'); ap.add_argument('city'); ap.add_argument('--transit', nargs='+', required=True)
+    ap.add_argument('--out', required=True); ap.add_argument('--clear', type=float, default=0.0)
     ap.add_argument('--versions', default='full,no_city,no_agent'); ap.add_argument('--runs', type=int, default=2)
     ap.add_argument('--epochs', type=int, default=20); ap.add_argument('--patience', type=int, default=3)
     a = ap.parse_args()
@@ -106,13 +108,26 @@ def main():
     n_cells = int(S['n_cells'])                                      # includes the 'other' cell
     X = torch.tensor(C['X'], device=dev)
     lx = X.clone(); lx[..., 0] = lx[..., 0] / 5; lx[..., 1] = lx[..., 1].clamp(max=5) - 1; X = lx
+    tstate = {}
+    for path in a.transit:
+        Tz = np.load(path)
+        tstate.update({name: Tz['T'][i] for i, name in enumerate(Tz['states'])})
+    TX = []
+    for name in C['states']:                                         # road state SEED-(k-1) -> transit SEED-(k-10)
+        sd, j = name.split('-'); TX.append(tstate[f'{sd}-{int(j) + 1 - 10}'])
+    TX = torch.tensor(np.stack(TX), device=dev)
+    TX[..., 0] = TX[..., 0] / 5; TX[..., 1] = TX[..., 1] / 10
+    X = torch.cat([X, TX], -1)
     seed, val = S['seed'], S['val'].astype(bool)
-    tr, va, te = (seed == 4711) & ~val, (seed == 4711) & val, seed == 4712
+    keep = (S['kind'] == 0) | (np.abs(S['label']) > a.clear)
+    tr, va, te = (seed == 4711) & ~val & keep, (seed == 4711) & val & keep, (seed == 4712) & keep
     ps = S['par_score'].astype(np.float32); mu, sd = ps[tr].mean(), ps[tr].std() + 1e-6
     summ = S['summ'].astype(np.float32).copy()
     smu, ssd = summ[tr].mean(0), summ[tr].std(0) + 1e-6
-    summ[:, 3:7] = (summ[:, 3:7] - smu[3:7]) / ssd[3:7]               # trips, plans, best, mean score
-    arrays = {'new': S['new'], 'new_dep': S['new_dep'], 'par': S['par'], 'par_dep': S['par_dep'], 'act': S['act'],
+    summ[:, 3:7] = (summ[:, 3:7] - smu[3:7]) / ssd[3:7]               # trips, plans, best and mean score vs parent
+    mem = S['mem'].astype(np.float32).copy()
+    mem[..., 8] = np.clip(mem[..., 8] / 10, -10, 10)                 # score vs parent
+    arrays = {'new': S['new'], 'new_dep': S['new_dep'], 'par': S['par'], 'par_dep': S['par_dep'], 'mem': mem,
               'summ': summ, 'par_score': (ps - mu) / sd, 'state': S['state']}
     y = (S['label'] > 0).astype(np.float32); kind = S['kind']; rel = S['related'].astype(bool)
     print(f'device {dev}; train {tr.sum()}, val {va.sum()}, test {te.sum()}; cells {n_cells}', flush=True)
@@ -122,7 +137,7 @@ def main():
         for i in range(0, len(idx), bs):
             j = idx[i:i + bs]
             b = {k: torch.as_tensor(v[j], device=dev) for k, v in arrays.items()}
-            b['new'] = b['new'].long(); b['par'] = b['par'].long(); b['act'] = b['act'].long(); b['state'] = b['state'].long()
+            b['new'] = b['new'].long(); b['par'] = b['par'].long(); b['state'] = b['state'].long()
             yield b, j
 
     def predict(model, idx):
@@ -141,7 +156,8 @@ def main():
         return r
 
     te_idx = np.nonzero(te)[0]
-    results = {'n': {'train': int(tr.sum()), 'val': int(va.sum()), 'test': int(te.sum())},
+    results = {'clear': a.clear, 'n': {'train': int(tr.sum()), 'val': int(va.sum()), 'test': int(te.sum()),
+                                       **{f'test_{name}': int((kind[te_idx] == k).sum()) for k, name in enumerate(KINDS)}},
                'test_better_share': {name: float(y[te_idx][kind[te_idx] == k].mean()) for k, name in enumerate(KINDS)},
                'reference_parent_score': report(-arrays['par_score'][te_idx], te_idx), 'versions': {}}
     print('reference', json.dumps(results['reference_parent_score']), flush=True)
