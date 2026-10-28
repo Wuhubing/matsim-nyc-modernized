@@ -20,7 +20,9 @@ Persons: train crc32 % 10 >= 2, validation == 0, never trained == 1 ('unseen'). 
 
 Evaluation (same code for everything, so every number uses one definition): per-trip accuracy and log loss of the
 mode; per origin cell (>= 50 labelled trips) root mean square difference of the expected car and pt share from the
-labels' shares, all persons and the related cohort; departure shift within one quarter hour. References evaluated
+labels' shares, all persons and the related cohort, with the number of cells; departure shift: share of trips whose
+predicted shift bin (arg max) is within one quarter hour of the label (references without a shift prediction
+predict no shift; the cross-seed yardstick uses seed 4711's shifts). References evaluated
 the same way: seed 4711's labels as a prediction (the cross-seed yardstick U), the initial plan's mode, and lookups
 of seed 4711's training persons by (subpopulation, origin and destination activity) and additionally distance band;
 plus any --extern probabilities ([n, T, 8], e.g. gradient boosting)."""
@@ -79,8 +81,9 @@ class Net(nn.Module):
         return out[..., :M], out[..., M:]
 
 
-def evaluate(P, label, D, persons):
-    """P [n, T, M] probabilities; label [n, T] modes (-1 unusable); D sample arrays; persons bool [n]."""
+def evaluate(P, label, D, persons, shift_pred=None, shift_label=None):
+    """P [n, T, M] probabilities; label [n, T] modes (-1 unusable); D sample arrays; persons bool [n];
+    shift_pred [n, T] predicted shift bins (default: no shift, bin 8), shift_label [n, T] (-1 unusable)."""
     valid = (label >= 0) & persons[:, None]
     lab = label[valid].astype(int); p = np.clip(P[valid], 1e-6, 1)
     r = {'trips': int(valid.sum()), 'acc': float((p.argmax(1) == lab).mean()), 'logloss': float(-np.log(p[np.arange(len(lab)), lab]).mean())}
@@ -90,7 +93,12 @@ def evaluate(P, label, D, persons):
         for k, name in ((CAR, 'car'), (PT, 'pt')):
             pred = np.bincount(cells, P[v][:, k], minlength=len(n)); true = np.bincount(cells, label[v] == k, minlength=len(n))
             ok = n >= 50
-            r[f'cell_rmse_{name}_{g}'] = float(np.sqrt(np.mean((pred[ok] / n[ok] - true[ok] / n[ok]) ** 2)))
+            r[f'cell_rmse_{name}_{g}'] = float(np.sqrt(np.mean((pred[ok] / n[ok] - true[ok] / n[ok]) ** 2))) if ok.any() else float('nan')
+        r[f'cells_{g}'] = int((n >= 50).sum())
+    if shift_label is not None:
+        sp = np.full(label.shape, 8) if shift_pred is None else shift_pred
+        vs = (shift_label >= 0) & persons[:, None]
+        r['shift_within_15min'] = float((np.abs(sp[vs].astype(int) - shift_label[vs]) <= 1).mean())
     return r
 
 
@@ -118,16 +126,16 @@ def main():
     soft = torch.as_tensor(D['soft_4711'], device=dev)
     results = {'references': {}, 'versions': {}}
 
-    def score(name, P, store):
+    def score(name, P, store, shift_pred=None):
         r = {}
         for s in (4712, 4713):
-            for g, pm in groups.items(): r[f'{s}_{g}'] = evaluate(P, D[f'mode_{s}'], D, pm)
+            for g, pm in groups.items(): r[f'{s}_{g}'] = evaluate(P, D[f'mode_{s}'], D, pm, shift_pred, D[f'shift_{s}'])
         store[name] = r
-        print(name, json.dumps({k: {m: round(v, 4) for m, v in x.items() if m in ('acc', 'logloss', 'cell_rmse_car_all', 'cell_rmse_pt_all', 'cell_rmse_car_related')}
+        print(name, json.dumps({k: {m: round(v, 4) for m, v in x.items() if m in ('acc', 'logloss', 'cell_rmse_car_all', 'cell_rmse_pt_all', 'cell_rmse_car_related', 'cells_all', 'shift_within_15min')}
                                 for k, x in r.items() if k.endswith('_all') or k.endswith('_unseen')}), flush=True)
 
     onehot = lambda L: np.eye(M, dtype=np.float32)[np.clip(L, 0, M - 1)] * (L >= 0)[..., None] + (L < 0)[..., None] / M
-    score('seed 4711 labels (cross-seed U)', onehot(D['mode_4711']), results['references'])
+    score('seed 4711 labels (cross-seed U)', onehot(D['mode_4711']), results['references'], np.where(D['shift_4711'] >= 0, D['shift_4711'], 8))
     score('initial plan mode', onehot(D['init']), results['references'])
     valid = D['tok'][..., 0] >= 0
     dband = np.minimum(np.floor(np.log2(np.maximum(np.expm1(D['x'][..., 1]), 0.25) / 0.25)).astype(int), 8)   # as ceiling.py
@@ -146,15 +154,15 @@ def main():
     road = torch.tensor(Z['road']); transit = torch.tensor(Z['transit']); adj = torch.tensor(C['adj'], dtype=torch.long)
     ce = nn.CrossEntropyLoss(ignore_index=-1)
 
-    def predict(model, idx):
-        model.eval(); outp = np.zeros((len(idx), D['tok'].shape[1], M), np.float32)
+    def predict(model, idx, with_shift=False):
+        model.eval(); outp = np.zeros((len(idx), D['tok'].shape[1], M), np.float32); sh = np.zeros((len(idx), D['tok'].shape[1], B), np.float32)
         with torch.no_grad():
             E = model.city()
             for i in range(0, len(idx), 4096):
                 j = idx[i:i + 4096]
-                lm, _ = model(T['tok'][j], T['x'][j], T['init'][j], T['sub'][j], E)
-                outp[i:i + len(j)] = torch.softmax(lm, -1).cpu().numpy()
-        return outp
+                lm, ls = model(T['tok'][j], T['x'][j], T['init'][j], T['sub'][j], E)
+                outp[i:i + len(j)] = torch.softmax(lm, -1).cpu().numpy(); sh[i:i + len(j)] = torch.softmax(ls, -1).cpu().numpy()
+        return (outp, sh) if with_shift else outp
 
     def val_loss(model):
         P = predict(model, va); L = D['mode_4711'][va]; v = L >= 0
@@ -189,10 +197,10 @@ def main():
                     bad += 1
                     if bad >= a.patience: break
             model.load_state_dict(best_state)
-            preds.append(predict(model, np.arange(n)))
+            preds.append(predict(model, np.arange(n), with_shift=True))
             torch.save(model.state_dict(), out / f'{version}-{run}.pt')
-        score(f'{version} (ensemble of {a.runs})', np.mean(preds, 0), results['versions'])
-        score(f'{version} (run 0)', preds[0], results['versions'])
+        score(f'{version} (ensemble of {a.runs})', np.mean([p for p, _ in preds], 0), results['versions'], np.mean([q for _, q in preds], 0).argmax(-1))
+        score(f'{version} (run 0)', preds[0][0], results['versions'], preds[0][1].argmax(-1))
         with open(out / 'results.json', 'w') as f: json.dump(results, f, indent=1)
     print('done', flush=True)
 
