@@ -8,10 +8,13 @@ LABEL is SEED (baseline; plans DIR/sSEED-itK.pkl, city state SEED-(k-1)) or SCHE
 DIR/SCHEMA-SEED-itK.pkl, no city state: index 0, unused by the structure-only versions).
 
 A sample is an agent who innovated in iteration k (replanning-log/agents-k: innovative strategy,
-plan_created == k, a parent plan). Runs without a replanning log (the policy runs): the new plan is the
-selected plan created in k, its parent the plan with the same planId created earlier, the type from the new plan's
-planMutator, and the executed score from research/persons-k (equal to the log's executed score to < 3e-5 on the
-baseline). Label: executed score of the new plan in k minus the stored score of the
+plan_created == k, a parent plan). Runs without a replanning log (the policy runs, whose plans also lack
+iterationCreated / planId / planMutator): a new plan is a copy of its parent and still carries the parent's
+score in the snapshot, so the selected plan with exactly one other plan of the same score is a new plan and that
+plan its parent; the type is a mode change if the trips' main modes differ, a time change if a departure moved by
+more than 1 s, else a re-route; the executed score is research/persons-k (equal to the log's to < 3e-5). Checked
+against the log on baseline seed 4711 iteration 40: 92% of the 12,498 innovations found, 592 false finds (5%),
+parent always right, type right for 95% (544 mode changes that kept every main mode count as re-routes). Label: executed score of the new plan in k minus the stored score of the
 parent in the snapshot of k (both from before the parent could be re-scored in k). City state: road congestion
 of iteration k-1 (what the router used). Arrays, padded with -1 / 0:
 - plan tokens for the new and the parent plan: mode, departure hour, origin cell, destination cell,
@@ -155,9 +158,17 @@ def main():
                     executed = {r['person_id']: float(r['score']) for r in csv.DictReader(f) if r['score']}
                 rows = []
                 for p, ag in agents.items():
-                    new = next((pl for pl in ag['plans'] if pl['created'] == k and pl['selected']), None)
-                    if new is None or p not in executed or kind(new['mutator']) < 0: continue
-                    rows.append((p, kind(new['mutator']), new['id'], executed[p]))
+                    sel = next((pl for pl in ag['plans'] if pl['selected']), None)
+                    if sel is None or p not in executed or math.isnan(sel['score']): continue
+                    pars = [pl for pl in ag['plans'] if pl is not sel and pl['score'] == sel['score']]
+                    if len(pars) != 1: continue
+                    sel['created'], pars[0]['created'] = k, -2               # mark the pair for the lookup below
+                    sel['id'] = pars[0]['id'] = f'pair-{k}'
+                    if [t[0] for t in sel['trips']] != [t[0] for t in pars[0]['trips']]: kd = 0
+                    elif any(abs(x[1] - y[1]) > 1 for x, y in zip(sel['trips'], pars[0]['trips'])
+                             if not (math.isnan(x[1]) or math.isnan(y[1]))): kd = 1
+                    else: kd = 2
+                    rows.append((p, kd, f'pair-{k}', executed[p]))
             for p, kd, parent_id, executed_score in rows:
                     ag = agents.get(p)
                     if ag is None: continue
