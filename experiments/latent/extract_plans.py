@@ -1,15 +1,16 @@
 #!/usr/bin/env python3
 """Per-plan trip sequences of a sample of agents in one plan snapshot (docs/latent-choice-plan.md, step 2).
 
-  extract_plans.py SNAPSHOT.plans.xml.zst --out FILE.pkl [--sample-mod 1000 --sample-keep 128]
+  extract_plans.py SNAPSHOT.plans.xml.zst --out FILE.pkl [--sample-mod 1000 --sample-keep 128] [--links links.pkl]
 
 Agents are sampled by crc32(person id) % mod < keep, so every seed and snapshot keeps the same agents.
 Per agent: subpopulation and every stored plan with planId, score (nan if not executed yet), selected,
 iterationCreated, planMutator, and its trips. A trip runs between two non-interaction activities:
 (main mode, departure seconds, origin x, y, destination x, y, origin activity type, destination activity type,
-planned travel seconds, route metres, legs). Planned travel time and distance are the sums over the trip's legs
+planned travel seconds, route metres, legs[, toll links crossed]). Planned travel time and distance are the sums over the trip's legs
 of trav_time and route distance as the router wrote them (nan when missing); a re-routed plan differs from its
-parent only here.
+parent only here. With --links (policy_extract.py links) a twelfth field counts the tolled links on the
+trip's car routes (the same links in both schemas; the price is applied later).
 Main mode as in experiments/l2seg/plans_stats.py: first of MAIN among the trip's legs, else walk.
 Departure: end_time of the origin activity, else dep_time of the trip's first leg."""
 import argparse, io, math, pickle, zlib
@@ -32,8 +33,8 @@ def seconds(s):
 def is_act(x): return x.tag in ('act', 'activity')
 
 
-def trips(plan):
-    out, origin, legs, first_dep, tt, dist = [], None, [], math.nan, 0.0, 0.0
+def trips(plan, tolled=None):
+    out, origin, legs, first_dep, tt, dist, toll = [], None, [], math.nan, 0.0, 0.0, 0
     for x in plan:
         if is_act(x):
             if x.get('type', '').endswith('interaction'): continue
@@ -42,14 +43,17 @@ def trips(plan):
                 dep = seconds(origin.get('end_time'))
                 if math.isnan(dep): dep = first_dep
                 out.append((mode, dep, float(origin.get('x')), float(origin.get('y')),
-                            float(x.get('x')), float(x.get('y')), origin.get('type'), x.get('type'), tt, dist, len(legs)))
-            origin, legs, first_dep, tt, dist = x, [], math.nan, 0.0, 0.0
+                            float(x.get('x')), float(x.get('y')), origin.get('type'), x.get('type'), tt, dist, len(legs))
+                           + ((toll,) if tolled is not None else ()))
+            origin, legs, first_dep, tt, dist, toll = x, [], math.nan, 0.0, 0.0, 0
         elif x.tag == 'leg':
             if not legs: first_dep = seconds(x.get('dep_time'))
             legs.append(x.get('mode'))
             tt += seconds(x.get('trav_time'))
             r = x.find('route')
             dist += float(r.get('distance')) if r is not None and r.get('distance') not in (None, 'NaN') else math.nan
+            if tolled is not None and x.get('mode') == 'car' and r is not None:
+                toll += sum(lid in tolled for lid in (r.text or '').split())
     return out
 
 
@@ -61,7 +65,11 @@ def attr(el, name):
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument('snapshot'); ap.add_argument('--out', required=True)
     ap.add_argument('--sample-mod', type=int, default=1000); ap.add_argument('--sample-keep', type=int, default=128)
+    ap.add_argument('--links')
     a = ap.parse_args()
+    tolled = None
+    if a.links:
+        with open(a.links, 'rb') as f: tolled = {k for k, v in pickle.load(f).items() if v[2]}
     agents = {}
     with stream(a.snapshot) as f:
         it = ET.iterparse(f, events=('start', 'end')); _, root = next(it)
@@ -75,7 +83,7 @@ def main():
                     plans.append({'id': attr(p, 'planId'), 'score': float(s) if s is not None else math.nan,
                                   'selected': p.get('selected') == 'yes',
                                   'created': int(attr(p, 'iterationCreated') or -1),
-                                  'mutator': attr(p, 'planMutator'), 'trips': trips(p)})
+                                  'mutator': attr(p, 'planMutator'), 'trips': trips(p, tolled)})
                 agents[pid] = {'subpop': attr(el, 'subpopulation'), 'plans': plans}
             el.clear(); root.clear()
     Path(a.out).parent.mkdir(parents=True, exist_ok=True)
