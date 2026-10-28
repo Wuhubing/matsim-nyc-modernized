@@ -6,7 +6,10 @@
 Agents are sampled by crc32(person id) % mod < keep, so every seed and snapshot keeps the same agents.
 Per agent: subpopulation and every stored plan with planId, score (nan if not executed yet), selected,
 iterationCreated, planMutator, and its trips. A trip runs between two non-interaction activities:
-(main mode, departure seconds, origin x, y, destination x, y, origin activity type, destination activity type).
+(main mode, departure seconds, origin x, y, destination x, y, origin activity type, destination activity type,
+planned travel seconds, route metres, legs). Planned travel time and distance are the sums over the trip's legs
+of trav_time and route distance as the router wrote them (nan when missing); a re-routed plan differs from its
+parent only here.
 Main mode as in experiments/l2seg/plans_stats.py: first of MAIN among the trip's legs, else walk.
 Departure: end_time of the origin activity, else dep_time of the trip's first leg."""
 import argparse, io, math, pickle, zlib
@@ -30,7 +33,7 @@ def is_act(x): return x.tag in ('act', 'activity')
 
 
 def trips(plan):
-    out, origin, legs, first_dep = [], None, [], math.nan
+    out, origin, legs, first_dep, tt, dist = [], None, [], math.nan, 0.0, 0.0
     for x in plan:
         if is_act(x):
             if x.get('type', '').endswith('interaction'): continue
@@ -39,11 +42,14 @@ def trips(plan):
                 dep = seconds(origin.get('end_time'))
                 if math.isnan(dep): dep = first_dep
                 out.append((mode, dep, float(origin.get('x')), float(origin.get('y')),
-                            float(x.get('x')), float(x.get('y')), origin.get('type'), x.get('type')))
-            origin, legs, first_dep = x, [], math.nan
+                            float(x.get('x')), float(x.get('y')), origin.get('type'), x.get('type'), tt, dist, len(legs)))
+            origin, legs, first_dep, tt, dist = x, [], math.nan, 0.0, 0.0
         elif x.tag == 'leg':
             if not legs: first_dep = seconds(x.get('dep_time'))
             legs.append(x.get('mode'))
+            tt += seconds(x.get('trav_time'))
+            r = x.find('route')
+            dist += float(r.get('distance')) if r is not None and r.get('distance') not in (None, 'NaN') else math.nan
     return out
 
 

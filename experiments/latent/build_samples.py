@@ -8,7 +8,8 @@ plan_created == k, a parent plan). Label: executed score of the new plan in k mi
 parent in the snapshot of k (both from before the parent could be re-scored in k). City state: road congestion
 of iteration k-1 (what the router used). Arrays, padded with -1 / 0:
 - plan tokens for the new and the parent plan: mode, departure hour, origin cell, destination cell,
-  origin and destination activity type (int, [n, T, 6]); departure in hours (float, [n, T]);
+  origin and destination activity type (int, [n, T, 6]); departure hours, planned travel hours, route km / 10
+  and legs (float, [n, T, 4], 0 where missing; extract_plans.py);
 - agent memory, only what the plan tokens do not carry: one token per stored plan other than the new one
   (float, [n, M, 17]): main-mode shares of its trips, score minus parent score, age in iterations / 10, is the
   parent, which strategy made it (initial, mode, time, route), mean absolute departure shift from the parent in
@@ -78,14 +79,14 @@ def main():
         related = {r['person_id']: r['charging_cohort'] == 'related' for r in csv.DictReader(f)}
 
     def plan_tokens(plan):
-        tok = np.full((T, 6), -1, np.int16); dep = np.zeros(T, np.float32)
-        for j, (m, d, ox, oy, dx, dy, ot, dt) in enumerate(plan['trips'][:T]):
+        tok = np.full((T, 6), -1, np.int16); x = np.zeros((T, 4), np.float32)
+        for j, (m, d, ox, oy, dx, dy, ot, dt, tt, dist, legs) in enumerate(plan['trips'][:T]):
             h = 0 if math.isnan(d) else min(int(d // 3600), 29)
             tok[j] = (MODES.index(m), h, cell(ox, oy), cell(dx, dy), act_id(ot), act_id(dt))
-            dep[j] = 0 if math.isnan(d) else d / 3600
-        return tok, dep
+            x[j] = [0 if math.isnan(v) else v for v in (d / 3600, tt / 3600, dist / 10000, legs)]
+        return tok, x
 
-    out = {k: [] for k in ('new', 'new_dep', 'par', 'par_dep', 'mem', 'summ', 'par_score', 'label', 'kind',
+    out = {k: [] for k in ('new', 'new_x', 'par', 'par_x', 'mem', 'summ', 'par_score', 'label', 'kind',
                             'state', 'related', 'val', 'seed')}
     for seed, run in (r.split('=', 1) for r in a.runs):
         log = f'{run}/replanning-log'
@@ -114,7 +115,7 @@ def main():
                     summ = np.concatenate([sub, [len(par['trips']), len(stored), max(scores) - par['score'],
                                                  float(np.mean(scores)) - par['score']]]).astype(np.float32)
                     nt, nd = plan_tokens(new); pt, pd = plan_tokens(par)
-                    for key, v in (('new', nt), ('new_dep', nd), ('par', pt), ('par_dep', pd), ('mem', memory(stored, par, k)), ('summ', summ),
+                    for key, v in (('new', nt), ('new_x', nd), ('par', pt), ('par_x', pd), ('mem', memory(stored, par, k)), ('summ', summ),
                                    ('par_score', par['score']), ('label', float(r['executed_score']) - par['score']),
                                    ('kind', kd), ('state', st), ('related', related.get(p, False)),
                                    ('val', zlib.crc32(p.encode()) % 10 == 0), ('seed', int(seed))):
