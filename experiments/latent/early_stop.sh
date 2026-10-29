@@ -7,7 +7,7 @@
 #   toll-net    schema1 from the same network plan
 #   toll-cold   schema1 from the cold plans (control a)
 #   toll-warm   schema1 from the baseline seed-4712 100-iteration output plans (control b)
-# Run on the login node: bash ~/matsim-work/latent/early_stop.sh
+# Baseline first (user, 10-29): bash ~/matsim-work/latent/early_stop.sh base; the toll runs after: ... early_stop.sh toll
 set -euo pipefail
 L=/orcd/pool/007/weibingw/matsim-data/latent; W=/orcd/scratch/orcd/006/weibingw/matsim-work
 STABLE=$W/rq1/baseline-s4712-100it-rq1/simulation/BUILT.output_plans.xml.zst
@@ -17,8 +17,13 @@ submit() {
     --export=ALL,JAVA_HOME=/home/weibingw/tools/jdk-25,SEED=4712,ITERS=30,RESEARCH=1,INNOVATION_UNTIL=19,HEAP=24g,OUT=$W/latent/seed-es-$1-s4712-30it,RUN_ARGS="$2" \
     ~/matsim-work/latent/seedrun.sbatch
 }
+case "${1:-}" in
+base)
 submit base-net  "--scenario baseline --plans $L/seed/net-1.xml.gz"
-submit base-cold "--scenario baseline"
+submit base-cold "--scenario baseline" ;;
+toll)
 submit toll-net  "--scenario schema1 --plans $L/seed/net-1.xml.gz"
 submit toll-cold "--scenario schema1"
-submit toll-warm "--scenario schema1 --plans $STABLE"
+submit toll-warm "--scenario schema1 --plans $STABLE" ;;
+*) echo "usage: early_stop.sh base|toll"; exit 1 ;;
+esac
