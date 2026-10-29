@@ -11,7 +11,10 @@ unfinished legs; distances = |value - stable| (car legs as a share of the stable
 cold baseline) gives the cold trajectory; for each run and distance, 'equivalent cold iteration' is the first cold
 iteration whose 3-iteration moving average is at most the run's iteration-12 distance (3-iteration average 10-12).
 With --final-pkl (extract_plans.py of a run's output plans, sampled persons) and --stable-pkl: per origin cell car and
-pt trip shares of the selected plans, root mean square difference from the stable run's output plans."""
+pt trip shares of the selected plans, root mean square difference from the stable run's output plans.
+--upto N reads iterations 0..N-1 of every run and --window A B averages the distances over iterations A..B (default
+13 and 10 12, the 12-iteration check). --stable-seeds NAME=RUN_DIR (other seeds of the original, iterations 90-99)
+gives the seed difference U: the same distances of their stable state from --stable."""
 import argparse, csv, gzip, json, math, pickle
 from collections import defaultdict
 from pathlib import Path
@@ -59,6 +62,8 @@ def main():
     ap = argparse.ArgumentParser()
     for k in ('--stable', '--cold-traj', '--stable-pkl', '--city', '--out'): ap.add_argument(k, required=True)
     ap.add_argument('--runs', nargs='+', required=True); ap.add_argument('--final-pkl', nargs='*', default=[])
+    ap.add_argument('--upto', type=int, default=13); ap.add_argument('--window', type=int, nargs=2, default=[10, 12])
+    ap.add_argument('--stable-seeds', nargs='*', default=[])
     a = ap.parse_args()
     st = trajectory(a.stable, range(90, 100))
     stable = {k: float(np.mean([v[k] for v in st.values()])) for k in KEYS}
@@ -68,18 +73,22 @@ def main():
     cold = trajectory(a.cold_traj, range(0, 80))
     cd = {k: dist(v) for k, v in cold.items()}
     smooth = {m: {k: float(np.mean([cd[j][m] for j in (k - 1, k, k + 1) if j in cd])) for k in cd} for m in ('share_car', 'share_pt', 'car_related', 'score')}
-    res = {'stable': stable, 'cold_trajectory': {k: {**cold[k], **{f'd_{m}': v for m, v in cd[k].items()}} for k in cd}, 'runs': {}}
+    res = {'stable': stable, 'window': a.window, 'seed_difference': {}, 'cold_trajectory': {k: {**cold[k], **{f'd_{m}': v for m, v in cd[k].items()}} for k in cd}, 'runs': {}}
     for spec in a.runs:
         name, run = spec.split('=', 1)
-        tr = trajectory(run, range(0, 13)); d = {k: dist(v) for k, v in tr.items()}
+        tr = trajectory(run, range(0, a.upto)); d = {k: dist(v) for k, v in tr.items()}
         r = {'per_iteration': {k: {**tr[k], **{f'd_{m}': v for m, v in d[k].items()}} for k in tr}}
-        last = [k for k in (10, 11, 12) if k in d]
+        last = [k for k in range(a.window[0], a.window[1] + 1) if k in d]
         if last:
             at12 = {m: float(np.mean([d[k][m] for k in last])) for m in ('share_car', 'share_pt', 'car_related', 'score', 'unfinished_ratio')}
             r['at_12'] = at12
             r['equivalent_cold_iteration'] = {m: next((k for k in sorted(smooth[m]) if smooth[m][k] <= at12[m]), '>79') for m in ('share_car', 'share_pt', 'car_related', 'score')}
         res['runs'][name] = r
         print(name, json.dumps({k: r.get(k) for k in ('at_12', 'equivalent_cold_iteration')}), flush=True)
+    for spec in a.stable_seeds:
+        name, run = spec.split('=', 1); o = trajectory(run, range(90, 100))
+        res['seed_difference'][name] = dist({k: float(np.mean([v[k] for v in o.values()])) for k in KEYS})
+        print('seed difference', name, json.dumps(res['seed_difference'][name]), flush=True)
     if a.final_pkl:
         city = np.load(a.city); res['cell_rmse'] = {}
         for spec in a.final_pkl:
