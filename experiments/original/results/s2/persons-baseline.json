@@ -1,0 +1,204 @@
+{
+ "pairs": {
+  "4711-4712": {
+   "all": {
+    "car_legs_absdiff_mean": 0.5637630008656541,
+    "car_legs_any_in_both_frac": 0.47092095833301223,
+    "car_legs_any_in_one_only_frac": 0.20220086770904774,
+    "car_legs_diff_gt_0.5_frac": 0.24493129994528656,
+    "n": 389301,
+    "same_choice_99": 0.2286868001880293,
+    "score_absdiff_median": 1.2783924648463199,
+    "score_absdiff_p90": 7.34896651185219
+   },
+   "charging:related": {
+    "car_legs_absdiff_mean": 0.4496893679107639,
+    "car_legs_any_in_both_frac": 0.18615961469070144,
+    "car_legs_any_in_one_only_frac": 0.18726565319025432,
+    "car_legs_diff_gt_0.5_frac": 0.20103230259958269,
+    "n": 127482,
+    "same_choice_99": 0.3524183806341287,
+    "score_absdiff_median": 1.0808570068112715,
+    "score_absdiff_p90": 7.32708727698345
+   },
+   "charging:unrelated": {
+    "car_legs_absdiff_mean": 0.6193064674450669,
+    "car_legs_any_in_both_frac": 0.6095737895263522,
+    "car_legs_any_in_one_only_frac": 0.20947295650812203,
+    "car_legs_diff_gt_0.5_frac": 0.26630611223784373,
+    "n": 261819,
+    "same_choice_99": 0.1684407930669661,
+    "score_absdiff_median": 1.3856657638702785,
+    "score_absdiff_p90": 7.3557282050193535
+   },
+   "subpopulation:man": {
+    "car_legs_absdiff_mean": 0.6167702165625761,
+    "car_legs_any_in_both_frac": 0.17106010219806958,
+    "car_legs_any_in_one_only_frac": 0.2735258334009246,
+    "car_legs_diff_gt_0.5_frac": 0.2869251358585449,
+    "n": 123290,
+    "same_choice_99": 0.08776056452267013,
+    "score_absdiff_median": 1.6785897375149212,
+    "score_absdiff_p90": 7.672504185713128
+   },
+   "subpopulation:nonman": {
+    "car_legs_absdiff_mean": 0.6958796548239135,
+    "car_legs_any_in_both_frac": 0.6555430303972635,
+    "car_legs_any_in_one_only_frac": 0.2184706133872347,
+    "car_legs_diff_gt_0.5_frac": 0.2908390344398663,
+    "n": 205808,
+    "same_choice_99": 0.08748445152763741,
+    "score_absdiff_median": 1.7214744003930695,
+    "score_absdiff_p90": 7.9265107925058835
+   },
+   "subpopulation:outside": {
+    "car_legs_absdiff_mean": 0.003559623274587645,
+    "car_legs_any_in_both_frac": 0.4538644253608624,
+    "car_legs_any_in_one_only_frac": 0.0005149245054233178,
+    "car_legs_diff_gt_0.5_frac": 0.0019932561500257463,
+    "n": 60203,
+    "same_choice_99": 1.0,
+    "score_absdiff_median": 0.1293991284763507,
+    "score_absdiff_p90": 1.7455284646103058
+   }
+  },
+  "4711-4713": {
+   "all": {
+    "car_legs_absdiff_mean": 0.5695723874328604,
+    "car_legs_any_in_both_frac": 0.46986521997117914,
+    "car_legs_any_in_one_only_frac": 0.20384227114751824,
+    "car_legs_diff_gt_0.5_frac": 0.247397258162707,
+    "n": 389301,
+    "same_choice_99": 0.2270325532171764,
+    "score_absdiff_median": 1.298142126342536,
+    "score_absdiff_p90": 7.4110438544244275
+   },
+   "charging:related": {
+    "car_legs_absdiff_mean": 0.4533432170816273,
+    "car_legs_any_in_both_frac": 0.1863635650523211,
+    "car_legs_any_in_one_only_frac": 0.18772061938155976,
+    "car_legs_diff_gt_0.5_frac": 0.20224816052462308,
+    "n": 127482,
+    "same_choice_99": 0.3501278611882462,
+    "score_absdiff_median": 1.0941327561261964,
+    "score_absdiff_p90": 7.415725273098072
+   },
+   "charging:unrelated": {
+    "car_legs_absdiff_mean": 0.6261654043442225,
+    "car_legs_any_in_both_frac": 0.6079046975200425,
+    "car_legs_any_in_one_only_frac": 0.2116920467956871,
+    "car_legs_diff_gt_0.5_frac": 0.26938075540736156,
+    "n": 261819,
+    "same_choice_99": 0.16709635282389743,
+    "score_absdiff_median": 1.4097225805048386,
+    "score_absdiff_p90": 7.4097359756648995
+   },
+   "subpopulation:man": {
+    "car_legs_absdiff_mean": 0.6199635006894314,
+    "car_legs_any_in_both_frac": 0.17128720901938518,
+    "car_legs_any_in_one_only_frac": 0.27369616351691134,
+    "car_legs_diff_gt_0.5_frac": 0.2882310000811096,
+    "n": 123290,
+    "same_choice_99": 0.08466217860329305,
+    "score_absdiff_median": 1.6982645533735337,
+    "score_absdiff_p90": 7.712384843891812
+   },
+   "subpopulation:nonman": {
+    "car_legs_absdiff_mean": 0.7050226424628779,
+    "car_legs_any_in_both_frac": 0.6534585633211537,
+    "car_legs_any_in_one_only_frac": 0.2214393998289668,
+    "car_legs_diff_gt_0.5_frac": 0.2948233304827801,
+    "n": 205808,
+    "same_choice_99": 0.08621142035295032,
+    "score_absdiff_median": 1.7699841022524323,
+    "score_absdiff_p90": 8.003933077950366
+   },
+   "subpopulation:outside": {
+    "car_legs_absdiff_mean": 0.0033303988173346843,
+    "car_legs_any_in_both_frac": 0.4536983206816936,
+    "car_legs_any_in_one_only_frac": 0.0006311977808414863,
+    "car_legs_diff_gt_0.5_frac": 0.0016444363237712407,
+    "n": 60203,
+    "same_choice_99": 1.0,
+    "score_absdiff_median": 0.12953023773140515,
+    "score_absdiff_p90": 1.695422409563798
+   }
+  },
+  "4712-4713": {
+   "all": {
+    "car_legs_absdiff_mean": 0.5645436307638563,
+    "car_legs_any_in_both_frac": 0.47088242773586503,
+    "car_legs_any_in_one_only_frac": 0.20188748551891725,
+    "car_legs_diff_gt_0.5_frac": 0.2452780753196113,
+    "n": 389301,
+    "same_choice_99": 0.2288537661090005,
+    "score_absdiff_median": 1.2793446459802453,
+    "score_absdiff_p90": 7.350685520688803
+   },
+   "charging:related": {
+    "car_legs_absdiff_mean": 0.4471909759809228,
+    "car_legs_any_in_both_frac": 0.18772061938155976,
+    "car_legs_any_in_one_only_frac": 0.184920224031628,
+    "car_legs_diff_gt_0.5_frac": 0.19941638819598062,
+    "n": 127482,
+    "same_choice_99": 0.35226933998525284,
+    "score_absdiff_median": 1.0841766159764585,
+    "score_absdiff_p90": 7.339914646077478
+   },
+   "charging:unrelated": {
+    "car_legs_absdiff_mean": 0.6216836822384929,
+    "car_legs_any_in_both_frac": 0.6087564309694865,
+    "car_legs_any_in_one_only_frac": 0.21014899606216508,
+    "car_legs_diff_gt_0.5_frac": 0.26760853872331647,
+    "n": 261819,
+    "same_choice_99": 0.1687616253976984,
+    "score_absdiff_median": 1.3900996951028795,
+    "score_absdiff_p90": 7.354706386361793
+   },
+   "subpopulation:man": {
+    "car_legs_absdiff_mean": 0.6149785059615541,
+    "car_legs_any_in_both_frac": 0.17257685132614162,
+    "car_legs_any_in_one_only_frac": 0.27091410495579527,
+    "car_legs_diff_gt_0.5_frac": 0.2861627058155568,
+    "n": 123290,
+    "same_choice_99": 0.08780923027009489,
+    "score_absdiff_median": 1.6802593076346461,
+    "score_absdiff_p90": 7.602617301858121
+   },
+   "subpopulation:nonman": {
+    "car_legs_absdiff_mean": 0.6984028803545053,
+    "car_legs_any_in_both_frac": 0.6545761097722149,
+    "car_legs_any_in_one_only_frac": 0.2193938039337635,
+    "car_legs_diff_gt_0.5_frac": 0.2919420041980875,
+    "n": 205808,
+    "same_choice_99": 0.08777112648682267,
+    "score_absdiff_median": 1.726613246146941,
+    "score_absdiff_p90": 7.92581719545698
+   },
+   "subpopulation:outside": {
+    "car_legs_absdiff_mean": 0.003650980848130492,
+    "car_legs_any_in_both_frac": 0.45381459395711177,
+    "car_legs_any_in_one_only_frac": 0.00068102918459213,
+    "car_legs_diff_gt_0.5_frac": 0.002026477085859509,
+    "n": 60203,
+    "same_choice_99": 1.0,
+    "score_absdiff_median": 0.13108997215067753,
+    "score_absdiff_p90": 1.8535848409338578
+   }
+  }
+ },
+ "persons": 389301,
+ "same_choice_99_all_three": {
+  "all": 0.19642641554992152,
+  "charging:related": 0.3214728353806812,
+  "charging:unrelated": 0.1355402014368705,
+  "subpopulation:man": 0.04661367507502636,
+  "subpopulation:nonman": 0.05111074399440255,
+  "subpopulation:outside": 1.0
+ },
+ "within_run_same_choice_90_vs_99": {
+  "4711": 0.6698980994140781,
+  "4712": 0.6708125589197048,
+  "4713": 0.6700650653350493
+ }
+}

@@ -7,13 +7,14 @@
 - **问题定义不变：** 保住九项政策效应（在事先定好的区间内、方向相同），每个场景不跑偏，停得住，在没参与调试的场景上也成立；按总核时计算加速比（[charter.md](charter.md) 第 1、3 节）。
 - **仓库已整理：** 此前的方法探索（进展记录、想法、各阶段计划、分析代码）移到了 [../archive/](../archive/README.md)。这里只留问题定义、验收标准、参考资料和实验登记表。
 - **以前试过的方向可以重新做**（用户 11-18），包括此前放下的几个。重新做之前，先看归档里当时的结论。
-- **下一步：** 从原版运行出发，重新做分析，再选方向。
+- **下一步：** 按 [original-runs-analysis-plan.md](original-runs-analysis-plan.md) 分析原版运行的数据和轨迹，再选方向。
 
 ## 文件地图
 
 | 文件 | 内容 |
 |---|---|
 | [charter.md](charter.md) | 总纲：问题、已有事实、验收、已试方法和开放的方法方向、测试漏斗、论文结构、工作方式 |
+| [original-runs-analysis-plan.md](original-runs-analysis-plan.md) | 原版运行的数据与轨迹分析计划（当前工作） |
 | [acceptance-protocol.md](acceptance-protocol.md) | 验收标准的具体数值和推导 |
 | [experiments.md](experiments.md) | 实验登记表：所有运行、提交号、数据位置、结论；代号对照表 |
 | [matsim-explained.md](matsim-explained.md) | MATSim 是什么、每轮做什么、为什么慢（白话） |
