@@ -1,6 +1,6 @@
 # MATSim 是什么，NYC 模型每一轮在做什么
 
-本文用白话说明 MATSim 的运作方式，以及它为什么慢。逐行核实的源码依据见 [matsim-source-reading.md](matsim-source-reading.md)；更完整的形式化推导（含已被总纲取代的加速框架）见 [archive/matsim-as-algorithm.md](archive/matsim-as-algorithm.md)。
+本文用白话说明 MATSim 的运作方式，以及它为什么慢。逐行核实的源码依据见 [matsim-source-reading.md](matsim-source-reading.md)；更完整的形式化推导（含已被总纲取代的加速框架）见 [archive/matsim-as-algorithm.md](../archive/docs/archive/matsim-as-algorithm.md)。
 
 ## 1. 一句话
 

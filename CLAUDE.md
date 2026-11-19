@@ -10,17 +10,13 @@
 
 1. [docs/README.md](docs/README.md)：目录、当前状态、代码地图。
 2. [docs/charter.md](docs/charter.md)：总纲。第 1–5 节改动要用户同意。
-3. [docs/progress-log.md](docs/progress-log.md) 的最后几节：最近的结果和待定的事。
-4. 需要时再读：[docs/matsim-explained.md](docs/matsim-explained.md)（MATSim 怎么运作）、[docs/rq1-answer.md](docs/rq1-answer.md)–[rq3](docs/rq3-answer.md)、[docs/acceptance-protocol.md](docs/acceptance-protocol.md)（验收标准的具体数值）、[docs/experiments.md](docs/experiments.md)（所有运行和数据位置）、[docs/ideas.md](docs/ideas.md)（发现与可能的方法，未经筛选）。
+3. 需要时再读：[docs/matsim-explained.md](docs/matsim-explained.md)（MATSim 怎么运作）、[docs/rq1-answer.md](docs/rq1-answer.md)–[rq3](docs/rq3-answer.md)、[docs/acceptance-protocol.md](docs/acceptance-protocol.md)（验收标准的具体数值）、[docs/experiments.md](docs/experiments.md)（所有运行和数据位置）。
 
-## 不要接着做的事
+## 归档（2026-11-18 整理）
 
-[docs/archive/](docs/archive/) 和其他旧分支是历史记录，只在用户要求时参考。以下方向已经放弃，不要重新提出，除非有新证据并先问用户：
+此前的方法探索都移到了 [archive/](archive/README.md)：进展记录、想法记录、各阶段的计划、分析代码（`archive/experiments/`）和更早的旧文档（`archive/docs/archive/`）。只在用户要求时参考。
 
-- PSim 或任何"便宜模型给计划打分"的做法：会改变最后评估；
-- 按个人预测"谁下一轮会换计划"（L2Seg 式个人挑人）：标签是噪声，效果差；
-- 方法里使用 G 估算器（估算的均衡差距）：G 只作诊断；直接测得的量可以用；
-- 只仿真变了的人、多线程处理事件、修改模型本身。
+以前试过并放下的方向（PSim 式便宜打分、按个人预测谁会换计划、方法里用 G 估算器、只仿真变了的人、多线程处理事件）**可以重新做**（用户 11-18）。重新做之前，先看归档里当时的结论和放下的理由，说明这次有什么不同。
 
 ## 工作规则
 

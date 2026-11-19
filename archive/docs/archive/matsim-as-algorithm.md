@@ -2,8 +2,8 @@
 
 - **日期**：2026-10-17
 - **依据**：
-  - 源码：MATSim 2026.0（`c7a75eb`），逐行核实见 [01_MATSim_source_reading.md](../matsim-source-reading.md)
-  - MATSim 书（Horni, Nagel, Axhausen 2016）Ch.47–49：本次无法重新下载（出版社和 OAPEN 拦截脚本下载，Open Research Library 只渲染图像），引用的是 RQ1 时读原文所做的笔记 [QR1/03](../literature/03_Horni2016_MATSim_book.md)，以及 Ch.47 的前身 Nagel & Flötteröd 2009 全文笔记 [QR1/04](../literature/04_Nagel2009_agent_based_traffic_assignment.md)
+  - 源码：MATSim 2026.0（`c7a75eb`），逐行核实见 [01_MATSim_source_reading.md](../../../docs/matsim-source-reading.md)
+  - MATSim 书（Horni, Nagel, Axhausen 2016）Ch.47–49：本次无法重新下载（出版社和 OAPEN 拦截脚本下载，Open Research Library 只渲染图像），引用的是 RQ1 时读原文所做的笔记 [QR1/03](../../../docs/literature/03_Horni2016_MATSim_book.md)，以及 Ch.47 的前身 Nagel & Flötteröd 2009 全文笔记 [QR1/04](../../../docs/literature/04_Nagel2009_agent_based_traffic_assignment.md)
   - NYC 数据：`Wuhubing/matsim-nyc-modernized` 分支 `research/aggregate-regularity` 的 RQ0/RQ1 文档
 - **记法**：【代码】源码直接写明；【书】书中原文；【数据】NYC 运行测得；【推断】我们的解读
 
@@ -449,7 +449,7 @@
 - 分支 `research/rq3-acceleration`（工作树 `~/matsim-work/mnm-rq3`，从 `research/schema2-policy` 拉出）：
   - `073b8e6`：修改一（精英父代 `-Dnyc.eliteParent=expbeta|best`，改时间后重新找路 `-Dnyc.tamReRoute`），默认关闭
   - `f9e9a08`：`experiments/rq3/` 的离线分析脚本和合成检验
-  - `3c0af65`：验收方案 `docs/rq3-acceptance-protocol.md`（本地副本 [04_acceptance_protocol.md](../acceptance-protocol.md)）
+  - `3c0af65`：验收方案 `docs/rq3-acceptance-protocol.md`（本地副本 [04_acceptance_protocol.md](../../../docs/acceptance-protocol.md)）
 - 已提交的作业：
   - 12 轮检查：26147936（开关关闭，应与记录逐位一致）、26147937（精英父代）、26147938（精英父代 + 改时间后重新找路）
   - 分析：26148144（停止规则回放）、26148145–47（O4 三个种子）、26148148（Δ 脚本的正确性检查：RQ0 vs RQ1，应全部为 0）

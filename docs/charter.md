@@ -1,11 +1,11 @@
 # 研究总纲 v2.3：更快地得到同样的政策效应（2026-10-18 起，10-20 修订）
 
 **地位：**
-- 本文取代 [archive/research-charter.md](archive/research-charter.md)（v1，10-15）作为 RQ3 及以后工作的总纲。v1 保留，作为历史记录。
-- 和 [progress-log.md](progress-log.md)、[acceptance-protocol.md](acceptance-protocol.md) 冲突时，以本文为准。
+- 本文取代 [archive/research-charter.md](../archive/docs/archive/research-charter.md)（v1，10-15）作为 RQ3 及以后工作的总纲。v1 保留，作为历史记录。
+- 和 [progress-log.md](../archive/docs/progress-log.md)、[acceptance-protocol.md](acceptance-protocol.md) 冲突时，以本文为准。
 - 修改第 1–5 节需要用户同意。
 
-**每个新会话：** 先读仓库根目录的 `CLAUDE.md`，再读本文和 [progress-log.md](progress-log.md) 的进展记录。动手之前，先说明这一步回答什么问题、为什么现在做、能不能用已有数据代替（见 `CLAUDE.md` 的工作规则）。
+**每个新会话：** 先读仓库根目录的 `CLAUDE.md`，再读本文和 [progress-log.md](../archive/docs/progress-log.md) 的进展记录。动手之前，先说明这一步回答什么问题、为什么现在做、能不能用已有数据代替（见 `CLAUDE.md` 的工作规则）。
 
 **v2.3 相对 v2.2 改了什么（10-20，用户要求）：**
 - **方法方向开放：** 第 4 节不再是候选清单。已经试过的方法作为证据保留；此前提过的想法只作记录，未经筛选，和 RQ1 里其他领域的做法地位相同。新方向可以来自文献和新的分析，选哪个看证据。
@@ -62,8 +62,8 @@
 
 | 事实 | 证据 | 对方法的含义 |
 |---|---|---|
-| **一、慢在发现，不在选择** | 最好方案得分到第 79 轮仍在涨；选择噪声只占约 12%（[archive/h0-equilibrium-gap.md](archive/h0-equilibrium-gap.md)）；G 诊断显示第 99 轮的改进空间主要在**换方式**（方式差距约 0.16，路线约 0.03）（[diagnostics/g-estimator.md](diagnostics/g-estimator.md) §9） | 加速要靠找得更快，尤其是方式选择 |
-| **二、随机试探的浪费是可预测的** | 父代随机挑（O1：从好父代出发，成功率高 2.2 倍、1.75 倍）；随机换方式 71% 明显更差，结果按相似的人可预测（AUC 0.86）（[archive/h1-proposal-predictor.md](archive/h1-proposal-predictor.md)） | 有信息的提议有空间 |
+| **一、慢在发现，不在选择** | 最好方案得分到第 79 轮仍在涨；选择噪声只占约 12%（[archive/h0-equilibrium-gap.md](../archive/docs/archive/h0-equilibrium-gap.md)）；G 诊断显示第 99 轮的改进空间主要在**换方式**（方式差距约 0.16，路线约 0.03）（[diagnostics/g-estimator.md](../archive/docs/diagnostics/g-estimator.md) §9） | 加速要靠找得更快，尤其是方式选择 |
+| **二、随机试探的浪费是可预测的** | 父代随机挑（O1：从好父代出发，成功率高 2.2 倍、1.75 倍）；随机换方式 71% 明显更差，结果按相似的人可预测（AUC 0.86）（[archive/h1-proposal-predictor.md](../archive/docs/archive/h1-proposal-predictor.md)） | 有信息的提议有空间 |
 | **三、试探有外部性** | 试探者执行差方案，执行状态比最好状态差约 3.5 分；几万人同时换路，新路线执行当轮慢 26–57%（O3）；大家涌向"看起来最空"的地方（O4） | 控制步长、避免集体涌入 |
 | **四、终点依赖流程，但稳的结论不依赖** | 优化越充分（只做选择的续跑（X1）< 精英父代（E1）< 热启动的政策运行（W1）），得分越高、开车越多；但精英父代下车流、方式转移、方案排序都在容差内，收入和人群福利不在 | 验收只看稳的 Δ，不看"像不像原版终点" |
 | **五、政策效应在关创新后很快稳定** | 原流程关创新（第 80 轮）后约 3 轮，稳的 Δ 就进入容差 | 停止时机和创新期长度是主要的加速杠杆之一 |
@@ -104,7 +104,7 @@
 
 ### 3.4 诊断（不作为通过条件）
 
-- **G（均衡差距）：** 每个人"在当前路况下单方面换方案最多能多得多少分"的总和 ÷ 总分。已实现并检验（[diagnostics/g-estimator.md](diagnostics/g-estimator.md)、分支 `research/rq3-gap`）。原版第 99 轮 0.1663 ± 0.0006，精英父代 0.1584。
+- **G（均衡差距）：** 每个人"在当前路况下单方面换方案最多能多得多少分"的总和 ÷ 总分。已实现并检验（[diagnostics/g-estimator.md](../archive/docs/diagnostics/g-estimator.md)、分支 `research/rq3-gap`）。原版第 99 轮 0.1663 ± 0.0006，精英父代 0.1584。
 - **用途：** 解释某个方法为什么快或慢、离均衡远在哪里（方式还是路线、哪类人）；作为论文"怎么定义收敛"一节的材料。
 - **最好方案平均得分、执行得分曲线：** A 阶段的机制指标。
 
@@ -125,11 +125,11 @@
 
 | 方法 | 结果 | 出处 |
 |---|---|---|
-| 精英父代（E1）：试新方案时从得分高的计划出发 | 100 轮：九项政策效应通过；固定流程下约 1.3 倍。在第 30–70 轮停止试新方案的探针都不通过 | [progress-log.md](progress-log.md) 10-18、10-19 晚 |
+| 精英父代（E1）：试新方案时从得分高的计划出发 | 100 轮：九项政策效应通过；固定流程下约 1.3 倍。在第 30–70 轮停止试新方案的探针都不通过 | [progress-log.md](../archive/docs/progress-log.md) 10-18、10-19 晚 |
 | 精英父代 + 改时间后找路（E3） | 不通过：收费区相关人群少开的车次超出区间（1.15、1.51 倍容差） | 同上 10-19 晚 |
 | 热启动（W1、W0）：政策运行从基线终点出发 | 减去同样热启动的基线后，政策效应通过；固定流程下不省时间；试新方案只保留 10–40 轮的探针都不通过 | 同上 10-18 晚、10-19 晚 |
 | 原版直接缩短（强基线） | 在第 30、50、70 轮停止试新方案都不通过；只有第 80 轮（原流程）通过 | 同上 10-19 晚 |
-| 创新退火（早期试验，一个种子） | 停止发现过早，终点明显偏离 | [archive/h0-equilibrium-gap.md](archive/h0-equilibrium-gap.md) |
+| 创新退火（早期试验，一个种子） | 停止发现过早，终点明显偏离 | [archive/h0-equilibrium-gap.md](../archive/docs/archive/h0-equilibrium-gap.md) |
 | 得分平均（早期试验） | 两次因内存不足失败，没有结论 | 同上 |
 | 工程优化（每轮成本） | −26%，结果逐位一致；已经做完，不再继续 | 分支 `perf/simulation-redundancy` |
 
@@ -142,7 +142,7 @@
 
 ### 4.3 此前提过、尚未筛选的想法（只作记录）
 
-创新退火、得分平均、找路时平滑路况、按估算效用或预测器提议换方式、按测得的时间差决定谁重新找路、只让受影响的人重新搜索、前期用小样本人口；以及 [rq1-answer.md](rq1-answer.md) 第 2 节按领域列出的其他做法。哪个值得做，要先用已有数据或文献说明依据。新的想法和支持它们的发现记在 [ideas.md](ideas.md)。
+创新退火、得分平均、找路时平滑路况、按估算效用或预测器提议换方式、按测得的时间差决定谁重新找路、只让受影响的人重新搜索、前期用小样本人口；以及 [rq1-answer.md](rq1-answer.md) 第 2 节按领域列出的其他做法。哪个值得做，要先用已有数据或文献说明依据。新的想法和支持它们的发现记在 [ideas.md](../archive/docs/ideas.md)。
 
 ## 5. 漏斗（测试规模）
 
@@ -178,13 +178,13 @@
 | 换路权重（12 轮） | 效果小，不单独做 |
 | 停止规则回放 | 改为按 Δ 停止；原版直接缩短已测，不通过 |
 | 由粗到细的保真度 | 暂缓 |
-| PSim、只仿真变了的人、多线程事件、L2Seg 式挑人 | 已放弃（[archive/matsim-nyc-findings.md](archive/matsim-nyc-findings.md) 第 0 节） |
+| PSim、只仿真变了的人、多线程事件、L2Seg 式挑人 | 此前放弃，可以重新评估（用户 11-18）；当时的理由见（[archive/matsim-nyc-findings.md](../archive/docs/archive/matsim-nyc-findings.md) 第 0 节） |
 
 ## 8. 近期步骤与状态（10-20）
 
 - 问题定义和验收已定（第 1、3 节）；已试方法的结果见第 4.1 节。
 - **下一步：** 先整理现有内容，再从文献和已有证据重新选方法方向。方向定下来之前，不排新的运行。
-- 过去的步骤和结果按时间记在 [progress-log.md](progress-log.md)。
+- 过去的步骤和结果按时间记在 [progress-log.md](../archive/docs/progress-log.md)。
 
 ## 9. 工作方式
 
@@ -202,8 +202,8 @@
    - 可抢占分区的节点较慢，100 轮运行可能超过 12 小时上限，提交前估计时间。
 7. 文档：
    - 本文是总纲；
-   - [progress-log.md](progress-log.md) 记实验和进展；
+   - [progress-log.md](../archive/docs/progress-log.md) 记实验和进展；
    - [acceptance-protocol.md](acceptance-protocol.md) 记容差；
    - [experiments.md](experiments.md) 记每次运行（提交号、数据位置、结论）；
-   - [README.md](README.md) 是文档目录，仓库根目录的 `CLAUDE.md` 是新会话入口；旧文档在 [archive/](archive/README.md)。
+   - [README.md](README.md) 是文档目录，仓库根目录的 `CLAUDE.md` 是新会话入口；旧文档在 [archive/](../archive/docs/archive/README.md)。
    - 说明页（HTML）只做展示，以本文为准。

@@ -2,7 +2,7 @@
 
 - **日期**：2026-10-17，在任何加速版运行出结果之前写定
 - **用途**：判断一个加速方法（例如精英父代）是否"没有改变结论"，以及省了多少计算
-- **代码**：`matsim-nyc-modernized` 分支 `research/rq3-acceleration` 的 `experiments/rq3/`（`compute_deltas.py`、`replay_stop.py`）
+- **代码**：`matsim-nyc-modernized` 分支 `research/rq3-acceleration` 的 `experiments/rq3/`（`compute_deltas.py`、`replay_stop.py`；本仓库中已归档到 `archive/experiments/rq3/`）
 - **原则**：
   1. 比较的是**终点和政策结论**，不是轨迹是否相似；轨迹只用来量"什么时候到"。
   2. 参照是我们自己的完整原流程，不是论文数字（本地模型屏幕线 +74% 到 +76%，论文 +1.8%）。论文只决定"检验哪些结论"。
@@ -17,7 +17,7 @@
 | Schema 1（高峰 $9.18） | 4711–4713 | `.../policy/schema1-s471X-100it` | ⏳ 运行中 |
 | Schema 2（高峰 $14） | 4711–4713 | `.../policy/schema2-s471X-100it` | ⏳ 运行中 |
 
-共同设置：100 轮，第 79 轮后关闭创新，16 线程，research 记录，同一份仿真代码（RQ1 的 `e1581d1` 起 Java 未改仿真逻辑）。详见 [progress-log.md（政策参照）](progress-log.md)。
+共同设置：100 轮，第 79 轮后关闭创新，16 线程，research 记录，同一份仿真代码（RQ1 的 `e1581d1` 起 Java 未改仿真逻辑）。详见 [progress-log.md（政策参照）](../archive/docs/progress-log.md)。
 
 ## 2. 指标（全部取第 90–99 轮的 10 轮均值；样本单位，不放大）
 

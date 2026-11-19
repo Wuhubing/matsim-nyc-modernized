@@ -18,7 +18,7 @@
 | POLARIS Austin（收费研究） | 全区 | **1.25 小时**（24 线程） | 跑到第 50 轮，约 62 小时 | Mori et al.（[OSTI 3794253](https://www.osti.gov/pages/servlets/purl/3794253)） |
 | POLARIS Chicago | 25% 人口 | 约 157 分钟 | — | Gurumurthy et al. 2025（[MUM 2025](https://matsim.org/conferences/mum2025/abstracts/MUM25_paper_24.pdf)） |
 | POLARIS 多年联合仿真 | — | — | 每个预测年 14 轮，约 43.5 小时（热启动） | Nair et al. 2026（[arXiv 2608.24817](https://arxiv.org/abs/2608.24817)） |
-| MATSim-NYC（本仓库） | 4% 人口 | 170–300 秒（16 线程） | 100 轮，约 5–8 小时 | [archive/matsim-nyc-findings.md](archive/matsim-nyc-findings.md) |
+| MATSim-NYC（本仓库） | 4% 人口 | 170–300 秒（16 线程） | 100 轮，约 5–8 小时 | [archive/matsim-nyc-findings.md](../archive/docs/archive/matsim-nyc-findings.md) |
 | MATSim 瑞士 10%（QSim → Hermes） | 10% 人口 | 12 分钟 → 5 分钟 | 301 轮，83 → 47 小时 | Graur et al. 2021（[笔记 02](literature/02_Graur2021_Hermes.md)） |
 
 - 场景、人口比例、硬件都不同，**这张表不能用来说谁快**。
@@ -94,7 +94,7 @@
 |---|---|---|---|---|
 | Nicolai 2013（经 ref 06 转引） | 冷、温、热启动 | Zurich：100 / 60 / 30 轮 | 二手引用 | ref 06 |
 | Zame et al. 2026 | 测量"改动场景后重新收敛要多少轮" | 重新收敛的轮数**取决于新方案好了多少，不取决于改动多大**：改动相同，轮数差 8 倍（26–208 轮）；越是改进，越要更久才找到 | 电动卡车充电站场景，不是收费 | ref 06 |
-| 本仓库热启动（W0/W1） | 从基线终点出发跑政策 | 结论通过，但固定流程下不省时间 | — | [progress-log.md](progress-log.md) |
+| 本仓库热启动（W0/W1） | 从基线终点出发跑政策 | 结论通过，但固定流程下不省时间 | — | [progress-log.md](../archive/docs/progress-log.md) |
 
 ### 3.5 每轮更便宜：更快的交通仿真
 

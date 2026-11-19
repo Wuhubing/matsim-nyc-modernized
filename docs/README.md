@@ -2,35 +2,29 @@
 
 **一句话：** 在不改变政策结论的前提下，用更少的总核时跑完一整套 MATSim-NYC 收费政策分析。
 
-## 当前状态（2026-10-19）
+## 当前状态（2026-11-18 整理后）
 
-- **问题定义已定：** 保住九项政策效应（在事先定好的区间内、方向相同），每个场景不跑偏，停得住，在没参与调试的场景上也成立；按总核时计算加速比（[charter.md](charter.md) 第 1、3 节）。
-- **已有方法的结果：**
-  - 精英父代（E1）：结论通过，固定流程下约 1.3 倍；
-  - 精英父代 + 改时间后找路（E3）：不通过；
-  - 热启动（W0、W1）：结论通过，但固定流程下不省时间；
-  - 缩短流程的探针：原版、精英父代、热启动都不通过。
-- **最新分析：** 收费区相关人群占 33% 的人，贡献了 87–90% 的小汽车出行政策效应；起点就要交费的人也要约 80 轮才基本改完（[progress-log.md](progress-log.md) 最后几节）。
-- **方法方向：开放。** 上面是已试方法的证据；此前提过的其他想法只作记录，不是计划（[charter.md](charter.md) 第 4 节）。
-- **下一步：** 先整理，再从文献和已有证据重新选方向。
+- **问题定义不变：** 保住九项政策效应（在事先定好的区间内、方向相同），每个场景不跑偏，停得住，在没参与调试的场景上也成立；按总核时计算加速比（[charter.md](charter.md) 第 1、3 节）。
+- **仓库已整理：** 此前的方法探索（进展记录、想法、各阶段计划、分析代码）移到了 [../archive/](../archive/README.md)。这里只留问题定义、验收标准、参考资料和实验登记表。
+- **以前试过的方向可以重新做**（用户 11-18），包括此前放下的几个。重新做之前，先看归档里当时的结论。
+- **下一步：** 从原版运行出发，重新做分析，再选方向。
 
 ## 文件地图
 
 | 文件 | 内容 |
 |---|---|
 | [charter.md](charter.md) | 总纲：问题、已有事实、验收、已试方法和开放的方法方向、测试漏斗、论文结构、工作方式 |
+| [acceptance-protocol.md](acceptance-protocol.md) | 验收标准的具体数值和推导 |
+| [experiments.md](experiments.md) | 实验登记表：所有运行、提交号、数据位置、结论；代号对照表 |
 | [matsim-explained.md](matsim-explained.md) | MATSim 是什么、每轮做什么、为什么慢（白话） |
 | [matsim-source-reading.md](matsim-source-reading.md) | MATSim 2026.0 源码逐行核实（参考） |
 | [rq1-answer.md](rq1-answer.md) | RQ1：其他领域怎么加速仿真；按领域的总表；全部文献附录 |
 | [rq2-answer.md](rq2-answer.md) | RQ2：哪些结论必须不变；前人的 MATSim 加速论文怎么检验结果没变 |
 | [rq3-answer.md](rq3-answer.md) | RQ3：MATSim 的"收敛"指什么 |
-| [acceptance-protocol.md](acceptance-protocol.md) | 验收标准的具体数值和推导 |
-| [progress-log.md](progress-log.md) | 按时间的进展记录（实验、结果、决定） |
-| [ideas.md](ideas.md) | 发现与可能的方法：想法记录，未经筛选，不是计划 |
-| [experiments.md](experiments.md) | 实验登记表：所有运行、提交号、数据位置、结论；代号对照表 |
-| [literature/](literature/README.md) | 61 篇读书笔记（按领域索引） |
-| [diagnostics/g-estimator.md](diagnostics/g-estimator.md) | G 估算器（均衡差距）设计；只作诊断 |
-| [archive/](archive/README.md) | 已被取代的计划和记录 |
+| [polaris-vs-matsim-review.md](polaris-vs-matsim-review.md) | POLARIS 与 MATSim 的对比 |
+| [literature/](literature/README.md) | 读书笔记（按领域索引） |
+| [weekly/](weekly/) | 周报（已发布到 GitHub Pages，原地保留以免链接失效） |
+| [../archive/](../archive/README.md) | 此前的方法探索：进展记录、想法、计划、分析代码、更早的旧文档 |
 
 ## 代码地图
 
@@ -41,10 +35,11 @@
 | 运行器（参照流程、热启动 `--plans`、`--innovation-until`、退火、得分平均、精英父代等选项） | `experiments/reference/run_reference.py`、`reference.sbatch` | 在用 |
 | 逐人、分组、路段的每轮记录 | `src/main/java/org/c2smart/matsimnyc/ResearchMetrics.java`、`IterationMetrics.java` | 在用 |
 | 重新规划日志（每次试新方案的结果） | `ReplanningLog.java`、`RecordingStrategyChooser.java` | 在用 |
-| 精英父代 | `EliteParent.java` | 在用 |
-| 政策效应、验收、探针、换方案分析 | `experiments/rq3/`（`compute_deltas.py`、`analyze_e1_x1_w1.py`、`probe_table.py`、`plan_change.py`；运维脚本在 `ops/`） | 在用 |
-| 共用的解析函数和早期分析 | `experiments/l2seg/`（`experiments/rq3` 从这里导入函数） | 只当函数库用，里面的分析属于已放弃的方向 |
+| 精英父代 | `EliteParent.java` | 保留在模型代码里，只在运行器打开对应选项时生效 |
 | 按个人挑人的选择器、重复找路过滤 | `TargetedInnovationChooser.java`、`StableReRoute.java` | 闲置：只在设置对应系统属性时生效 |
+| 此前的分析代码（政策效应、验收、探针、换方案分析；共用解析函数；学习型起点） | `archive/experiments/rq3/`、`archive/experiments/l2seg/`、`archive/experiments/latent/` | 已归档；目录间的相对位置不变，脚本仍可从归档位置运行 |
+
+Java 代码没有移动：上面几个方法类由 `RunNyc` 按系统属性加载，移走会破坏构建。
 
 ## 数据在哪里
 
