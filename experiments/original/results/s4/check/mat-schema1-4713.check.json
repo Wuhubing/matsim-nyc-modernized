@@ -1,0 +1,5018 @@
+{
+ "chg_c_writer_flag_vs_64bit_hash_mismatch": {
+  "n": 0,
+  "of": 38540799
+ },
+ "chg_p_writer_flag_vs_64bit_hash_mismatch": {
+  "n": 0,
+  "of": 38540799
+ },
+ "cohort_duplicate_ids": 0,
+ "cohorts_file_sha256": "b5c32a7cfd9cb1ee55389e3dcc15c15a0c73ccce80dbacc8917e0fd8c0d64ddb",
+ "complete": true,
+ "extract_schema": 3,
+ "files": [
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 48233001,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 389301,
+    "false": 0,
+    "true": 0
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 1749979970,
+   "gz_isize_mod32": 103454655,
+   "iteration": 0,
+   "mtime": 1792221240,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-0.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 389301,
+    "false": 0,
+    "true": 0
+   },
+   "seconds": 7.86,
+   "sums_unstored": {
+    "censored_wait_seconds": 3795362467.0,
+    "wait_segments": 1086914.0,
+    "waiting_at_cutoff": 49465.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 52360179,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 345810,
+    "true": 43491
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 1329935487,
+   "gz_isize_mod32": 114301817,
+   "iteration": 1,
+   "mtime": 1792221429,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-1.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 311521,
+    "true": 77780
+   },
+   "seconds": 8.52,
+   "sums_unstored": {
+    "censored_wait_seconds": 3383831241.0,
+    "wait_segments": 1033208.0,
+    "waiting_at_cutoff": 43828.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 52478607,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 327158,
+    "true": 62143
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 3099988210,
+   "gz_isize_mod32": 114344756,
+   "iteration": 2,
+   "mtime": 1792221600,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-2.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 283100,
+    "true": 106201
+   },
+   "seconds": 8.98,
+   "sums_unstored": {
+    "censored_wait_seconds": 3125564693.0,
+    "wait_segments": 1007099.0,
+    "waiting_at_cutoff": 40041.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 52554529,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 317081,
+    "true": 72220
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 270467151,
+   "gz_isize_mod32": 114347309,
+   "iteration": 3,
+   "mtime": 1792221768,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-3.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 268540,
+    "true": 120761
+   },
+   "seconds": 8.39,
+   "sums_unstored": {
+    "censored_wait_seconds": 2882125483.0,
+    "wait_segments": 981462.0,
+    "waiting_at_cutoff": 36513.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 52609101,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 307061,
+    "true": 82240
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 1778928843,
+   "gz_isize_mod32": 114355689,
+   "iteration": 4,
+   "mtime": 1792221957,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-4.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 255507,
+    "true": 133794
+   },
+   "seconds": 8.64,
+   "sums_unstored": {
+    "censored_wait_seconds": 2684127025.0,
+    "wait_segments": 960326.0,
+    "waiting_at_cutoff": 33652.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 52656736,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 298424,
+    "true": 90877
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 948906099,
+   "gz_isize_mod32": 114351285,
+   "iteration": 5,
+   "mtime": 1792222139,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-5.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 245813,
+    "true": 143488
+   },
+   "seconds": 8.71,
+   "sums_unstored": {
+    "censored_wait_seconds": 2487022050.0,
+    "wait_segments": 938621.0,
+    "waiting_at_cutoff": 30797.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 52696224,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 291017,
+    "true": 98284
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 1534421168,
+   "gz_isize_mod32": 114353270,
+   "iteration": 6,
+   "mtime": 1792222313,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-6.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 236905,
+    "true": 152396
+   },
+   "seconds": 8.23,
+   "sums_unstored": {
+    "censored_wait_seconds": 2337046383.0,
+    "wait_segments": 921069.0,
+    "waiting_at_cutoff": 28711.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 52728567,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 284080,
+    "true": 105221
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 1315730663,
+   "gz_isize_mod32": 114350455,
+   "iteration": 7,
+   "mtime": 1792222490,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-7.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 228894,
+    "true": 160407
+   },
+   "seconds": 8.52,
+   "sums_unstored": {
+    "censored_wait_seconds": 2206267527.0,
+    "wait_segments": 903519.0,
+    "waiting_at_cutoff": 26843.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 52755545,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 277666,
+    "true": 111635
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 2457119596,
+   "gz_isize_mod32": 114335826,
+   "iteration": 8,
+   "mtime": 1792222673,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-8.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 221849,
+    "true": 167452
+   },
+   "seconds": 8.06,
+   "sums_unstored": {
+    "censored_wait_seconds": 2083855093.0,
+    "wait_segments": 886017.0,
+    "waiting_at_cutoff": 25207.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 52777696,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 272293,
+    "true": 117008
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 1839548832,
+   "gz_isize_mod32": 114338317,
+   "iteration": 9,
+   "mtime": 1792222868,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-9.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 216319,
+    "true": 172982
+   },
+   "seconds": 8.72,
+   "sums_unstored": {
+    "censored_wait_seconds": 1978479269.0,
+    "wait_segments": 872294.0,
+    "waiting_at_cutoff": 23678.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 52801279,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 266687,
+    "true": 122614
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 2644035216,
+   "gz_isize_mod32": 114333428,
+   "iteration": 10,
+   "mtime": 1792223116,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-10.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 210586,
+    "true": 178715
+   },
+   "seconds": 8.04,
+   "sums_unstored": {
+    "censored_wait_seconds": 1879434305.0,
+    "wait_segments": 859910.0,
+    "waiting_at_cutoff": 22361.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 52815631,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 262311,
+    "true": 126990
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 1595372934,
+   "gz_isize_mod32": 114338528,
+   "iteration": 11,
+   "mtime": 1792223321,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-11.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 206078,
+    "true": 183223
+   },
+   "seconds": 8.06,
+   "sums_unstored": {
+    "censored_wait_seconds": 1808625614.0,
+    "wait_segments": 848181.0,
+    "waiting_at_cutoff": 21284.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 52833718,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 257763,
+    "true": 131538
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 2818002229,
+   "gz_isize_mod32": 114333257,
+   "iteration": 12,
+   "mtime": 1792223526,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-12.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 202156,
+    "true": 187145
+   },
+   "seconds": 8.46,
+   "sums_unstored": {
+    "censored_wait_seconds": 1727196781.0,
+    "wait_segments": 835597.0,
+    "waiting_at_cutoff": 20256.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 52847818,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 253623,
+    "true": 135678
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 881478250,
+   "gz_isize_mod32": 114340205,
+   "iteration": 13,
+   "mtime": 1792223752,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-13.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 198399,
+    "true": 190902
+   },
+   "seconds": 8.43,
+   "sums_unstored": {
+    "censored_wait_seconds": 1674386061.0,
+    "wait_segments": 827665.0,
+    "waiting_at_cutoff": 19573.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 52850219,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 250422,
+    "true": 138879
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 380094050,
+   "gz_isize_mod32": 114327095,
+   "iteration": 14,
+   "mtime": 1792223963,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-14.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 195111,
+    "true": 194190
+   },
+   "seconds": 8.71,
+   "sums_unstored": {
+    "censored_wait_seconds": 1607825623.0,
+    "wait_segments": 815937.0,
+    "waiting_at_cutoff": 18609.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 52870985,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 246689,
+    "true": 142612
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 2163293139,
+   "gz_isize_mod32": 114338538,
+   "iteration": 15,
+   "mtime": 1792224230,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-15.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 191907,
+    "true": 197394
+   },
+   "seconds": 8.96,
+   "sums_unstored": {
+    "censored_wait_seconds": 1571030042.0,
+    "wait_segments": 810308.0,
+    "waiting_at_cutoff": 18130.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 52880905,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 243616,
+    "true": 145685
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 3503885848,
+   "gz_isize_mod32": 114337732,
+   "iteration": 16,
+   "mtime": 1792224446,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-16.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 188605,
+    "true": 200696
+   },
+   "seconds": 8.25,
+   "sums_unstored": {
+    "censored_wait_seconds": 1507109706.0,
+    "wait_segments": 801663.0,
+    "waiting_at_cutoff": 17199.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 52886780,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 241197,
+    "true": 148104
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 3767055056,
+   "gz_isize_mod32": 114325650,
+   "iteration": 17,
+   "mtime": 1792224675,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-17.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 186397,
+    "true": 202904
+   },
+   "seconds": 8.33,
+   "sums_unstored": {
+    "censored_wait_seconds": 1464219658.0,
+    "wait_segments": 794198.0,
+    "waiting_at_cutoff": 16663.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 52900105,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 239711,
+    "true": 149590
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 1200070205,
+   "gz_isize_mod32": 114336246,
+   "iteration": 18,
+   "mtime": 1792224898,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-18.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 185146,
+    "true": 204155
+   },
+   "seconds": 8.69,
+   "sums_unstored": {
+    "censored_wait_seconds": 1431679527.0,
+    "wait_segments": 788508.0,
+    "waiting_at_cutoff": 16218.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 52906993,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 237609,
+    "true": 151692
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 2188080036,
+   "gz_isize_mod32": 114342893,
+   "iteration": 19,
+   "mtime": 1792225124,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-19.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 183075,
+    "true": 206226
+   },
+   "seconds": 8.33,
+   "sums_unstored": {
+    "censored_wait_seconds": 1392295119.0,
+    "wait_segments": 779834.0,
+    "waiting_at_cutoff": 15713.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 52908556,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 234949,
+    "true": 154352
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 2527083865,
+   "gz_isize_mod32": 114331703,
+   "iteration": 20,
+   "mtime": 1792225412,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-20.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 180617,
+    "true": 208684
+   },
+   "seconds": 8.47,
+   "sums_unstored": {
+    "censored_wait_seconds": 1365109123.0,
+    "wait_segments": 775874.0,
+    "waiting_at_cutoff": 15296.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 52913038,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 234111,
+    "true": 155190
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 3797914404,
+   "gz_isize_mod32": 114343934,
+   "iteration": 21,
+   "mtime": 1792225629,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-21.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 180138,
+    "true": 209163
+   },
+   "seconds": 8.24,
+   "sums_unstored": {
+    "censored_wait_seconds": 1324701074.0,
+    "wait_segments": 768651.0,
+    "waiting_at_cutoff": 14716.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 52924684,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 232285,
+    "true": 157016
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 44107021,
+   "gz_isize_mod32": 114342451,
+   "iteration": 22,
+   "mtime": 1792225856,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-22.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 178158,
+    "true": 211143
+   },
+   "seconds": 7.91,
+   "sums_unstored": {
+    "censored_wait_seconds": 1297771980.0,
+    "wait_segments": 764350.0,
+    "waiting_at_cutoff": 14335.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 52934284,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 231042,
+    "true": 158259
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 2811745839,
+   "gz_isize_mod32": 114342212,
+   "iteration": 23,
+   "mtime": 1792226084,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-23.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 176990,
+    "true": 212311
+   },
+   "seconds": 7.93,
+   "sums_unstored": {
+    "censored_wait_seconds": 1282557752.0,
+    "wait_segments": 759278.0,
+    "waiting_at_cutoff": 14231.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 52938451,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 229273,
+    "true": 160028
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 2938951204,
+   "gz_isize_mod32": 114340167,
+   "iteration": 24,
+   "mtime": 1792226304,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-24.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 175209,
+    "true": 214092
+   },
+   "seconds": 9.03,
+   "sums_unstored": {
+    "censored_wait_seconds": 1248023503.0,
+    "wait_segments": 754466.0,
+    "waiting_at_cutoff": 13745.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 52943526,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 227945,
+    "true": 161356
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 3270825425,
+   "gz_isize_mod32": 114337338,
+   "iteration": 25,
+   "mtime": 1792226534,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-25.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 174110,
+    "true": 215191
+   },
+   "seconds": 8.62,
+   "sums_unstored": {
+    "censored_wait_seconds": 1232875489.0,
+    "wait_segments": 747486.0,
+    "waiting_at_cutoff": 13559.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 52951118,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 227107,
+    "true": 162194
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 1640921761,
+   "gz_isize_mod32": 114342831,
+   "iteration": 26,
+   "mtime": 1792226760,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-26.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 173693,
+    "true": 215608
+   },
+   "seconds": 9.64,
+   "sums_unstored": {
+    "censored_wait_seconds": 1207349166.0,
+    "wait_segments": 743832.0,
+    "waiting_at_cutoff": 13174.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 52955143,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 226276,
+    "true": 163025
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 1987993479,
+   "gz_isize_mod32": 114338891,
+   "iteration": 27,
+   "mtime": 1792226980,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-27.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 173045,
+    "true": 216256
+   },
+   "seconds": 8.83,
+   "sums_unstored": {
+    "censored_wait_seconds": 1183081431.0,
+    "wait_segments": 738663.0,
+    "waiting_at_cutoff": 12824.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 52966386,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 224652,
+    "true": 164649
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 3799707302,
+   "gz_isize_mod32": 114344203,
+   "iteration": 28,
+   "mtime": 1792227204,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-28.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 171336,
+    "true": 217965
+   },
+   "seconds": 8.96,
+   "sums_unstored": {
+    "censored_wait_seconds": 1171316521.0,
+    "wait_segments": 733507.0,
+    "waiting_at_cutoff": 12765.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 52975811,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 223661,
+    "true": 165640
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 3538675992,
+   "gz_isize_mod32": 114345273,
+   "iteration": 29,
+   "mtime": 1792227426,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-29.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 170327,
+    "true": 218974
+   },
+   "seconds": 7.96,
+   "sums_unstored": {
+    "censored_wait_seconds": 1152565805.0,
+    "wait_segments": 730163.0,
+    "waiting_at_cutoff": 12385.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 52987487,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 222755,
+    "true": 166546
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 966399593,
+   "gz_isize_mod32": 114356549,
+   "iteration": 30,
+   "mtime": 1792227716,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-30.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 169630,
+    "true": 219671
+   },
+   "seconds": 8.48,
+   "sums_unstored": {
+    "censored_wait_seconds": 1128813652.0,
+    "wait_segments": 724984.0,
+    "waiting_at_cutoff": 12136.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 52986303,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 221748,
+    "true": 167553
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 2296690399,
+   "gz_isize_mod32": 114348857,
+   "iteration": 31,
+   "mtime": 1792227953,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-31.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 168627,
+    "true": 220674
+   },
+   "seconds": 8.41,
+   "sums_unstored": {
+    "censored_wait_seconds": 1116760839.0,
+    "wait_segments": 721841.0,
+    "waiting_at_cutoff": 11920.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 52992943,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 220968,
+    "true": 168333
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 1788150776,
+   "gz_isize_mod32": 114354131,
+   "iteration": 32,
+   "mtime": 1792228188,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-32.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 168154,
+    "true": 221147
+   },
+   "seconds": 8.4,
+   "sums_unstored": {
+    "censored_wait_seconds": 1100804915.0,
+    "wait_segments": 718278.0,
+    "waiting_at_cutoff": 11707.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 52993410,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 219925,
+    "true": 169376
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 789797316,
+   "gz_isize_mod32": 114347595,
+   "iteration": 33,
+   "mtime": 1792228422,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-33.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 166981,
+    "true": 222320
+   },
+   "seconds": 8.66,
+   "sums_unstored": {
+    "censored_wait_seconds": 1085487466.0,
+    "wait_segments": 713745.0,
+    "waiting_at_cutoff": 11582.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 53007698,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 219121,
+    "true": 170180
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 3597855151,
+   "gz_isize_mod32": 114356516,
+   "iteration": 34,
+   "mtime": 1792228643,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-34.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 166267,
+    "true": 223034
+   },
+   "seconds": 8.52,
+   "sums_unstored": {
+    "censored_wait_seconds": 1076760529.0,
+    "wait_segments": 711893.0,
+    "waiting_at_cutoff": 11400.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 53013491,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 218387,
+    "true": 170914
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 1505707294,
+   "gz_isize_mod32": 114356319,
+   "iteration": 35,
+   "mtime": 1792228874,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-35.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 165475,
+    "true": 223826
+   },
+   "seconds": 8.67,
+   "sums_unstored": {
+    "censored_wait_seconds": 1065722189.0,
+    "wait_segments": 706260.0,
+    "waiting_at_cutoff": 11317.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 53014915,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 217560,
+    "true": 171741
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 3674108398,
+   "gz_isize_mod32": 114357397,
+   "iteration": 36,
+   "mtime": 1792229105,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-36.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 164736,
+    "true": 224565
+   },
+   "seconds": 11.12,
+   "sums_unstored": {
+    "censored_wait_seconds": 1048977510.0,
+    "wait_segments": 701910.0,
+    "waiting_at_cutoff": 11095.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 53016936,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 216505,
+    "true": 172796
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 2476096211,
+   "gz_isize_mod32": 114352785,
+   "iteration": 37,
+   "mtime": 1792229334,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-37.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 163604,
+    "true": 225697
+   },
+   "seconds": 8.68,
+   "sums_unstored": {
+    "censored_wait_seconds": 1049047165.0,
+    "wait_segments": 701130.0,
+    "waiting_at_cutoff": 11073.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 53025571,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 216066,
+    "true": 173235
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 4078785740,
+   "gz_isize_mod32": 114359902,
+   "iteration": 38,
+   "mtime": 1792229549,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-38.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 163355,
+    "true": 225946
+   },
+   "seconds": 8.24,
+   "sums_unstored": {
+    "censored_wait_seconds": 1032066151.0,
+    "wait_segments": 697952.0,
+    "waiting_at_cutoff": 10763.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 53033116,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 215250,
+    "true": 174051
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 2315740109,
+   "gz_isize_mod32": 114349048,
+   "iteration": 39,
+   "mtime": 1792229781,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-39.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 162397,
+    "true": 226904
+   },
+   "seconds": 9.68,
+   "sums_unstored": {
+    "censored_wait_seconds": 1023320073.0,
+    "wait_segments": 693067.0,
+    "waiting_at_cutoff": 10741.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 53033851,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 214577,
+    "true": 174724
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 2837527084,
+   "gz_isize_mod32": 114357052,
+   "iteration": 40,
+   "mtime": 1792230091,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-40.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 162002,
+    "true": 227299
+   },
+   "seconds": 8.22,
+   "sums_unstored": {
+    "censored_wait_seconds": 1016826026.0,
+    "wait_segments": 691460.0,
+    "waiting_at_cutoff": 10647.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 53035535,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 214017,
+    "true": 175284
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 2139562808,
+   "gz_isize_mod32": 114354890,
+   "iteration": 41,
+   "mtime": 1792230334,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-41.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 161616,
+    "true": 227685
+   },
+   "seconds": 8.05,
+   "sums_unstored": {
+    "censored_wait_seconds": 1005894172.0,
+    "wait_segments": 687919.0,
+    "waiting_at_cutoff": 10401.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 53042535,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 213078,
+    "true": 176223
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 417088662,
+   "gz_isize_mod32": 114350855,
+   "iteration": 42,
+   "mtime": 1792230585,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-42.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 160133,
+    "true": 229168
+   },
+   "seconds": 7.95,
+   "sums_unstored": {
+    "censored_wait_seconds": 999608286.0,
+    "wait_segments": 685152.0,
+    "waiting_at_cutoff": 10432.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 53047742,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 212916,
+    "true": 176385
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 1321460296,
+   "gz_isize_mod32": 114360841,
+   "iteration": 43,
+   "mtime": 1792230817,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-43.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 160294,
+    "true": 229007
+   },
+   "seconds": 7.82,
+   "sums_unstored": {
+    "censored_wait_seconds": 993436484.0,
+    "wait_segments": 682870.0,
+    "waiting_at_cutoff": 10302.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 53049684,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 211712,
+    "true": 177589
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 87211594,
+   "gz_isize_mod32": 114351498,
+   "iteration": 44,
+   "mtime": 1792231051,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-44.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 158944,
+    "true": 230357
+   },
+   "seconds": 9.25,
+   "sums_unstored": {
+    "censored_wait_seconds": 989734392.0,
+    "wait_segments": 680309.0,
+    "waiting_at_cutoff": 10353.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 53053656,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 212080,
+    "true": 177221
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 2533849677,
+   "gz_isize_mod32": 114357430,
+   "iteration": 45,
+   "mtime": 1792231286,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-45.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 159473,
+    "true": 229828
+   },
+   "seconds": 9.33,
+   "sums_unstored": {
+    "censored_wait_seconds": 981094204.0,
+    "wait_segments": 678215.0,
+    "waiting_at_cutoff": 10181.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 53057685,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 210855,
+    "true": 178446
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 2127670227,
+   "gz_isize_mod32": 114349881,
+   "iteration": 46,
+   "mtime": 1792231527,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-46.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 158416,
+    "true": 230885
+   },
+   "seconds": 9.63,
+   "sums_unstored": {
+    "censored_wait_seconds": 966130862.0,
+    "wait_segments": 673882.0,
+    "waiting_at_cutoff": 9988.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 53059196,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 210681,
+    "true": 178620
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 2196891093,
+   "gz_isize_mod32": 114353153,
+   "iteration": 47,
+   "mtime": 1792231765,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-47.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 158187,
+    "true": 231114
+   },
+   "seconds": 10.26,
+   "sums_unstored": {
+    "censored_wait_seconds": 972053018.0,
+    "wait_segments": 672668.0,
+    "waiting_at_cutoff": 10182.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 53067480,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 210728,
+    "true": 178573
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 3384950601,
+   "gz_isize_mod32": 114359502,
+   "iteration": 48,
+   "mtime": 1792232006,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-48.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 158252,
+    "true": 231049
+   },
+   "seconds": 9.3,
+   "sums_unstored": {
+    "censored_wait_seconds": 964379915.0,
+    "wait_segments": 667573.0,
+    "waiting_at_cutoff": 10023.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 53069204,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 209722,
+    "true": 179579
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 1162661350,
+   "gz_isize_mod32": 114357297,
+   "iteration": 49,
+   "mtime": 1792232254,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-49.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 157061,
+    "true": 232240
+   },
+   "seconds": 8.82,
+   "sums_unstored": {
+    "censored_wait_seconds": 954181357.0,
+    "wait_segments": 666792.0,
+    "waiting_at_cutoff": 9858.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 53067614,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 208972,
+    "true": 180329
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 12912864,
+   "gz_isize_mod32": 114352747,
+   "iteration": 50,
+   "mtime": 1792232582,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-50.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 156199,
+    "true": 233102
+   },
+   "seconds": 9.32,
+   "sums_unstored": {
+    "censored_wait_seconds": 946511770.0,
+    "wait_segments": 663643.0,
+    "waiting_at_cutoff": 9686.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 53076515,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 208769,
+    "true": 180532
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 1542901779,
+   "gz_isize_mod32": 114362980,
+   "iteration": 51,
+   "mtime": 1792232838,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-51.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 156180,
+    "true": 233121
+   },
+   "seconds": 9.06,
+   "sums_unstored": {
+    "censored_wait_seconds": 952022767.0,
+    "wait_segments": 661371.0,
+    "waiting_at_cutoff": 9863.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 53074692,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 207655,
+    "true": 181646
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 102883548,
+   "gz_isize_mod32": 114349108,
+   "iteration": 52,
+   "mtime": 1792233080,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-52.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 154990,
+    "true": 234311
+   },
+   "seconds": 8.17,
+   "sums_unstored": {
+    "censored_wait_seconds": 942219133.0,
+    "wait_segments": 658936.0,
+    "waiting_at_cutoff": 9731.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 53086214,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 208221,
+    "true": 181080
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 1002297051,
+   "gz_isize_mod32": 114352559,
+   "iteration": 53,
+   "mtime": 1792233331,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-53.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 155743,
+    "true": 233558
+   },
+   "seconds": 8.72,
+   "sums_unstored": {
+    "censored_wait_seconds": 934345464.0,
+    "wait_segments": 657019.0,
+    "waiting_at_cutoff": 9595.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 53083949,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 208250,
+    "true": 181051
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 3386952756,
+   "gz_isize_mod32": 114361927,
+   "iteration": 54,
+   "mtime": 1792233584,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-54.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 155651,
+    "true": 233650
+   },
+   "seconds": 9.29,
+   "sums_unstored": {
+    "censored_wait_seconds": 931845409.0,
+    "wait_segments": 655218.0,
+    "waiting_at_cutoff": 9551.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 53081747,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 207464,
+    "true": 181837
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 238448377,
+   "gz_isize_mod32": 114361078,
+   "iteration": 55,
+   "mtime": 1792233833,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-55.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 154836,
+    "true": 234465
+   },
+   "seconds": 8.96,
+   "sums_unstored": {
+    "censored_wait_seconds": 925322572.0,
+    "wait_segments": 653839.0,
+    "waiting_at_cutoff": 9462.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 53085802,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 206628,
+    "true": 182673
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 2091116859,
+   "gz_isize_mod32": 114354886,
+   "iteration": 56,
+   "mtime": 1792234065,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-56.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 153631,
+    "true": 235670
+   },
+   "seconds": 8.61,
+   "sums_unstored": {
+    "censored_wait_seconds": 917726026.0,
+    "wait_segments": 649998.0,
+    "waiting_at_cutoff": 9394.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 53085970,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 206598,
+    "true": 182703
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 3741541748,
+   "gz_isize_mod32": 114358362,
+   "iteration": 57,
+   "mtime": 1792234306,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-57.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 153911,
+    "true": 235390
+   },
+   "seconds": 8.33,
+   "sums_unstored": {
+    "censored_wait_seconds": 919986754.0,
+    "wait_segments": 648127.0,
+    "waiting_at_cutoff": 9405.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 53091053,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 206243,
+    "true": 183058
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 3641616845,
+   "gz_isize_mod32": 114359951,
+   "iteration": 58,
+   "mtime": 1792234568,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-58.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 153514,
+    "true": 235787
+   },
+   "seconds": 9.08,
+   "sums_unstored": {
+    "censored_wait_seconds": 911885312.0,
+    "wait_segments": 645104.0,
+    "waiting_at_cutoff": 9339.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 53094364,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 206264,
+    "true": 183037
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 1152654016,
+   "gz_isize_mod32": 114361423,
+   "iteration": 59,
+   "mtime": 1792234807,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-59.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 153525,
+    "true": 235776
+   },
+   "seconds": 9.6,
+   "sums_unstored": {
+    "censored_wait_seconds": 912649145.0,
+    "wait_segments": 643285.0,
+    "waiting_at_cutoff": 9372.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 53095372,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 205555,
+    "true": 183746
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 2794327330,
+   "gz_isize_mod32": 114359284,
+   "iteration": 60,
+   "mtime": 1792235124,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-60.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 152981,
+    "true": 236320
+   },
+   "seconds": 8.93,
+   "sums_unstored": {
+    "censored_wait_seconds": 909095562.0,
+    "wait_segments": 642199.0,
+    "waiting_at_cutoff": 9312.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 53099594,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 205745,
+    "true": 183556
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 3188527409,
+   "gz_isize_mod32": 114356723,
+   "iteration": 61,
+   "mtime": 1792235364,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-61.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 153210,
+    "true": 236091
+   },
+   "seconds": 10.55,
+   "sums_unstored": {
+    "censored_wait_seconds": 910165012.0,
+    "wait_segments": 638907.0,
+    "waiting_at_cutoff": 9376.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 53103020,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 205017,
+    "true": 184284
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 783169688,
+   "gz_isize_mod32": 114360805,
+   "iteration": 62,
+   "mtime": 1792235611,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-62.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 152386,
+    "true": 236915
+   },
+   "seconds": 8.61,
+   "sums_unstored": {
+    "censored_wait_seconds": 902976991.0,
+    "wait_segments": 637845.0,
+    "waiting_at_cutoff": 9258.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 53103418,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 204007,
+    "true": 185294
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 3788843027,
+   "gz_isize_mod32": 114361911,
+   "iteration": 63,
+   "mtime": 1792235866,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-63.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 151230,
+    "true": 238071
+   },
+   "seconds": 8.93,
+   "sums_unstored": {
+    "censored_wait_seconds": 901215581.0,
+    "wait_segments": 635767.0,
+    "waiting_at_cutoff": 9205.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 53110605,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 204323,
+    "true": 184978
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 893488012,
+   "gz_isize_mod32": 114361380,
+   "iteration": 64,
+   "mtime": 1792236122,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-64.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 151317,
+    "true": 237984
+   },
+   "seconds": 9.3,
+   "sums_unstored": {
+    "censored_wait_seconds": 898307050.0,
+    "wait_segments": 633579.0,
+    "waiting_at_cutoff": 9226.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 53104679,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 203094,
+    "true": 186207
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 4065869140,
+   "gz_isize_mod32": 114348926,
+   "iteration": 65,
+   "mtime": 1792236370,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-65.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 150192,
+    "true": 239109
+   },
+   "seconds": 9.1,
+   "sums_unstored": {
+    "censored_wait_seconds": 892480964.0,
+    "wait_segments": 634125.0,
+    "waiting_at_cutoff": 9162.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 53109923,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 204181,
+    "true": 185120
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 1816208940,
+   "gz_isize_mod32": 114366022,
+   "iteration": 66,
+   "mtime": 1792236616,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-66.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 151470,
+    "true": 237831
+   },
+   "seconds": 8.83,
+   "sums_unstored": {
+    "censored_wait_seconds": 892369286.0,
+    "wait_segments": 630818.0,
+    "waiting_at_cutoff": 9204.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 53113279,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 203428,
+    "true": 185873
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 776383846,
+   "gz_isize_mod32": 114361544,
+   "iteration": 67,
+   "mtime": 1792236875,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-67.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 150767,
+    "true": 238534
+   },
+   "seconds": 8.53,
+   "sums_unstored": {
+    "censored_wait_seconds": 895128659.0,
+    "wait_segments": 629897.0,
+    "waiting_at_cutoff": 9215.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 53113744,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 202666,
+    "true": 186635
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 3434150595,
+   "gz_isize_mod32": 114356216,
+   "iteration": 68,
+   "mtime": 1792237116,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-68.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 150191,
+    "true": 239110
+   },
+   "seconds": 8.17,
+   "sums_unstored": {
+    "censored_wait_seconds": 885988109.0,
+    "wait_segments": 627230.0,
+    "waiting_at_cutoff": 9047.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 53112358,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 202870,
+    "true": 186431
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 3377617217,
+   "gz_isize_mod32": 114359968,
+   "iteration": 69,
+   "mtime": 1792237361,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-69.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 150293,
+    "true": 239008
+   },
+   "seconds": 8.81,
+   "sums_unstored": {
+    "censored_wait_seconds": 884117222.0,
+    "wait_segments": 625133.0,
+    "waiting_at_cutoff": 9080.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 53114719,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 202926,
+    "true": 186375
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 2828187938,
+   "gz_isize_mod32": 114354073,
+   "iteration": 70,
+   "mtime": 1792237685,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-70.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 150302,
+    "true": 238999
+   },
+   "seconds": 10.05,
+   "sums_unstored": {
+    "censored_wait_seconds": 883166291.0,
+    "wait_segments": 622176.0,
+    "waiting_at_cutoff": 9113.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 53116758,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 202583,
+    "true": 186718
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 4106938842,
+   "gz_isize_mod32": 114360326,
+   "iteration": 71,
+   "mtime": 1792237947,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-71.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 149665,
+    "true": 239636
+   },
+   "seconds": 9.44,
+   "sums_unstored": {
+    "censored_wait_seconds": 876443178.0,
+    "wait_segments": 620184.0,
+    "waiting_at_cutoff": 8975.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 53117302,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 201294,
+    "true": 188007
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 2961021540,
+   "gz_isize_mod32": 114358833,
+   "iteration": 72,
+   "mtime": 1792238193,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-72.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 148565,
+    "true": 240736
+   },
+   "seconds": 9.17,
+   "sums_unstored": {
+    "censored_wait_seconds": 877353824.0,
+    "wait_segments": 620332.0,
+    "waiting_at_cutoff": 8954.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 53114681,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 201302,
+    "true": 187999
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 2851770801,
+   "gz_isize_mod32": 114356623,
+   "iteration": 73,
+   "mtime": 1792238446,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-73.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 148331,
+    "true": 240970
+   },
+   "seconds": 8.1,
+   "sums_unstored": {
+    "censored_wait_seconds": 881557021.0,
+    "wait_segments": 618911.0,
+    "waiting_at_cutoff": 9026.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 53116585,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 201454,
+    "true": 187847
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 1839938696,
+   "gz_isize_mod32": 114360338,
+   "iteration": 74,
+   "mtime": 1792238701,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-74.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 148525,
+    "true": 240776
+   },
+   "seconds": 7.86,
+   "sums_unstored": {
+    "censored_wait_seconds": 883423391.0,
+    "wait_segments": 617841.0,
+    "waiting_at_cutoff": 9066.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 53117888,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 201028,
+    "true": 188273
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 821948372,
+   "gz_isize_mod32": 114359230,
+   "iteration": 75,
+   "mtime": 1792238952,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-75.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 148379,
+    "true": 240922
+   },
+   "seconds": 8.11,
+   "sums_unstored": {
+    "censored_wait_seconds": 877660337.0,
+    "wait_segments": 616365.0,
+    "waiting_at_cutoff": 8949.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 53121680,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 200862,
+    "true": 188439
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 761294249,
+   "gz_isize_mod32": 114363721,
+   "iteration": 76,
+   "mtime": 1792239218,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-76.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 147720,
+    "true": 241581
+   },
+   "seconds": 8.41,
+   "sums_unstored": {
+    "censored_wait_seconds": 876124575.0,
+    "wait_segments": 614515.0,
+    "waiting_at_cutoff": 9020.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 53124342,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 201166,
+    "true": 188135
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 2634888301,
+   "gz_isize_mod32": 114366838,
+   "iteration": 77,
+   "mtime": 1792239472,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-77.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 148541,
+    "true": 240760
+   },
+   "seconds": 8.83,
+   "sums_unstored": {
+    "censored_wait_seconds": 868167936.0,
+    "wait_segments": 610673.0,
+    "waiting_at_cutoff": 8834.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 53122223,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 199348,
+    "true": 189953
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 3310417163,
+   "gz_isize_mod32": 114355854,
+   "iteration": 78,
+   "mtime": 1792239729,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-78.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 146208,
+    "true": 243093
+   },
+   "seconds": 8.12,
+   "sums_unstored": {
+    "censored_wait_seconds": 864501873.0,
+    "wait_segments": 611311.0,
+    "waiting_at_cutoff": 8891.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 53125415,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 200029,
+    "true": 189272
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 1083166188,
+   "gz_isize_mod32": 114358364,
+   "iteration": 79,
+   "mtime": 1792239973,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-79.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 147239,
+    "true": 242062
+   },
+   "seconds": 8.02,
+   "sums_unstored": {
+    "censored_wait_seconds": 869194530.0,
+    "wait_segments": 609546.0,
+    "waiting_at_cutoff": 8936.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 53112775,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 230477,
+    "true": 158824
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 4213504736,
+   "gz_isize_mod32": 114465187,
+   "iteration": 80,
+   "mtime": 1792240272,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-80.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 177635,
+    "true": 211666
+   },
+   "seconds": 9.72,
+   "sums_unstored": {
+    "censored_wait_seconds": 838623845.0,
+    "wait_segments": 609241.0,
+    "waiting_at_cutoff": 8305.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 53074501,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 254574,
+    "true": 134727
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 2015958070,
+   "gz_isize_mod32": 114544698,
+   "iteration": 81,
+   "mtime": 1792240505,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-81.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 195873,
+    "true": 193428
+   },
+   "seconds": 9.48,
+   "sums_unstored": {
+    "censored_wait_seconds": 842469601.0,
+    "wait_segments": 613791.0,
+    "waiting_at_cutoff": 8348.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 53070574,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 258525,
+    "true": 130776
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 1980025709,
+   "gz_isize_mod32": 114562653,
+   "iteration": 82,
+   "mtime": 1792240733,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-82.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 201961,
+    "true": 187340
+   },
+   "seconds": 8.71,
+   "sums_unstored": {
+    "censored_wait_seconds": 839854919.0,
+    "wait_segments": 613286.0,
+    "waiting_at_cutoff": 8296.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 53068604,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 260833,
+    "true": 128468
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 422109954,
+   "gz_isize_mod32": 114572569,
+   "iteration": 83,
+   "mtime": 1792240969,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-83.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 204996,
+    "true": 184305
+   },
+   "seconds": 8.22,
+   "sums_unstored": {
+    "censored_wait_seconds": 840936195.0,
+    "wait_segments": 613595.0,
+    "waiting_at_cutoff": 8300.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 53067210,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 262456,
+    "true": 126845
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 299212791,
+   "gz_isize_mod32": 114570917,
+   "iteration": 84,
+   "mtime": 1792241205,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-84.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 207720,
+    "true": 181581
+   },
+   "seconds": 8.09,
+   "sums_unstored": {
+    "censored_wait_seconds": 838618727.0,
+    "wait_segments": 613326.0,
+    "waiting_at_cutoff": 8319.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 53067807,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 263576,
+    "true": 125725
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 986136816,
+   "gz_isize_mod32": 114582299,
+   "iteration": 85,
+   "mtime": 1792241442,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-85.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 209505,
+    "true": 179796
+   },
+   "seconds": 7.93,
+   "sums_unstored": {
+    "censored_wait_seconds": 837178881.0,
+    "wait_segments": 612406.0,
+    "waiting_at_cutoff": 8284.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 53067624,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 263864,
+    "true": 125437
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 1038966899,
+   "gz_isize_mod32": 114584655,
+   "iteration": 86,
+   "mtime": 1792241669,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-86.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 210191,
+    "true": 179110
+   },
+   "seconds": 8.29,
+   "sums_unstored": {
+    "censored_wait_seconds": 835739926.0,
+    "wait_segments": 611882.0,
+    "waiting_at_cutoff": 8287.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 53061176,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 264461,
+    "true": 124840
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 1081881321,
+   "gz_isize_mod32": 114579737,
+   "iteration": 87,
+   "mtime": 1792241901,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-87.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 210478,
+    "true": 178823
+   },
+   "seconds": 8.28,
+   "sums_unstored": {
+    "censored_wait_seconds": 834561470.0,
+    "wait_segments": 611462.0,
+    "waiting_at_cutoff": 8256.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 53064754,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 265363,
+    "true": 123938
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 3041923929,
+   "gz_isize_mod32": 114591672,
+   "iteration": 88,
+   "mtime": 1792242140,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-88.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 211731,
+    "true": 177570
+   },
+   "seconds": 8.26,
+   "sums_unstored": {
+    "censored_wait_seconds": 836209135.0,
+    "wait_segments": 611586.0,
+    "waiting_at_cutoff": 8288.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 53063532,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 266042,
+    "true": 123259
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 224392264,
+   "gz_isize_mod32": 114592570,
+   "iteration": 89,
+   "mtime": 1792242375,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-89.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 212626,
+    "true": 176675
+   },
+   "seconds": 7.92,
+   "sums_unstored": {
+    "censored_wait_seconds": 831989053.0,
+    "wait_segments": 611739.0,
+    "waiting_at_cutoff": 8204.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 53063591,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 266184,
+    "true": 123117
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 2670309435,
+   "gz_isize_mod32": 114586940,
+   "iteration": 90,
+   "mtime": 1792242679,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-90.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 212746,
+    "true": 176555
+   },
+   "seconds": 7.82,
+   "sums_unstored": {
+    "censored_wait_seconds": 833773833.0,
+    "wait_segments": 611211.0,
+    "waiting_at_cutoff": 8249.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 53062761,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 266219,
+    "true": 123082
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 2268624421,
+   "gz_isize_mod32": 114582841,
+   "iteration": 91,
+   "mtime": 1792242910,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-91.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 212745,
+    "true": 176556
+   },
+   "seconds": 8.33,
+   "sums_unstored": {
+    "censored_wait_seconds": 833201563.0,
+    "wait_segments": 611522.0,
+    "waiting_at_cutoff": 8254.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 53063171,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 266563,
+    "true": 122738
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 4199752026,
+   "gz_isize_mod32": 114586271,
+   "iteration": 92,
+   "mtime": 1792243141,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-92.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 213330,
+    "true": 175971
+   },
+   "seconds": 9.67,
+   "sums_unstored": {
+    "censored_wait_seconds": 835271526.0,
+    "wait_segments": 610569.0,
+    "waiting_at_cutoff": 8285.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 53060490,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 266887,
+    "true": 122414
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 4170658595,
+   "gz_isize_mod32": 114593921,
+   "iteration": 93,
+   "mtime": 1792243366,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-93.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 213734,
+    "true": 175567
+   },
+   "seconds": 11.49,
+   "sums_unstored": {
+    "censored_wait_seconds": 832535536.0,
+    "wait_segments": 610923.0,
+    "waiting_at_cutoff": 8234.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 53060278,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 267072,
+    "true": 122229
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 851082343,
+   "gz_isize_mod32": 114593602,
+   "iteration": 94,
+   "mtime": 1792243606,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-94.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 214012,
+    "true": 175289
+   },
+   "seconds": 8.82,
+   "sums_unstored": {
+    "censored_wait_seconds": 831000175.0,
+    "wait_segments": 610419.0,
+    "waiting_at_cutoff": 8213.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 53061581,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 266666,
+    "true": 122635
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 3185701488,
+   "gz_isize_mod32": 114597119,
+   "iteration": 95,
+   "mtime": 1792243838,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-95.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 213521,
+    "true": 175780
+   },
+   "seconds": 9.86,
+   "sums_unstored": {
+    "censored_wait_seconds": 833717504.0,
+    "wait_segments": 610665.0,
+    "waiting_at_cutoff": 8246.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 53060257,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 266773,
+    "true": 122528
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 1821872420,
+   "gz_isize_mod32": 114594671,
+   "iteration": 96,
+   "mtime": 1792244075,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-96.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 213854,
+    "true": 175447
+   },
+   "seconds": 8.75,
+   "sums_unstored": {
+    "censored_wait_seconds": 831948957.0,
+    "wait_segments": 610512.0,
+    "waiting_at_cutoff": 8238.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 53058247,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 267416,
+    "true": 121885
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 593302329,
+   "gz_isize_mod32": 114595516,
+   "iteration": 97,
+   "mtime": 1792244306,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-97.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 215036,
+    "true": 174265
+   },
+   "seconds": 7.94,
+   "sums_unstored": {
+    "censored_wait_seconds": 828608243.0,
+    "wait_segments": 609604.0,
+    "waiting_at_cutoff": 8189.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 53060044,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 266810,
+    "true": 122491
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 2670026850,
+   "gz_isize_mod32": 114595417,
+   "iteration": 98,
+   "mtime": 1792244540,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-98.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 214043,
+    "true": 175258
+   },
+   "seconds": 8.17,
+   "sums_unstored": {
+    "censored_wait_seconds": 830253983.0,
+    "wait_segments": 610432.0,
+    "waiting_at_cutoff": 8231.0
+   },
+   "unfinished_not_01": 0
+  },
+  {
+   "bad_hash64": {
+    "outcome": 0,
+    "realized": 0
+   },
+   "bad_numeric": {},
+   "bad_sha_length": {
+    "choice": 0,
+    "plan": 0
+   },
+   "bytes": 53062272,
+   "car_legs_gt_dep": 0,
+   "choice_changed_values": {
+    "empty_or_other": 0,
+    "false": 266771,
+    "true": 122530
+   },
+   "cohort_label_mismatch": 0,
+   "columns_extra": [],
+   "columns_missing": [],
+   "columns_ok": true,
+   "dep_ne_comp_plus_stuck": 0,
+   "gz_crc32": 3155241055,
+   "gz_isize_mod32": 114592735,
+   "iteration": 99,
+   "mtime": 1792244799,
+   "n_duplicate_rows": 0,
+   "n_missing_ids": 0,
+   "n_rows": 389301,
+   "n_unique_ids": 389301,
+   "n_unknown_ids": 0,
+   "negative_values": {},
+   "non_integer_counts": {},
+   "order_identical_to_cohort": true,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it/simulation/research/persons-99.csv.gz",
+   "plan_changed_values": {
+    "empty_or_other": 0,
+    "false": 213624,
+    "true": 175677
+   },
+   "seconds": 7.78,
+   "sums_unstored": {
+    "censored_wait_seconds": 831301962.0,
+    "wait_segments": 610604.0,
+    "waiting_at_cutoff": 8232.0
+   },
+   "unfinished_not_01": 0
+  }
+ ],
+ "group_tables": {
+  "gm_dep_ne_comp_plus_stuck": 0,
+  "groups_missing_cols": 0,
+  "missing_groups": 0,
+  "partition_violations": 0,
+  "unexpected_groups": 0
+ },
+ "hash_collision_risk_note": "64-bit truncation: expected collision pairs per run <= n*C(100,2)/2^64 = 1.04e-10; realized/outcome hashes are 64-bit rolling hashes by definition (possible collisions)",
+ "hash_collision_test_128bit": {
+  "choice": {
+   "first64_equal_pairs": 35013934,
+   "first64_equal_second64_differ": 0
+  },
+  "plan": {
+   "first64_equal_pairs": 31964333,
+   "first64_equal_second64_differ": 0
+  }
+ },
+ "issues": [],
+ "iterations": [
+  0,
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8,
+  9,
+  10,
+  11,
+  12,
+  13,
+  14,
+  15,
+  16,
+  17,
+  18,
+  19,
+  20,
+  21,
+  22,
+  23,
+  24,
+  25,
+  26,
+  27,
+  28,
+  29,
+  30,
+  31,
+  32,
+  33,
+  34,
+  35,
+  36,
+  37,
+  38,
+  39,
+  40,
+  41,
+  42,
+  43,
+  44,
+  45,
+  46,
+  47,
+  48,
+  49,
+  50,
+  51,
+  52,
+  53,
+  54,
+  55,
+  56,
+  57,
+  58,
+  59,
+  60,
+  61,
+  62,
+  63,
+  64,
+  65,
+  66,
+  67,
+  68,
+  69,
+  70,
+  71,
+  72,
+  73,
+  74,
+  75,
+  76,
+  77,
+  78,
+  79,
+  80,
+  81,
+  82,
+  83,
+  84,
+  85,
+  86,
+  87,
+  88,
+  89,
+  90,
+  91,
+  92,
+  93,
+  94,
+  95,
+  96,
+  97,
+  98,
+  99
+ ],
+ "maxrss_gb_parent": 4.91,
+ "n_issues": 0,
+ "n_persons": 389301,
+ "order_identical_files": 100,
+ "partial": false,
+ "person_vs_group": {
+  "allmode_completed_vs_group_modes": {
+   "max_abs_diff": 0.0,
+   "n_mismatch": 0
+  },
+  "allmode_departures_vs_group_modes": {
+   "max_abs_diff": 0.0,
+   "n_mismatch": 0
+  },
+  "allmode_stuck_vs_group_modes": {
+   "max_abs_diff": 0.0,
+   "n_mismatch": 0
+  },
+  "choice_changed": {
+   "max_abs_diff": 0.0,
+   "max_rel_diff": 0.0,
+   "n_mismatch": 0
+  },
+  "completed_car_legs": {
+   "max_abs_diff": 0.0,
+   "max_rel_diff": 0.0,
+   "n_mismatch": 0
+  },
+  "completed_car_seconds": {
+   "max_abs_diff": 0.0,
+   "max_rel_diff": 0.0,
+   "n_mismatch": 0
+  },
+  "persons_count": {
+   "max_abs_diff": 0.0,
+   "n_mismatch": 0
+  },
+  "plan_changed": {
+   "max_abs_diff": 0.0,
+   "max_rel_diff": 0.0,
+   "n_mismatch": 0
+  },
+  "private_car_entry_crossings": {
+   "max_abs_diff": 0.0,
+   "max_rel_diff": 0.0,
+   "n_mismatch": 0
+  },
+  "score_sum": {
+   "max_abs_diff": 5.30388206243515e-07,
+   "max_rel_diff": 1.426893531886398e-12,
+   "n_mismatch": 0
+  },
+  "toll_revenue": {
+   "max_abs_diff": 0.007503841014113277,
+   "max_rel_diff": 2.2928318707144553e-08,
+   "n_mismatch": 0
+  },
+  "unfinished": {
+   "max_abs_diff": 0.0,
+   "max_rel_diff": 0.0,
+   "n_mismatch": 0
+  }
+ },
+ "rows_per_file_all_equal_n": true,
+ "run": "schema1-4713",
+ "run_json": {
+  "commit": "6436c9ff1743ad5d4565d94ed0936847a431f8ea",
+  "events": "none",
+  "expected_persons": 389301,
+  "innovation_until": 79,
+  "iterations": 100,
+  "plans": "/orcd/home/002/weibingw/matsim-work/matsim-nyc-modernized/outputs/reference-inputs/cold.xml.gz",
+  "replanning_log": false,
+  "seed": 4713,
+  "threads": 16,
+  "worktree_dirty": false
+ },
+ "scenario": "schema1",
+ "seconds": 273.8,
+ "seed": 4713,
+ "source_fingerprint": "9b8c61f37e5ead7316fa3b88775f8d3dc94a109f53d3e7af9da1d07d2747572c"
+}

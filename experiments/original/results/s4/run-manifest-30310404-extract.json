@@ -1,0 +1,77 @@
+{
+ "analysis_version": "s4-s6 v1 (2026-11-24)",
+ "data_root": "/orcd/scratch/orcd/006/weibingw/matsim-work",
+ "host": "node1363",
+ "numpy": "2.3.5",
+ "pandas": "2.3.3",
+ "python": "3.12.12",
+ "repo_head_when_written": "df776c3 (research/cleanup); s4-s6 scripts are new and uncommitted",
+ "runs": {
+  "baseline-4711": {
+   "commit": "e1581d1f14a085b50b73e16f7bb7ee743968d84a",
+   "dirty": false,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/rq1/baseline-s4711-100it-rq1"
+  },
+  "baseline-4712": {
+   "commit": "e1581d1f14a085b50b73e16f7bb7ee743968d84a",
+   "dirty": false,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/rq1/baseline-s4712-100it-rq1"
+  },
+  "baseline-4713": {
+   "commit": "e1581d1f14a085b50b73e16f7bb7ee743968d84a",
+   "dirty": false,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/rq1/baseline-s4713-100it-rq1"
+  },
+  "schema1-4711": {
+   "commit": "6436c9ff1743ad5d4565d94ed0936847a431f8ea",
+   "dirty": false,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4711-100it"
+  },
+  "schema1-4712": {
+   "commit": "6436c9ff1743ad5d4565d94ed0936847a431f8ea",
+   "dirty": false,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4712-100it"
+  },
+  "schema1-4713": {
+   "commit": "6436c9ff1743ad5d4565d94ed0936847a431f8ea",
+   "dirty": false,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema1-s4713-100it"
+  },
+  "schema2-4711": {
+   "commit": "91fe7b0a2f8b257eae4df42835f00a7308828f33",
+   "dirty": false,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema2-s4711-100it"
+  },
+  "schema2-4712": {
+   "commit": "91fe7b0a2f8b257eae4df42835f00a7308828f33",
+   "dirty": false,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema2-s4712-100it"
+  },
+  "schema2-4713": {
+   "commit": "91fe7b0a2f8b257eae4df42835f00a7308828f33",
+   "dirty": false,
+   "path": "/orcd/scratch/orcd/006/weibingw/matsim-work/policy/schema2-s4713-100it"
+  }
+ },
+ "scripts": {
+  "s4.sbatch": "881420beb5a3a85d56451d5d30c21e751536a20d84e7bbfcd965b66313ac52f2",
+  "s4_common.py": "2bfefb18fa3dbbf17741dd62694f0d599a56cf4742a45db52c6c7ca56fb33e00",
+  "s4_extract.py": "b28ad18372c87760f26baae0878218b31a111c4e1765226a7ff887d786a172c7",
+  "s4_figures.py": "87cd6953d33b10371e106025d1a1b8679dd9c3b6031634fc2722ff0c849e112b",
+  "s4_reconcile.py": "fbbc7e6411e68c00eac6e8b1cec142bec8e2a2ce51c62cd7cfdd9f34250b4dcb",
+  "s4_selftest.py": "bc6652a986106ab751c6479df8ba29feb6290b14a215721df5f8d03f409e34e1",
+  "s5_stability.py": "ce041a8e17c3d1bd59b256e15aa4e1068f7333d2391cd0aa95233de8583b0cd1",
+  "s6_policy.py": "5fb046f14f49bede8e93b5081587474fcc64fc2e55c14861a9c26afb461d2078"
+ },
+ "slurm": {
+  "SLURM_CPUS_PER_TASK": "4",
+  "SLURM_JOB_ID": "30310404",
+  "SLURM_JOB_NAME": "orig-s4",
+  "SLURM_JOB_NODELIST": "node1363",
+  "SLURM_JOB_PARTITION": "mit_preemptable",
+  "SLURM_MEM_PER_NODE": "24576",
+  "SLURM_RESTART_COUNT": null
+ },
+ "stage": "extract",
+ "time": "2026-11-24 02:21:07 EST"
+}

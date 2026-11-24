@@ -1,0 +1,66 @@
+{
+ "paired_vs_unpaired_variance": {
+  "legs_car_charging_related|schema1": {
+   "ratio": 1.3989505239207622,
+   "var_paired_delta": 126666.89333333437,
+   "var_unpaired_sum": 90544.22666666724
+  },
+  "legs_car_charging_related|schema2": {
+   "ratio": 1.9521031232424768,
+   "var_paired_delta": 135495.523333334,
+   "var_unpaired_sum": 69410.02333333374
+  },
+  "legs_car_completed_charging_related|schema1": {
+   "ratio": 1.3721085496225307,
+   "var_paired_delta": 133107.25333333813,
+   "var_unpaired_sum": 97009.27333333515
+  },
+  "legs_car_completed_charging_related|schema2": {
+   "ratio": 1.943205154383141,
+   "var_paired_delta": 137294.54333333502,
+   "var_unpaired_sum": 70653.65333333441
+  },
+  "share_car|schema1": {
+   "ratio": 0.7300964735423139,
+   "var_paired_delta": 4.752334078236032e-08,
+   "var_unpaired_sum": 6.509186457480681e-08
+  },
+  "share_car|schema2": {
+   "ratio": 0.2635507853854309,
+   "var_paired_delta": 1.9539572153072367e-08,
+   "var_unpaired_sum": 7.413968478407924e-08
+  },
+  "share_pt|schema1": {
+   "ratio": 1.8713232173015388,
+   "var_paired_delta": 2.293357324671746e-08,
+   "var_unpaired_sum": 1.225527104814519e-08
+  },
+  "share_pt|schema2": {
+   "ratio": 0.8252670366438648,
+   "var_paired_delta": 1.1859450587862132e-08,
+   "var_unpaired_sum": 1.4370440186356252e-08
+  },
+  "stuck_car_charging_related|schema1": {
+   "ratio": 0.6762734584450267,
+   "var_paired_delta": 94.17333333333414,
+   "var_unpaired_sum": 139.2533333333373
+  },
+  "stuck_car_charging_related|schema2": {
+   "ratio": 0.08699326363570269,
+   "var_paired_delta": 12.009999999999982,
+   "var_unpaired_sum": 138.05666666667037
+  }
+ },
+ "reconstruction_failures": 0,
+ "same_seed_vs_cross_seed_plan_fp_equal_at_99": {
+  "baseline 4711 vs 4712 (replanners)": 0.08758789175260864,
+  "baseline 4711 vs 4713 (replanners)": 0.08563102783973163,
+  "baseline 4712 vs 4713 (replanners)": 0.08778540130903256,
+  "schema1 vs baseline same seed 4711 (replanners)": 0.09354356453092999,
+  "schema1 vs baseline same seed 4712 (replanners)": 0.09446122431616115,
+  "schema1 vs baseline same seed 4713 (replanners)": 0.09433967997374643,
+  "schema2 vs baseline same seed 4711 (replanners)": 0.09462530917842102,
+  "schema2 vs baseline same seed 4712 (replanners)": 0.09465873387258507,
+  "schema2 vs baseline same seed 4713 (replanners)": 0.09380184625856128
+ }
+}

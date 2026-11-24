@@ -1,0 +1,9 @@
+{"run": "baseline-4711", "reused": false, "seconds": 291.8, "complete": true, "issues": 0, "maxrss_gb_all_so_far": 4.8}
+{"run": "baseline-4712", "reused": false, "seconds": 303.2, "complete": true, "issues": 0, "maxrss_gb_all_so_far": 4.85}
+{"run": "baseline-4713", "reused": false, "seconds": 301.4, "complete": true, "issues": 0, "maxrss_gb_all_so_far": 4.87}
+{"run": "schema1-4711", "reused": false, "seconds": 254.3, "complete": true, "issues": 0, "maxrss_gb_all_so_far": 4.87}
+{"run": "schema1-4712", "reused": false, "seconds": 265.6, "complete": true, "issues": 0, "maxrss_gb_all_so_far": 4.87}
+{"run": "schema1-4713", "reused": false, "seconds": 273.8, "complete": true, "issues": 0, "maxrss_gb_all_so_far": 4.91}
+{"run": "schema2-4711", "reused": false, "seconds": 274.6, "complete": true, "issues": 0, "maxrss_gb_all_so_far": 4.91}
+{"run": "schema2-4712", "reused": false, "seconds": 298.1, "complete": true, "issues": 0, "maxrss_gb_all_so_far": 4.91}
+{"run": "schema2-4713", "reused": false, "seconds": 269.4, "complete": true, "issues": 0, "maxrss_gb_all_so_far": 4.91}

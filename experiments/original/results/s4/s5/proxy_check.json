@@ -1,0 +1,624 @@
+{
+ "gate": {
+  "all_runs_best_lag_is_same_iteration": true,
+  "exploratory_thresholds": {
+   "agreement_ge": 0.95,
+   "not_a_formal_acceptance_criterion": true,
+   "recall_ge": 0.8
+  },
+  "passed": true,
+  "pooled_innovation_on_timed_fp": {
+   "agreement": 0.9528703222127697,
+   "fn": 3675937,
+   "fp": 0,
+   "precision": 1.0,
+   "recall": 0.8428721933601079,
+   "tn": 54601659,
+   "tp": 19718630
+  }
+ },
+ "per_run": {
+  "baseline-4711": {
+   "alignment_score": {
+    "P(choice_fp_changed | log plan_id switched)": 0.6888669532191607,
+    "P(log plan_id switched | timed_fp_changed)": 1.0,
+    "P(timed_fp_changed | log plan_id switched)": 0.9243638869974878,
+    "executed_score_matches_persons_score_lag-1": 0.05351734133905402,
+    "executed_score_matches_persons_score_lag0": 1.0,
+    "executed_score_matches_persons_score_lag1": 0.05351779713033807
+   },
+   "best_lag": 0,
+   "confusion_lag0": {
+    "1-79_innovation_on|choice_fp": {
+     "agreement": 0.835767322895854,
+     "fn": 4269843,
+     "fp": 0,
+     "log_new_events": 7799511,
+     "precision": 1.0,
+     "recall": 0.45254990985973353,
+     "tn": 18199231,
+     "tp": 3529668
+    },
+    "1-79_innovation_on|timed_fp": {
+     "agreement": 0.9528877589538756,
+     "fn": 1224859,
+     "fp": 0,
+     "log_new_events": 7799511,
+     "precision": 1.0,
+     "recall": 0.8429569494805508,
+     "tn": 18199231,
+     "tp": 6574652
+    },
+    "1-99|choice_fp": {
+     "agreement": 0.8689456415027521,
+     "fn": 4269843,
+     "fp": 0,
+     "log_new_events": 7799511,
+     "precision": 1.0,
+     "recall": 0.45254990985973353,
+     "tn": 24781191,
+     "tp": 3529668
+    },
+    "1-99|timed_fp": {
+     "agreement": 0.962405383407638,
+     "fn": 1224859,
+     "fp": 0,
+     "log_new_events": 7799511,
+     "precision": 1.0,
+     "recall": 0.8429569494805508,
+     "tn": 24781191,
+     "tp": 6574652
+    },
+    "80-99_select_only|choice_fp": {
+     "agreement": 1.0,
+     "fn": 0,
+     "fp": 0,
+     "log_new_events": 0,
+     "precision": 0.0,
+     "recall": 0.0,
+     "tn": 6581960,
+     "tp": 0
+    },
+    "80-99_select_only|timed_fp": {
+     "agreement": 1.0,
+     "fn": 0,
+     "fp": 0,
+     "log_new_events": 0,
+     "precision": 0.0,
+     "recall": 0.0,
+     "tn": 6581960,
+     "tp": 0
+    }
+   },
+   "lag_comparison_timed_fp_proxy": {
+    "lag-1": {
+     "agreement": 0.6781538989502661,
+     "precision": 0.296254311254801,
+     "recall": 0.2529261691334005
+    },
+    "lag0": {
+     "agreement": 0.962405383407638,
+     "precision": 1.0,
+     "recall": 0.8429569494805508
+    },
+    "lag1": {
+     "agreement": 0.6779968524976309,
+     "precision": 0.30102159313120025,
+     "recall": 0.2507591822102693
+    }
+   },
+   "log_new_missed_by_choice_proxy": 4269843,
+   "of_which_caught_by_timed_proxy": 3044984,
+   "per_strategy": [
+    {
+     "description": "ExpBetaPlanSelector",
+     "innovative": 0,
+     "log_new_plan": 0,
+     "person_iterations": 9282300,
+     "proxy_detects_log_new": 0,
+     "proxy_flags_without_log_new": 0,
+     "recall": null,
+     "strategy_id": 0
+    },
+    {
+     "description": "RandomPlanSelector_SubtourModeChoice_ReRoute",
+     "innovative": 1,
+     "log_new_plan": 975106,
+     "person_iterations": 975106,
+     "proxy_detects_log_new": 827283,
+     "proxy_flags_without_log_new": 0,
+     "recall": 0.8484031479654519,
+     "strategy_id": 1
+    },
+    {
+     "description": "RandomPlanSelector_ReRoute",
+     "innovative": 1,
+     "log_new_plan": 973912,
+     "person_iterations": 973912,
+     "proxy_detects_log_new": 577549,
+     "proxy_flags_without_log_new": 0,
+     "recall": 0.5930196978782477,
+     "strategy_id": 2
+    },
+    {
+     "description": "RandomPlanSelector_TimeAllocationMutatorModule",
+     "innovative": 1,
+     "log_new_plan": 974392,
+     "person_iterations": 974392,
+     "proxy_detects_log_new": 974353,
+     "proxy_flags_without_log_new": 0,
+     "recall": 0.999959975040846,
+     "strategy_id": 3
+    },
+    {
+     "description": "ExpBetaPlanSelector",
+     "innovative": 0,
+     "log_new_plan": 0,
+     "person_iterations": 15498891,
+     "proxy_detects_log_new": 0,
+     "proxy_flags_without_log_new": 0,
+     "recall": null,
+     "strategy_id": 4
+    },
+    {
+     "description": "RandomPlanSelector_ReRoute",
+     "innovative": 1,
+     "log_new_plan": 1625547,
+     "person_iterations": 1625547,
+     "proxy_detects_log_new": 1140955,
+     "proxy_flags_without_log_new": 0,
+     "recall": 0.7018898869119133,
+     "strategy_id": 5
+    },
+    {
+     "description": "RandomPlanSelector_SubtourModeChoice_ReRoute",
+     "innovative": 1,
+     "log_new_plan": 1625231,
+     "person_iterations": 1625231,
+     "proxy_detects_log_new": 1429219,
+     "proxy_flags_without_log_new": 0,
+     "recall": 0.8793943753226464,
+     "strategy_id": 6
+    },
+    {
+     "description": "RandomPlanSelector_TimeAllocationMutatorModule",
+     "innovative": 1,
+     "log_new_plan": 1625323,
+     "person_iterations": 1625323,
+     "proxy_detects_log_new": 1625293,
+     "proxy_flags_without_log_new": 0,
+     "recall": 0.999981542130395,
+     "strategy_id": 7
+    },
+    {
+     "description": "ExpBetaPlanSelector",
+     "innovative": 0,
+     "log_new_plan": 0,
+     "person_iterations": 0,
+     "proxy_detects_log_new": 0,
+     "proxy_flags_without_log_new": 0,
+     "recall": null,
+     "strategy_id": 8
+    }
+   ],
+   "run": "baseline-4711"
+  },
+  "baseline-4712": {
+   "alignment_score": {
+    "P(choice_fp_changed | log plan_id switched)": 0.6886453657177417,
+    "P(log plan_id switched | timed_fp_changed)": 1.0,
+    "P(timed_fp_changed | log plan_id switched)": 0.9242145852197934,
+    "executed_score_matches_persons_score_lag-1": 0.053706950513220976,
+    "executed_score_matches_persons_score_lag0": 1.0,
+    "executed_score_matches_persons_score_lag1": 0.05370467155680071
+   },
+   "best_lag": 0,
+   "confusion_lag0": {
+    "1-79_innovation_on|choice_fp": {
+     "agreement": 0.8358550194467101,
+     "fn": 4267563,
+     "fp": 0,
+     "log_new_events": 7795609,
+     "precision": 1.0,
+     "recall": 0.45256836252305627,
+     "tn": 18203133,
+     "tp": 3528046
+    },
+    "1-79_innovation_on|timed_fp": {
+     "agreement": 0.9529091061405971,
+     "fn": 1224304,
+     "fp": 0,
+     "log_new_events": 7795609,
+     "precision": 1.0,
+     "recall": 0.842949537361353,
+     "tn": 18203133,
+     "tp": 6571305
+    },
+    "1-99|choice_fp": {
+     "agreement": 0.869015621578688,
+     "fn": 4267563,
+     "fp": 0,
+     "log_new_events": 7795609,
+     "precision": 1.0,
+     "recall": 0.45256836252305627,
+     "tn": 24785093,
+     "tp": 3528046
+    },
+    "1-99|timed_fp": {
+     "agreement": 0.9624224180313856,
+     "fn": 1224304,
+     "fp": 0,
+     "log_new_events": 7795609,
+     "precision": 1.0,
+     "recall": 0.842949537361353,
+     "tn": 24785093,
+     "tp": 6571305
+    },
+    "80-99_select_only|choice_fp": {
+     "agreement": 1.0,
+     "fn": 0,
+     "fp": 0,
+     "log_new_events": 0,
+     "precision": 0.0,
+     "recall": 0.0,
+     "tn": 6581960,
+     "tp": 0
+    },
+    "80-99_select_only|timed_fp": {
+     "agreement": 1.0,
+     "fn": 0,
+     "fp": 0,
+     "log_new_events": 0,
+     "precision": 0.0,
+     "recall": 0.0,
+     "tn": 6581960,
+     "tp": 0
+    }
+   },
+   "lag_comparison_timed_fp_proxy": {
+    "lag-1": {
+     "agreement": 0.6782507933558901,
+     "precision": 0.2960416538267513,
+     "recall": 0.252765487372445
+    },
+    "lag0": {
+     "agreement": 0.9624224180313856,
+     "precision": 1.0,
+     "recall": 0.842949537361353
+    },
+    "lag1": {
+     "agreement": 0.6781579917699597,
+     "precision": 0.30099447626129167,
+     "recall": 0.2507022863768565
+    }
+   },
+   "log_new_missed_by_choice_proxy": 4267563,
+   "of_which_caught_by_timed_proxy": 3043259,
+   "per_strategy": [
+    {
+     "description": "ExpBetaPlanSelector",
+     "innovative": 0,
+     "log_new_plan": 0,
+     "person_iterations": 9283606,
+     "proxy_detects_log_new": 0,
+     "proxy_flags_without_log_new": 0,
+     "recall": null,
+     "strategy_id": 0
+    },
+    {
+     "description": "RandomPlanSelector_SubtourModeChoice_ReRoute",
+     "innovative": 1,
+     "log_new_plan": 974036,
+     "person_iterations": 974036,
+     "proxy_detects_log_new": 826076,
+     "proxy_flags_without_log_new": 0,
+     "recall": 0.8480959635988814,
+     "strategy_id": 1
+    },
+    {
+     "description": "RandomPlanSelector_ReRoute",
+     "innovative": 1,
+     "log_new_plan": 973658,
+     "person_iterations": 973658,
+     "proxy_detects_log_new": 578118,
+     "proxy_flags_without_log_new": 0,
+     "recall": 0.593758794155648,
+     "strategy_id": 2
+    },
+    {
+     "description": "RandomPlanSelector_TimeAllocationMutatorModule",
+     "innovative": 1,
+     "log_new_plan": 974410,
+     "person_iterations": 974410,
+     "proxy_detects_log_new": 974365,
+     "proxy_flags_without_log_new": 0,
+     "recall": 0.9999538182079413,
+     "strategy_id": 3
+    },
+    {
+     "description": "ExpBetaPlanSelector",
+     "innovative": 0,
+     "log_new_plan": 0,
+     "person_iterations": 15501487,
+     "proxy_detects_log_new": 0,
+     "proxy_flags_without_log_new": 0,
+     "recall": null,
+     "strategy_id": 4
+    },
+    {
+     "description": "RandomPlanSelector_ReRoute",
+     "innovative": 1,
+     "log_new_plan": 1624913,
+     "person_iterations": 1624913,
+     "proxy_detects_log_new": 1140747,
+     "proxy_flags_without_log_new": 0,
+     "recall": 0.7020357397596055,
+     "strategy_id": 5
+    },
+    {
+     "description": "RandomPlanSelector_SubtourModeChoice_ReRoute",
+     "innovative": 1,
+     "log_new_plan": 1624415,
+     "person_iterations": 1624415,
+     "proxy_detects_log_new": 1427878,
+     "proxy_flags_without_log_new": 0,
+     "recall": 0.879010597661312,
+     "strategy_id": 6
+    },
+    {
+     "description": "RandomPlanSelector_TimeAllocationMutatorModule",
+     "innovative": 1,
+     "log_new_plan": 1624177,
+     "person_iterations": 1624177,
+     "proxy_detects_log_new": 1624121,
+     "proxy_flags_without_log_new": 0,
+     "recall": 0.9999655209992507,
+     "strategy_id": 7
+    },
+    {
+     "description": "ExpBetaPlanSelector",
+     "innovative": 0,
+     "log_new_plan": 0,
+     "person_iterations": 0,
+     "proxy_detects_log_new": 0,
+     "proxy_flags_without_log_new": 0,
+     "recall": null,
+     "strategy_id": 8
+    }
+   ],
+   "run": "baseline-4712"
+  },
+  "baseline-4713": {
+   "alignment_score": {
+    "P(choice_fp_changed | log plan_id switched)": 0.6883522520626078,
+    "P(log plan_id switched | timed_fp_changed)": 1.0,
+    "P(timed_fp_changed | log plan_id switched)": 0.9242946476644348,
+    "executed_score_matches_persons_score_lag-1": 0.05352250697360665,
+    "executed_score_matches_persons_score_lag0": 1.0,
+    "executed_score_matches_persons_score_lag1": 0.053522051182322596
+   },
+   "best_lag": 0,
+   "confusion_lag0": {
+    "1-79_innovation_on|choice_fp": {
+     "agreement": 0.8357031659454908,
+     "fn": 4271511,
+     "fp": 0,
+     "log_new_events": 7799447,
+     "precision": 1.0,
+     "recall": 0.4523315563270063,
+     "tn": 18199295,
+     "tp": 3527936
+    },
+    "1-79_innovation_on|timed_fp": {
+     "agreement": 0.9528141015438363,
+     "fn": 1226774,
+     "fp": 0,
+     "log_new_events": 7799447,
+     "precision": 1.0,
+     "recall": 0.8427101306028492,
+     "tn": 18199295,
+     "tp": 6572673
+    },
+    "1-99|choice_fp": {
+     "agreement": 0.8688944455524623,
+     "fn": 4271511,
+     "fp": 0,
+     "log_new_events": 7799447,
+     "precision": 1.0,
+     "recall": 0.4523315563270063,
+     "tn": 24781255,
+     "tp": 3527936
+    },
+    "1-99|timed_fp": {
+     "agreement": 0.9623466062824552,
+     "fn": 1226774,
+     "fp": 0,
+     "log_new_events": 7799447,
+     "precision": 1.0,
+     "recall": 0.8427101306028492,
+     "tn": 24781255,
+     "tp": 6572673
+    },
+    "80-99_select_only|choice_fp": {
+     "agreement": 1.0,
+     "fn": 0,
+     "fp": 0,
+     "log_new_events": 0,
+     "precision": 0.0,
+     "recall": 0.0,
+     "tn": 6581960,
+     "tp": 0
+    },
+    "80-99_select_only|timed_fp": {
+     "agreement": 1.0,
+     "fn": 0,
+     "fp": 0,
+     "log_new_events": 0,
+     "precision": 0.0,
+     "recall": 0.0,
+     "tn": 6581960,
+     "tp": 0
+    }
+   },
+   "lag_comparison_timed_fp_proxy": {
+    "lag-1": {
+     "agreement": 0.6780851581831403,
+     "precision": 0.29602294226412906,
+     "recall": 0.25265315668086974
+    },
+    "lag0": {
+     "agreement": 0.9623466062824552,
+     "precision": 1.0,
+     "recall": 0.8427101306028492
+    },
+    "lag1": {
+     "agreement": 0.6779993640006245,
+     "precision": 0.3009519791713178,
+     "recall": 0.25061392173060476
+    }
+   },
+   "log_new_missed_by_choice_proxy": 4271511,
+   "of_which_caught_by_timed_proxy": 3044737,
+   "per_strategy": [
+    {
+     "description": "RandomPlanSelector_ReRoute",
+     "innovative": 1,
+     "log_new_plan": 974685,
+     "person_iterations": 974685,
+     "proxy_detects_log_new": 577249,
+     "proxy_flags_without_log_new": 0,
+     "recall": 0.5922415960028111,
+     "strategy_id": 0
+    },
+    {
+     "description": "ExpBetaPlanSelector",
+     "innovative": 0,
+     "log_new_plan": 0,
+     "person_iterations": 9284291,
+     "proxy_detects_log_new": 0,
+     "proxy_flags_without_log_new": 0,
+     "recall": null,
+     "strategy_id": 1
+    },
+    {
+     "description": "RandomPlanSelector_TimeAllocationMutatorModule",
+     "innovative": 1,
+     "log_new_plan": 973250,
+     "person_iterations": 973250,
+     "proxy_detects_log_new": 973221,
+     "proxy_flags_without_log_new": 0,
+     "recall": 0.9999702029283329,
+     "strategy_id": 2
+    },
+    {
+     "description": "RandomPlanSelector_SubtourModeChoice_ReRoute",
+     "innovative": 1,
+     "log_new_plan": 973484,
+     "person_iterations": 973484,
+     "proxy_detects_log_new": 825507,
+     "proxy_flags_without_log_new": 0,
+     "recall": 0.8479923655653303,
+     "strategy_id": 3
+    },
+    {
+     "description": "RandomPlanSelector_TimeAllocationMutatorModule",
+     "innovative": 1,
+     "log_new_plan": 1628468,
+     "person_iterations": 1628468,
+     "proxy_detects_log_new": 1628423,
+     "proxy_flags_without_log_new": 0,
+     "recall": 0.9999723666660936,
+     "strategy_id": 4
+    },
+    {
+     "description": "RandomPlanSelector_ReRoute",
+     "innovative": 1,
+     "log_new_plan": 1624287,
+     "person_iterations": 1624287,
+     "proxy_detects_log_new": 1140180,
+     "proxy_flags_without_log_new": 0,
+     "recall": 0.7019572280021942,
+     "strategy_id": 5
+    },
+    {
+     "description": "ExpBetaPlanSelector",
+     "innovative": 0,
+     "log_new_plan": 0,
+     "person_iterations": 15496964,
+     "proxy_detects_log_new": 0,
+     "proxy_flags_without_log_new": 0,
+     "recall": null,
+     "strategy_id": 6
+    },
+    {
+     "description": "RandomPlanSelector_SubtourModeChoice_ReRoute",
+     "innovative": 1,
+     "log_new_plan": 1625273,
+     "person_iterations": 1625273,
+     "proxy_detects_log_new": 1428093,
+     "proxy_flags_without_log_new": 0,
+     "recall": 0.8786788434927547,
+     "strategy_id": 7
+    },
+    {
+     "description": "ExpBetaPlanSelector",
+     "innovative": 0,
+     "log_new_plan": 0,
+     "person_iterations": 0,
+     "proxy_detects_log_new": 0,
+     "proxy_flags_without_log_new": 0,
+     "recall": null,
+     "strategy_id": 8
+    }
+   ],
+   "run": "baseline-4713"
+  }
+ },
+ "pooled_lag0": {
+  "1-79_innovation_on|choice_fp": {
+   "agreement": 0.8357751694293516,
+   "fn": 12808917,
+   "fp": 0,
+   "precision": 1.0,
+   "recall": 0.4524832624600404,
+   "tn": 54601659,
+   "tp": 10585650
+  },
+  "1-79_innovation_on|timed_fp": {
+   "agreement": 0.9528703222127697,
+   "fn": 3675937,
+   "fp": 0,
+   "precision": 1.0,
+   "recall": 0.8428721933601079,
+   "tn": 54601659,
+   "tp": 19718630
+  },
+  "1-99|choice_fp": {
+   "agreement": 0.8689519028779674,
+   "fn": 12808917,
+   "fp": 0,
+   "precision": 1.0,
+   "recall": 0.4524832624600404,
+   "tn": 74347539,
+   "tp": 10585650
+  },
+  "1-99|timed_fp": {
+   "agreement": 0.9623914692404929,
+   "fn": 3675937,
+   "fp": 0,
+   "precision": 1.0,
+   "recall": 0.8428721933601079,
+   "tn": 74347539,
+   "tp": 19718630
+  },
+  "80-99_select_only|timed_fp": {
+   "agreement": 1.0,
+   "fn": 0,
+   "fp": 0,
+   "precision": 0.0,
+   "recall": 0.0,
+   "tn": 19745880,
+   "tp": 0
+  }
+ }
+}

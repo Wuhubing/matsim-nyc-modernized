@@ -1,0 +1,21 @@
+{
+ "crossseed_rows": 1170,
+ "proxy_gate": {
+  "all_runs_best_lag_is_same_iteration": true,
+  "exploratory_thresholds": {
+   "agreement_ge": 0.95,
+   "not_a_formal_acceptance_criterion": true,
+   "recall_ge": 0.8
+  },
+  "passed": true,
+  "pooled_innovation_on_timed_fp": {
+   "agreement": 0.9528703222127697,
+   "fn": 3675937,
+   "fp": 0,
+   "precision": 1.0,
+   "recall": 0.8428721933601079,
+   "tn": 54601659,
+   "tp": 19718630
+  }
+ }
+}
